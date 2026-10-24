@@ -2,7 +2,7 @@
 
 Four-member Open Innovation hackathon project. Checkpoint 1 weights: problem 35%, idea 30%, business 25%, development 10%. Implementation status checked **25 October 2026 (Asia/Calcutta)**; earlier pitch and research assets retain their original dates.
 
-ProofPatch is a separate-server supply-chain watch service: connect GitHub repositories, match their exact dependency inventory against corroborated advisories, and route supported fixes through **LangGraph + LangChain ChatGroq** to a draft PR for human review. The dashboard separates Services, Findings, Pipeline and Results. Read [the live demo guide](docs/LIVE-DEMO.md) for setup and the judging walkthrough.
+ProofPatch is a separate-server supply-chain watch service: connect GitHub repositories, match their exact dependency inventory against corroborated advisories, and route supported fixes through **LangGraph + LangChain ChatGroq** to a draft PR for human review. The dashboard separates Services, Findings, Pipeline, Results and PRs. Read [the live demo guide](docs/LIVE-DEMO.md) for setup and the judging walkthrough.
 
 Automatic repair is selected from the repository's detected stack and baseline tests, rather than its owner or name. Supported public repositories can use exact Python requirements, direct npm or Composer dependencies with committed lockfiles, and official PHP or nginx image references in Dockerfiles or Compose YAML. New connections start in Step by step mode; the operator can enable Complete pipeline for checked supported repositories. Missing tests, unsupported declarations and private repositories remain explicit boundaries. Arbitrary application-code migrations are not implemented.
 

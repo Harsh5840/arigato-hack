@@ -1,7 +1,7 @@
 'use client';
 
 import {useEffect, useRef, useState} from 'react';
-import {AlertTriangle, ArrowRight, GitBranch, ListChecks, Network, RefreshCw, SearchCheck, Trash2} from 'lucide-react';
+import {AlertTriangle, ArrowRight, GitBranch, GitPullRequestDraft, ListChecks, Network, RefreshCw, SearchCheck, Trash2} from 'lucide-react';
 import {useLiveOrchestration} from '@/hooks/use-live-orchestration';
 import {useRepositoryMonitoring} from '@/hooks/use-repository-monitoring';
 import {isTerminal} from '@/types/live-orchestration';
@@ -18,14 +18,17 @@ import RunMetrics from './operations/run-metrics';
 import RunAnalytics from './operations/run-analytics';
 import VerificationWorkbench from './operations/verification-workbench';
 import ReviewPanel from './operations/review-panel';
+import PullRequestsPanel from './operations/pull-requests-panel';
 import {canPrepareRepair, groupRepairFindings} from './operations/repair-capability';
+import {collectCreatedPullRequests} from './operations/pull-request-records';
 
-type DashboardTab = 'services' | 'findings' | 'pipeline' | 'results';
+type DashboardTab = 'services' | 'findings' | 'pipeline' | 'results' | 'prs';
 const tabs: {id: DashboardTab; label: string; Icon: typeof GitBranch}[] = [
   {id: 'services', label: 'Services', Icon: GitBranch},
   {id: 'findings', label: 'Findings', Icon: SearchCheck},
   {id: 'pipeline', label: 'Pipeline', Icon: Network},
   {id: 'results', label: 'Results', Icon: ListChecks},
+  {id: 'prs', label: 'PRs', Icon: GitPullRequestDraft},
 ];
 function belongsTo(run: LiveRun, repository?: MonitoredRepository) {
   return !!repository && (run.repositoryId === repository.id || run.repo.owner.toLowerCase() === repository.owner.toLowerCase() && run.repo.name.toLowerCase() === repository.name.toLowerCase());
@@ -84,6 +87,7 @@ export default function OperationsDashboard() {
   const groupedFindings = groupRepairFindings(allSelectedFindings);
   const affectedCount = groupedFindings.length;
   const existingDrafts = groupedFindings.filter(group => group.finding.status === 'draft-created').length;
+  const createdPRs = collectCreatedPullRequests(selectedRepositories, allSelectedFindings);
 
   useEffect(() => {
     if (run && !isTerminal(run.status)) return;
@@ -181,8 +185,8 @@ export default function OperationsDashboard() {
   return <div className="operations-dashboard" id="operations">
     <DashboardHeader service={service} connection={connection} busy={busy || !!monitoring.pending} run={run} activeRun={activeRun} onCancel={() => void cancel()} onFollow={() => void followActive()} onRefresh={() => {void refresh(); void monitoring.refresh();}} onExport={exportRun}/>
     <main className="ops-main ops-command-center">
-      <div className="ops-console-heading"><div><h1>Security workspace</h1><p>Choose services, decide how they run, then follow the evidence.</p></div><span>{selectedRepositories.length} selected · {focusedRepository ? `showing ${focusedRepository.owner}/${focusedRepository.name}` : 'choose a service'}</span></div>
-      <nav className="ops-dashboard-tabs" aria-label="Dashboard views">{tabs.map(({id, label, Icon}) => <button key={id} aria-current={tab === id ? 'page' : undefined} onClick={() => changeTab(id)}><Icon size={15}/>{label}{id === 'services' && <span>{selectedRepositories.length}</span>}{id === 'findings' && <span>{affectedCount}</span>}</button>)}</nav>
+      <div className="ops-console-heading"><div><h1>Security workspace</h1><p>Choose services, decide how they run, then follow the evidence.</p></div><span>{selectedRepositories.length} service{selectedRepositories.length === 1 ? '' : 's'} selected</span></div>
+      <nav className="ops-dashboard-tabs" aria-label="Dashboard views">{tabs.map(({id, label, Icon}) => <button key={id} aria-current={tab === id ? 'page' : undefined} onClick={() => changeTab(id)}><Icon size={15}/>{label}{id === 'services' && <span>{selectedRepositories.length}</span>}{id === 'findings' && <span>{affectedCount}</span>}{id === 'prs' && <span>{createdPRs.length}</span>}</button>)}</nav>
       {error && <div className="ops-error-banner" role="alert"><AlertTriangle size={18}/><div><strong>{error.code}</strong><p>{error.message}</p></div><button className="button subtle" onClick={() => void refresh()}><RefreshCw size={13}/>Reconnect</button></div>}
       {service && !service.ready && <div className="ops-error-banner" role="status"><AlertTriangle size={18}/><div><strong>Server setup required</strong><p>{!service.groqConfigured ? 'Groq credentials are missing. ' : ''}{!service.githubConfigured ? 'GitHub credentials are missing. ' : ''}Configure the server and reconnect. Credentials stay on the server.</p></div></div>}
       {monitoring.error && <div className="ops-error-banner" role="alert"><AlertTriangle size={18}/><div><strong>{monitoring.error.code}</strong><p>{monitoring.error.message}</p></div><button className="button subtle" onClick={() => void monitoring.refresh()}><RefreshCw size={13}/>Reload monitoring</button></div>}
@@ -199,7 +203,7 @@ export default function OperationsDashboard() {
       {tab === 'pipeline' && <div className="ops-pipeline-page"><div className="ops-tab-intro"><div><span>03 / WATCH THE HANDOFF</span><h2>Repair pipeline</h2><p>Advisory match → package or image update → tests → senior review → draft PR → human review.</p></div><strong>{focusedRepository ? `${focusedRepository.owner}/${focusedRepository.name}` : 'Choose a service'}</strong></div>
         <SecurityJourney repository={focusedRepository} snapshot={monitoring.snapshot} findings={focusedFindings} run={run} events={events}/><OrchestrationPanel run={run} events={events} service={service}/>
         {run?.failure && <div className="ops-error-banner" role="alert"><AlertTriangle size={18}/><div><strong>{run.failure.code}</strong><p>{run.failure.message}</p></div>{run.target && !activeRun && <button className="button outline" onClick={() => void prepareFix(run.target!.findingId)} disabled={busy || !service?.ready}>Retry fix</button>}</div>}
-        <button className="ops-text-next" onClick={() => changeTab('results')}>Open checks, model usage, and draft PR<ArrowRight size={15}/></button>
+        <button className="ops-text-next" onClick={() => changeTab('results')}>Open checks and model usage<ArrowRight size={15}/></button>
       </div>}
 
       {tab === 'results' && <div className="ops-results-view"><div className="ops-tab-intro"><div><span>04 / INSPECT THE PROOF</span><h2>Results and human review</h2><p>Observed checks, each model call, token use, code diff, and the actual draft PR.</p></div><div className="ops-results-actions"><strong>{run ? `Run ${run.id.slice(0, 8)}` : 'No run selected'}</strong><button className="ops-delete-runs" disabled={!allRuns.length || !!activeRun || busy} title={activeRun ? 'Wait for the active run to finish or cancel it first' : !allRuns.length ? 'No saved runs to delete' : 'Delete locally saved run history across all services'} onClick={() => void deleteHistory()}><Trash2 size={14}/>Delete saved runs</button></div></div>
@@ -208,7 +212,9 @@ export default function OperationsDashboard() {
         {run && <section className="ops-run-facts"><h2>Selected run</h2><p>{run.advisory?.titleEn ?? focusedFindings[0]?.summary ?? 'No advisory summary recorded.'}</p><dl><div><dt>Started</dt><dd>{new Date(run.createdAt).toLocaleString('en-GB',{timeZone:'Asia/Tokyo',dateStyle:'medium',timeStyle:'medium'})} JST</dd></div><div><dt>Last activity</dt><dd>{new Date(run.updatedAt).toLocaleString('en-GB',{timeZone:'Asia/Tokyo',dateStyle:'medium',timeStyle:'medium'})} JST</dd></div><div><dt>Checks passed</dt><dd>{run.checks.filter(check => check.status === 'passed').length} / {run.checks.length}</dd></div></dl></section>}
         {runs.length ? <RunAnalytics runs={runs} run={run} events={events} onSelect={id => void showRun(id)}/> : <div className="ops-tab-empty"><strong>No run results yet</strong><p>Scan a selected service. In Step by step mode, choose a finding to start the repair run; Complete pipeline mode starts supported repairs automatically.</p><button className="button primary" onClick={() => changeTab('services')}>Go to Services</button></div>}
         {run && <div className="ops-developer-grid"><VerificationWorkbench run={run}/><ReviewPanel run={run}/></div>}
+        <button className="ops-text-next" onClick={() => changeTab('prs')}>See created PRs<ArrowRight size={15}/></button>
       </div>}
+      {tab === 'prs' && <PullRequestsPanel records={createdPRs} selectedCount={selectedRepositories.length} onServices={() => changeTab('services')} onFindings={() => changeTab('findings')}/>}
       <footer className="ops-footer"><span>ProofPatch · Open Innovation · Packages + container images</span><span>Draft PRs are for human review. You decide whether to merge.</span></footer>
     </main>
   </div>;

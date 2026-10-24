@@ -53,7 +53,7 @@ PHP PR #6's [legacy target-repository Fixture evidence job is red](https://githu
 | 30–45 s | Open **Findings**. A new actionable match has **Fix & create draft PR**; clicking it queues the real fix and opens Pipeline progress. Existing demo matches show **Open draft PR** because their PRs already exist. Several advisory matches collapse into one repair row; expand actual CVE evidence if asked. |
 | 45–65 s | Open **Pipeline**. Follow **Connect & inspect → Watch for alerts → Confirm the risk → Prepare the update → Test & review → You review the PR**, then show the actual LangGraph/React Flow handoffs. |
 | 65–80 s | Open **Results**. Show model times and reported tokens, checks, YAML candidate diff, CI link, scanner residuals and live HTTP test output for a recorded run. |
-| 80–90 s | Open the real draft PR. Show the exact candidate, source evidence, senior-review rationale and human follow-ups. You decide whether to merge. |
+| 80–90 s | Open **PRs**. Select all to show the three recorded GitHub draft PRs; the container's 28 advisory matches appear on one review card. Open the real PR to show the exact candidate, senior-review rationale and human follow-ups. You decide whether to merge. |
 
 New connections begin in Step by step mode with automatic repair off. Existing settings are preserved on reconnect. Complete pipeline enables automatic fixes for checked supported repositories and turns on their individual continuous watch. Unsupported selections still scan. A connection cannot grant permissions the server identity lacks.
 
