@@ -75,7 +75,7 @@ input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent);
 .ops-repo-button:hover { border-color: var(--line-strong); color: var(--ink); }
 .ops-service { display: inline-flex; align-items: center; gap: 7px; margin-left: auto; font-size: 12.5px; color: var(--ink-2); font-weight: 560; }
 .ops-service i { width: 8px; height: 8px; border-radius: 99px; background: var(--good); box-shadow: 0 0 0 3px var(--good-bg); }
-.ops-service.loading i, .ops-service.reconnecting i { background: var(--warn); box-shadow: 0 0 0 3px var(--warn-bg); }
+.ops-service.loading i, .ops-service.reconnecting i, .ops-service.setup i { background: var(--warn); box-shadow: 0 0 0 3px var(--warn-bg); }
 .ops-service.offline i { background: var(--bad); box-shadow: 0 0 0 3px var(--bad-bg); }
 .ops-header-actions { display: flex; align-items: center; gap: 10px; }
 .ops-icon-button { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); transition: border-color .2s, color .2s; }
