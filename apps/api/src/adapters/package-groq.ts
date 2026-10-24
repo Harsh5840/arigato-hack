@@ -2,7 +2,7 @@ import { ChatGroq } from '@langchain/groq';
 import { AIMessage } from '@langchain/core/messages';
 import { configuredModels, verifyGroqModels } from './groq.js';
 import { boundedBytes, combinedSignal, exactKeys, object, string, strings } from './http.js';
-import type { Analysis, ModelUsage, Repair, Review } from './types.js';
+import type { Analysis, Evidence, ModelUsage, Repair, Review } from './types.js';
 import type { AdvisoryLead, Dependency } from '../../../../packages/contracts/src/monitoring.js';
 
 const textSchema = { type: 'string' };
@@ -18,13 +18,20 @@ export async function invokeStructuredRole(model: string, name: string, properti
   if (content.length > 90_000) throw new Error('Role input exceeds the bounded context size.');
   const apiKey = process.env.GROQ_API_KEY?.trim();
   if (!apiKey) throw new Error('GROQ_API_KEY is missing; no simulated model response is substituted.');
+  let lastHttpStatus: number | undefined;
   const llm = new ChatGroq({
     apiKey, model, temperature: 0.1, maxTokens: name.includes('repair') ? 5_000 : 2_500,
     maxRetries: 1, timeout: 90_000, streaming: false, reasoningEffort: 'low',
     // Keep redirects and response sizes bounded even inside the provider SDK.
     fetch: async (url: string | URL | Request, init?: RequestInit) => {
       const response = await globalThis.fetch(url, { ...init, redirect: 'error' });
-      if (!response.ok) { await response.body?.cancel(); return new Response(null, { status: response.status, headers: { 'content-type': 'application/json' } }); }
+      if (!response.ok) {
+        lastHttpStatus = response.status;
+        await response.body?.cancel();
+        // Preserve SDK-readable HTTP status without exposing provider bodies,
+        // request headers, prompts, credentials or echoed request data.
+        return new Response(JSON.stringify({ error: { message: `Groq request rejected (HTTP ${response.status}).`, type: 'provider_error' } }), { status: response.status, headers: { 'content-type': 'application/json' } });
+      }
       const bytes = await boundedBytes(response, 900_000);
       const payload = object(JSON.parse(new TextDecoder().decode(bytes)), 'Groq completion');
       if (!Array.isArray(payload.choices) || payload.choices.length !== 1) throw new Error('Groq returned no single structured completion.');
@@ -40,10 +47,11 @@ export async function invokeStructuredRole(model: string, name: string, properti
     });
   } catch (error) {
     signal?.throwIfAborted();
-    const status = error && typeof error === 'object' && 'status' in error ? Number(error.status) : undefined;
+    const reportedStatus = error && typeof error === 'object' && 'status' in error ? Number(error.status) : undefined;
+    const status = Number.isInteger(reportedStatus) && reportedStatus! >= 100 && reportedStatus! <= 599 ? reportedStatus : lastHttpStatus;
     if (status === 401 || status === 403) throw new Error(`Groq rejected authentication or model access (HTTP ${status}).`);
     if (status === 429) throw new Error('Groq rate limit reached. Wait for provider quota reset; no simulated output is substituted.');
-    throw new Error('LangChain Groq call failed or timed out. Check provider availability and structured-output compatibility. Provider bodies are omitted to protect secrets.');
+    throw new Error(`LangChain Groq call failed${status ? ` (HTTP ${status})` : ' or timed out'}. Check provider availability, request/token limits and structured-output compatibility. Provider bodies are omitted to protect secrets.`);
   }
   if (result.response_metadata.finish_reason !== 'stop') throw new Error('Groq output was truncated or refused; no partial candidate is accepted.');
   if (result.response_metadata.model !== model) throw new Error('Groq reported a different model from the selected role.');
@@ -54,6 +62,61 @@ export async function invokeStructuredRole(model: string, name: string, properti
   const usage = result.usage_metadata;
   if (!usage || ![usage.input_tokens, usage.output_tokens, usage.total_tokens].every((value) => Number.isInteger(value) && value >= 0)) throw new Error('Groq token usage was missing or invalid.');
   return { data, usage: { promptTokens: usage.input_tokens, completionTokens: usage.output_tokens, totalTokens: usage.total_tokens }, model };
+}
+
+const reviewEvidenceLimit = 24_000;
+function reviewRecord(value: unknown): Record<string, unknown> { return value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {}; }
+function boundedReviewRecord(value: unknown, label: string, limit = 8_000): Record<string, unknown> {
+  const record = reviewRecord(value);
+  if (JSON.stringify(record).length > limit) throw new Error(`${label} exceeds the senior-review evidence bound; full evidence remains available for human review.`);
+  return record;
+}
+
+/** Projection only: the complete evidence remains persisted and deterministic
+ * gates still read the original. Never replace missing scanner coverage with a
+ * clean claim, or hide a failed/not-run check in a shortened model context. */
+export function projectSeniorReviewEvidence(evidence: Evidence): Record<string, unknown> {
+  const report = reviewRecord(evidence.policy), runtime = reviewRecord(evidence.runtime ?? report.runtime);
+  if (evidence.checks.length > 64) throw new Error('Too many verification checks for a bounded senior review.');
+  const checks = evidence.checks.map(check => {
+    if (JSON.stringify(check).length > 4_000) throw new Error('A verification assertion exceeds the senior-review evidence bound.');
+    return check;
+  });
+  const provenanceKeys = ['target_repository', 'run_id', 'base_sha', 'candidate_sha', 'workflow_sha', 'github_run_id', 'mode', 'verifier_sha256'];
+  const provenance = Object.fromEntries(provenanceKeys.filter(key => report[key] !== undefined).map(key => [key, report[key]]));
+  const scalarRuntime = Object.fromEntries(Object.entries(runtime).filter(([, value]) => value === null || ['string', 'number', 'boolean'].includes(typeof value)));
+  const sourceRows = Array.isArray(runtime.remainingImageFindings) ? runtime.remainingImageFindings.map(reviewRecord) : [];
+  const severityCounts: Record<string, number> = {};
+  for (const row of sourceRows) { const severity = typeof row.severity === 'string' ? row.severity : 'UNKNOWN'; severityCounts[severity] = (severityCounts[severity] ?? 0) + 1; }
+  const rank: Record<string, number> = { CRITICAL: 5, HIGH: 4, MEDIUM: 3, LOW: 2, UNKNOWN: 1 };
+  const selectedSamples = [...sourceRows].sort((left, right) => (rank[String(right.severity)] ?? 0) - (rank[String(left.severity)] ?? 0) || Number(Boolean(right.fixedVersion)) - Number(Boolean(left.fixedVersion))).slice(0, 6);
+  const residuals = sourceRows.length || typeof runtime.candidateScannerFindings === 'number' ? {
+    totalCandidateScannerFindings: runtime.candidateScannerFindings,
+    sourceSampleRows: sourceRows.length,
+    sourceSampleWasTruncated: runtime.remainingImageFindingsTruncated === true,
+    severityCountsInSourceSampleOnly: severityCounts,
+    sample: selectedSamples,
+    rowsOmittedFromSourceSample: Math.max(0, Number(runtime.candidateScannerFindings ?? sourceRows.length) - sourceRows.length),
+    rowsOmittedFromReviewSample: Math.max(0, sourceRows.length - selectedSamples.length),
+    interpretation: 'These are residual image advisories for human follow-up. Counts by severity describe only the retained source sample, not the whole image. Selected-advisory clearance does not mean the image is clean.',
+  } : undefined;
+  const log = evidence.businessLog ?? (typeof report.businessLog === 'string' ? report.businessLog : '');
+  const projection = {
+    ci: evidence.ci, baseSha: evidence.baseSha, candidateSha: evidence.candidateSha,
+    verifierSha256: evidence.verifierSha256, builtImageId: evidence.builtImageId,
+    provenance: boundedReviewRecord(provenance, 'Runner provenance'),
+    checks,
+    repairPolicy: boundedReviewRecord(report.policy, 'Discovered repair policy'),
+    runtime: boundedReviewRecord(scalarRuntime, 'Observed runtime'),
+    vendorEvidence: boundedReviewRecord(runtime.vendorEvidence, 'Vendor corroboration'),
+    scannerCoverageGap: runtime.scannerCoverageGap,
+    remainingImageFindings: residuals,
+    businessTests: { logCharacters: log.length, logExcerpt: log.length > 1_200 ? log.slice(0, 400) + '\n[excerpt; full log in linked evidence]\n' + log.slice(-800) : log, excerpted: log.length > 1_200 },
+    fullEvidence: { actionsRunUrl: evidence.ci.url, artifactListingUrl: evidence.ci.url + '#artifacts', evidenceArtifactSha256: evidence.artifactSha256, scannerArtifact: boundedReviewRecord(report.scan_artifact, 'Scanner artifact provenance') },
+    scope: 'All mandatory verification assertions and source provenance are retained. Raw report/log duplication and most residual rows are omitted only from this model projection. Full evidence remains persisted and available in the linked Actions artifacts.',
+  };
+  if (JSON.stringify(projection).length > reviewEvidenceLimit) throw new Error('Senior-review evidence exceeds the bounded context after projection; full evidence requires human review.');
+  return projection;
 }
 
 export async function analyzePackage(finding: unknown, inventory: unknown, signal?: AbortSignal): Promise<Analysis> {

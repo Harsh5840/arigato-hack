@@ -77,13 +77,15 @@ export async function monitorCycle(monitor: MonitoringStore, runs: RunStore) {
       }
     }
     const inventory = monitor.repositories().filter(repo => repo.enabled).flatMap(repo => repo.inventory).slice(0, 100);
-    const triaged = new Set(monitor.state<string[]>('triagedLeadIds') || []);
-    const newLeads = forum.leads.filter(lead => !triaged.has(lead.id)).slice(0, 20);
+    const inventoryKey = createHash('sha256').update(JSON.stringify(inventory.map(item => [item.ecosystem, item.name, item.version]).sort())).digest('hex').slice(0, 20);
+    const leadKey = (id: string) => `${id}:${inventoryKey}`;
+    const triaged = new Set(monitor.state<string[]>('triagedLeadKeys') || []);
+    const newLeads = forum.leads.filter(lead => !triaged.has(leadKey(lead.id))).slice(0, 20);
     if (newLeads.length && inventory.length) {
       try {
         const triage = await triageForumLeads(newLeads, inventory, signal);
         monitor.configure({ supplyTriage: { ...triage, checkedAt: new Date().toISOString() }, scoutError: undefined });
-        monitor.setState('triagedLeadIds', [...new Set([...triaged, ...newLeads.map(lead => lead.id)])].slice(-500));
+        monitor.setState('triagedLeadKeys', [...new Set([...triaged, ...newLeads.map(lead => leadKey(lead.id))])].slice(-500));
       } catch (error) { monitor.configure({ scoutError: error instanceof Error ? error.message : 'Groq forum scout failed.' }); }
     }
     const current = monitor.snapshot();

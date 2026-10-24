@@ -10,7 +10,7 @@ import { SqliteGraphSaver } from '../graphs/sqlite-checkpointer.js';
 import * as repository from '../adapters/repository.js';
 import { scanDependencies } from '../adapters/supply-sources.js';
 import { scanContainerDependencies } from '../adapters/container-supply.js';
-import { analyzePackage, proposePackageRepair, reviewPackageRepair } from '../adapters/package-groq.js';
+import { analyzePackage, projectSeniorReviewEvidence, proposePackageRepair, reviewPackageRepair } from '../adapters/package-groq.js';
 import { configuredModels } from '../adapters/groq.js';
 import { getRepositoryRepairCapability, loadRepairContext } from './stack-discovery.js';
 import { discoverRepairPolicy, frozenRepairDigest, requiredRepairChecks, validateGenericRepair, type RepairPolicy } from './repair-policy.js';
@@ -188,7 +188,9 @@ export async function executePackageRun(store: RunStore, monitor: MonitoringStor
       review: async () => {
         stage('reviewing', 'devsec', 'The Senior Review Agent inspects the actual dependency diff, frozen test evidence and remaining owner tasks in a separate model context.');
         const allowedBaseline = Object.fromEntries(policy.allowedPaths.map(path => [path, baselineFiles[path]])), allowedCandidate = Object.fromEntries(policy.allowedPaths.map(path => [path, candidateFiles[path]]));
-        review = await call('reviewer', () => reviewPackageRepair(finding, allowedBaseline, allowedCandidate, { ...evidence, rawFiles: undefined }, signal)); store.update(id, { review });
+        const seniorEvidence = projectSeniorReviewEvidence(evidence);
+        store.event(id, 'devsec', 'review-context-prepared', `Prepared ${JSON.stringify(seniorEvidence).length} characters of senior-review evidence: every mandatory check and provenance record retained; full logs and scans remain attached to ${evidence.ci.url}.`);
+        review = await call('reviewer', () => reviewPackageRepair(finding, allowedBaseline, allowedCandidate, seniorEvidence, signal)); store.update(id, { review });
         return review.decision === 'approve' ? { decision: 'publish' } : { decision: 'retry', feedback: review.concerns.join('\n') || review.summaryEn };
       },
       gate: async state => {
