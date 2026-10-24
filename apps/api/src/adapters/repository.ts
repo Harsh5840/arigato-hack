@@ -39,12 +39,12 @@ function safeWorkflow(workflow: string): string {
   return workflow;
 }
 function runIdentity(runId: string): void { if (!/^[a-zA-Z0-9_-]{4,100}$/.test(runId)) throw new Error('Verification run identity is invalid.'); }
-async function api(repo: RepositoryRef, suffix: string, options: { method?: 'GET' | 'POST'; body?: unknown; signal?: AbortSignal; raw?: boolean; beforeWrite?: () => void } = {}): Promise<Response> {
+async function api(repo: RepositoryRef, suffix: string, options: { method?: 'GET' | 'POST' | 'PATCH'; body?: unknown; signal?: AbortSignal; raw?: boolean; beforeWrite?: () => void } = {}): Promise<Response> {
   const { owner, name } = parseRepository(repo);
   if (suffix && (!suffix.startsWith('/') || /[\r\n#]/.test(suffix))) throw new Error('Repository API path is invalid.');
   const token = await getGitHubCredential();
   if (!token) throw new Error('GitHub authentication is missing; configure a repository-scoped installation token or local Git Credential Manager.');
-  if (options.method === 'POST') options.beforeWrite?.();
+  if (options.method === 'POST' || options.method === 'PATCH') options.beforeWrite?.();
   const response = await fetch(`https://api.github.com/repos/${owner}/${name}${suffix}`, {
     method: options.method ?? 'GET', redirect: 'manual', signal: combinedSignal(options.signal, 30_000),
     headers: { authorization: `Bearer ${token}`, accept: 'application/vnd.github+json', 'x-github-api-version': '2022-11-28', 'user-agent': 'ProofPatch-Monitor', ...(options.body === undefined ? {} : { 'content-type': 'application/json' }) },
@@ -260,4 +260,21 @@ export async function ensureRepositoryDraftPullRequest(repo: RepositoryRef, inpu
   if (existing) return parse(existing, true);
   await assertHead();
   return parse(await json(repo, '/pulls', { method: 'POST', body: { title: input.title, body: input.body, head: input.branch, base: repo.defaultBranch ?? 'main', draft: true, maintainer_can_modify: false }, signal, beforeWrite: input.beforeWrite }), false);
+}
+
+/** A GitHub PR cannot be erased; closing an app-created draft is the supported remote removal. */
+export async function closeRepositoryDraftPullRequest(repo: RepositoryRef, input: {number: number; url: string}, signal?: AbortSignal): Promise<'closed' | 'already-closed'> {
+  parseRepository(repo);
+  if (!Number.isSafeInteger(input.number) || input.number < 1 || input.url !== `https://github.com/${repo.owner}/${repo.name}/pull/${input.number}`) throw new Error('Recorded PR identity does not match its repository.');
+  const path = `/pulls/${input.number}`;
+  const current = object(await json(repo, path, {signal}), 'Recorded PR');
+  if (current.number !== input.number || current.html_url !== input.url) throw new Error('GitHub returned a different PR than the recorded link.');
+  if (current.state === 'closed') return 'already-closed';
+  const head = object(current.head, 'Recorded PR head');
+  const headRepo = object(head.repo, 'Recorded PR head repository');
+  if (headRepo.full_name !== `${repo.owner}/${repo.name}` || typeof head.ref !== 'string' || !head.ref.startsWith('proofpatch/')) throw new Error('Recorded PR is not a ProofPatch branch in the selected repository.');
+  if (current.state !== 'open' || current.draft !== true || current.merged_at !== null) throw new Error('PR is no longer an open draft. Review its human-owned GitHub state before clearing it.');
+  const updated = object(await json(repo, path, {method: 'PATCH', body: {state: 'closed'}, signal}), 'Closed PR');
+  if (updated.number !== input.number || updated.html_url !== input.url || updated.state !== 'closed') throw new Error('GitHub did not confirm the PR was closed.');
+  return 'closed';
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import {useCallback, useEffect, useRef, useState} from 'react';
-import {addRepository, getFindings, getMonitoring, getRepositories, OrchestrationError, pollMonitoring, remediateFinding, scanRepository, updateMonitoring, updateRepository} from '@/services/orchestration-api';
+import {addRepository, closePullRequestsAndDeleteFindings, getFindings, getMonitoring, getRepositories, OrchestrationError, pollMonitoring, remediateFinding, scanRepository, updateMonitoring, updateRepository} from '@/services/orchestration-api';
 import type {MonitoredRepository, MonitoringSnapshot, SupplyFinding} from '@/types/monitoring';
 
 export function useRepositoryMonitoring() {
@@ -55,5 +55,6 @@ export function useRepositoryMonitoring() {
     poll: () => perform('poll', () => pollMonitoring()),
     configure: (changes: {enabled?: boolean; intervalSeconds?: number}) => perform('configure', () => updateMonitoring(changes)),
     remediate: (id: string) => perform(`repair:${id}`, () => remediateFinding(id)),
+    clearFindings: (repositoryIds: string[], expectedFindingCount: number, expectedPullRequestCount: number) => perform('clear-findings', () => closePullRequestsAndDeleteFindings(repositoryIds, expectedFindingCount, expectedPullRequestCount)),
   };
 }

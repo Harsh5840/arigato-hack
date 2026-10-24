@@ -2,6 +2,8 @@ import { DatabaseSync } from 'node:sqlite';
 import { randomUUID } from 'node:crypto';
 import type { AdvisoryLead, MonitoredRepository, MonitoringSnapshot, SupplyFinding } from '../../../../packages/contracts/src/monitoring.js';
 
+const findingTarget = (finding: SupplyFinding) => JSON.stringify([finding.repositoryId, finding.advisoryId, finding.ecosystem, finding.packageName, finding.installedVersion, finding.fixedVersion, finding.fixedDigest ?? null, finding.manifestPath]);
+
 export class MonitoringStore {
   private db: DatabaseSync;
   constructor(path: string) {
@@ -9,6 +11,7 @@ export class MonitoringStore {
     this.db.exec(`PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000;
       CREATE TABLE IF NOT EXISTS repositories(id TEXT PRIMARY KEY, identity TEXT UNIQUE NOT NULL, data TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS findings(id TEXT PRIMARY KEY, repository_id TEXT NOT NULL, data TEXT NOT NULL);
+      CREATE TABLE IF NOT EXISTS cleared_findings(id TEXT PRIMARY KEY, target_key TEXT NOT NULL, cleared_at TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS advisory_leads(id TEXT PRIMARY KEY, data TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS monitoring_state(key TEXT PRIMARY KEY, value TEXT NOT NULL);`);
     if (!this.state('settings')) this.setState('settings', { enabled: true, intervalSeconds: 300, sources: [] });
@@ -25,9 +28,46 @@ export class MonitoringStore {
   saveRepository(repo: MonitoredRepository) { this.db.prepare('INSERT INTO repositories(id,identity,data) VALUES(?,?,?) ON CONFLICT(identity) DO UPDATE SET data=excluded.data').run(repo.id, `${repo.owner}/${repo.name}`.toLowerCase(), JSON.stringify(repo)); }
   patchRepository(id: string, patch: Partial<MonitoredRepository>): MonitoredRepository { const repo = this.repository(id); if (!repo) throw new Error('Repository not found.'); const next = { ...repo, ...patch, updatedAt: new Date().toISOString() }; this.saveRepository(next); return next; }
   findings(repositoryId?: string): SupplyFinding[] { const rows = repositoryId ? this.db.prepare('SELECT data FROM findings WHERE repository_id=? ORDER BY rowid DESC LIMIT 100').all(repositoryId) : this.db.prepare('SELECT data FROM findings ORDER BY rowid DESC LIMIT 100').all(); return (rows as { data: string }[]).map(row => JSON.parse(row.data)); }
+  findingsForRepositories(repositoryIds: readonly string[]): SupplyFinding[] {
+    if (!repositoryIds.length) return [];
+    const placeholders = repositoryIds.map(() => '?').join(',');
+    return (this.db.prepare(`SELECT data FROM findings WHERE repository_id IN (${placeholders})`).all(...repositoryIds) as {data: string}[]).map(row => JSON.parse(row.data));
+  }
+  deleteFindingsForRepositories(repositoryIds: readonly string[]): number {
+    if (!repositoryIds.length) return 0;
+    const placeholders = repositoryIds.map(() => '?').join(',');
+    this.db.exec('BEGIN IMMEDIATE');
+    try {
+      const findings = this.findingsForRepositories(repositoryIds);
+      const cleared = this.db.prepare('INSERT INTO cleared_findings(id,target_key,cleared_at) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET target_key=excluded.target_key,cleared_at=excluded.cleared_at');
+      const now = new Date().toISOString();
+      for (const finding of findings) cleared.run(finding.id, findingTarget(finding), now);
+      const deleted = Number(this.db.prepare(`DELETE FROM findings WHERE repository_id IN (${placeholders})`).run(...repositoryIds).changes);
+      this.db.exec('COMMIT');
+      return deleted;
+    } catch (error) { this.db.exec('ROLLBACK'); throw error; }
+  }
   finding(id: string): SupplyFinding | undefined { const row = this.db.prepare('SELECT data FROM findings WHERE id=?').get(id) as { data: string } | undefined; return row ? JSON.parse(row.data) : undefined; }
-  saveFinding(finding: SupplyFinding) { const previous = this.finding(finding.id); const sameTarget = previous && ['repositoryId','ecosystem','packageName','installedVersion','fixedVersion','fixedDigest','manifestPath'].every(key => previous[key as keyof SupplyFinding] === finding[key as keyof SupplyFinding]); const next = sameTarget ? { ...finding, detectedAt: previous!.detectedAt, status: finding.status === 'needs-owner' ? 'needs-owner' as const : previous!.status, runId: finding.status === 'needs-owner' ? undefined : previous!.runId, pullRequest: previous!.pullRequest } : { ...finding, runId: undefined }; this.db.prepare('INSERT INTO findings(id,repository_id,data) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET data=excluded.data').run(next.id, next.repositoryId, JSON.stringify(next)); }
-  patchFinding(id: string, patch: Partial<SupplyFinding>) { const old = this.finding(id); if (!old) throw new Error('Finding not found.'); const next = { ...old, ...patch }; this.db.prepare('UPDATE findings SET data=? WHERE id=?').run(JSON.stringify(next), id); return next; }
+  saveFinding(finding: SupplyFinding) {
+    const previous = this.finding(finding.id);
+    const sameTarget = previous && ['repositoryId','ecosystem','packageName','installedVersion','fixedVersion','fixedDigest','manifestPath'].every(key => previous[key as keyof SupplyFinding] === finding[key as keyof SupplyFinding]);
+    const targetKey = findingTarget(finding);
+    const cleared = this.db.prepare('SELECT target_key FROM cleared_findings WHERE id=?').get(finding.id) as {target_key: string} | undefined;
+    if (cleared && cleared.target_key !== targetKey) this.db.prepare('DELETE FROM cleared_findings WHERE id=?').run(finding.id);
+    let next: SupplyFinding;
+    if (cleared?.target_key === targetKey) next = {...finding, status: 'needs-owner', runId: undefined, pullRequest: undefined};
+    else if (sameTarget) next = {...finding, detectedAt: previous.detectedAt, status: finding.status === 'needs-owner' ? 'needs-owner' : previous.status, runId: finding.status === 'needs-owner' ? undefined : previous.runId, pullRequest: previous.pullRequest};
+    else next = {...finding, runId: undefined};
+    this.db.prepare('INSERT INTO findings(id,repository_id,data) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET data=excluded.data').run(next.id, next.repositoryId, JSON.stringify(next));
+  }
+  patchFinding(id: string, patch: Partial<SupplyFinding>) {
+    const old = this.finding(id);
+    if (!old) throw new Error('Finding not found.');
+    const next = {...old, ...patch};
+    this.db.prepare('UPDATE findings SET data=? WHERE id=?').run(JSON.stringify(next), id);
+    if (patch.status === 'queued') this.db.prepare('DELETE FROM cleared_findings WHERE id=?').run(id);
+    return next;
+  }
   clearRunLinks(deletedIds: readonly string[]) {
     if (!deletedIds.length) return;
     const deleted = new Set(deletedIds);

@@ -127,6 +127,76 @@ test('an archived real draft PR stays linked to the exact finding after run hist
   assert.throws(() => queueRemediation(monitor, runs, 'finding-unit'), /draft PR already exists/);
 });
 
+test('closing selected GitHub drafts clears their dashboard findings once per PR', async () => {
+  const {monitor, runs} = memory();
+  const repo = repository(); monitor.saveRepository(repo);
+  const pullRequest = {url: 'https://github.com/unit-owner/python-service/pull/7', number: 7, draft: true};
+  const prior = runs.createForFinding(repo, finding()).run;
+  runs.update(prior.id, {status: 'completed', pullRequest});
+  for (let index = 0; index < 3; index++) monitor.saveFinding(finding({id: `finding-${index}`, advisoryId: `GHSA-test-${index}`, status: 'draft-created', pullRequest}));
+  const calls: string[] = [];
+  globalThis.fetch = async (input, init) => {
+    const method = init?.method ?? 'GET'; calls.push(method);
+    assert.equal(String(input), 'https://api.github.com/repos/unit-owner/python-service/pulls/7');
+    if (method === 'PATCH') assert.deepEqual(JSON.parse(String(init?.body)), {state: 'closed'});
+    return json({number: 7, html_url: pullRequest.url, state: method === 'PATCH' ? 'closed' : 'open', draft: true, merged_at: null, head: {ref: 'proofpatch/requests-fix', repo: {full_name: 'unit-owner/python-service'}}});
+  };
+  const response = await createApp(runs, undefined, monitor).request('http://localhost/api/findings', {method: 'DELETE', headers, body: JSON.stringify({repositoryIds: ['repo-unit'], expectedFindingCount: 3, expectedPullRequestCount: 1})});
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), {deletedFindings: 3, closedPullRequests: 1, alreadyClosedPullRequests: 0});
+  assert.deepEqual(calls, ['GET', 'PATCH']);
+  assert.equal(monitor.findings('repo-unit').length, 0);
+  assert.ok(runs.get(prior.id)?.pullRequestClosedAt);
+  monitor.saveFinding(finding({id: 'finding-0', advisoryId: 'GHSA-test-0'}));
+  assert.equal(monitor.finding('finding-0')?.status, 'needs-owner');
+  assert.equal(monitor.finding('finding-0')?.pullRequest, undefined);
+  assert.notEqual(queueRemediation(monitor, runs, 'finding-0').run.id, prior.id);
+});
+
+test('finding cleanup refuses active work and preserves records when GitHub close fails', async () => {
+  const {monitor, runs} = memory();
+  const repo = repository(); monitor.saveRepository(repo);
+  const pr = {url: 'https://github.com/unit-owner/python-service/pull/7', number: 7, draft: true};
+  monitor.saveFinding(finding({status: 'draft-created', pullRequest: pr}));
+  const {run} = runs.createForFinding(repo, finding());
+  const app = createApp(runs, undefined, monitor);
+  const remove = () => app.request('http://localhost/api/findings', {method: 'DELETE', headers, body: JSON.stringify({repositoryIds: ['repo-unit'], expectedFindingCount: 1, expectedPullRequestCount: 1})});
+  assert.equal((await remove()).status, 409);
+  assert.ok(monitor.finding('finding-unit'));
+  runs.update(run.id, {status: 'completed'});
+  globalThis.fetch = async (input, init) => {
+    assert.equal(String(input), 'https://api.github.com/repos/unit-owner/python-service/pulls/7');
+    if (init?.method === 'PATCH') return new Response('{}', {status: 403, headers});
+    return json({number: 7, html_url: pr.url, state: 'open', draft: true, merged_at: null, head: {ref: 'proofpatch/requests-fix', repo: {full_name: 'unit-owner/python-service'}}});
+  };
+  const response = await remove();
+  assert.equal(response.status, 502);
+  assert.ok(monitor.finding('finding-unit'));
+});
+
+test('cleanup will not close a human-owned PR and can retry an already closed draft', async () => {
+  const {monitor, runs} = memory();
+  monitor.saveRepository(repository());
+  const pr = {url: 'https://github.com/unit-owner/python-service/pull/7', number: 7, draft: true};
+  monitor.saveFinding(finding({status: 'draft-created', pullRequest: pr}));
+  const app = createApp(runs, undefined, monitor);
+  const remove = () => app.request('http://localhost/api/findings', {method: 'DELETE', headers, body: JSON.stringify({repositoryIds: ['repo-unit'], expectedFindingCount: 1, expectedPullRequestCount: 1})});
+  globalThis.fetch = async (_input, init) => {
+    assert.equal(init?.method ?? 'GET', 'GET');
+    return json({number: 7, html_url: pr.url, state: 'open', draft: false, merged_at: null, head: {ref: 'manual-fix', repo: {full_name: 'unit-owner/python-service'}}});
+  };
+  assert.equal((await remove()).status, 502);
+  assert.ok(monitor.finding('finding-unit'));
+  globalThis.fetch = async (_input, init) => {
+    assert.equal(init?.method ?? 'GET', 'GET');
+    return json({number: 7, html_url: pr.url, state: 'closed'});
+  };
+  const response = await remove();
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), {deletedFindings: 1, closedPullRequests: 0, alreadyClosedPullRequests: 1});
+  assert.equal(monitor.finding('finding-unit'), undefined);
+});
+
 test('repository onboarding inventories a frozen commit and leaves repositories without tests monitor-only', async () => {
   const {monitor} = memory(); const calls: string[] = [];
   globalThis.fetch = async (input, init) => {

@@ -59,6 +59,8 @@ New connections begin in Step by step mode with automatic repair off. Existing s
 
 Start a new live run before presenting because hosted verification can take several minutes. Open its actual Actions run in another tab. The current local run history was cleared on 25 October 2026; the published draft PRs and committed archived evidence above still exist. Their links are recovered from the archived run exports and remain attached to findings when run history is deleted. The existing advisory matches retain **Draft PR created** status, so scanning them again will not create duplicate PRs. To show a new end-to-end run, connect a fresh supported affected repository or introduce a new affected version in a demo repository. If a new run is queued, running or blocked, show that state. A dated completed record is a fallback, not the result of the new attempt.
 
+For post-demo cleanup, **Results → Close PRs + clear findings** acts on the checked services. It closes recorded open ProofPatch drafts on GitHub, then clears their local findings and PR cards. GitHub retains closed PR history; the action does not delete run evidence. If GitHub fails, local records remain for a retry. Do not use this before showing the three existing demo PRs.
+
 ## Explain what actually executes
 
 1. A worker checks enabled repositories every 300 seconds by default. It inventories exact package versions and supported image references at immutable commits. OSV requests contain at most 100 queries each, with up to 1,000 tracked dependencies per repository.

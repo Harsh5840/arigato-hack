@@ -47,7 +47,8 @@ async function proxy(request: Request, context: Context): Promise<Response> {
     body = new TextDecoder().decode(Buffer.concat(chunks));
   }
   try {
-    const response = await fetch(upstream, { method: request.method, headers, ...(body !== undefined ? { body } : {}), cache: 'no-store', redirect: 'error', signal: AbortSignal.any([request.signal, AbortSignal.timeout(path.at(-1) === 'events' ? 20 * 60_000 : 45_000)]) });
+    const timeout = path.at(-1) === 'events' ? 20 * 60_000 : path[0] === 'findings' && request.method === 'DELETE' ? 3 * 60_000 : 45_000;
+    const response = await fetch(upstream, { method: request.method, headers, ...(body !== undefined ? { body } : {}), cache: 'no-store', redirect: 'error', signal: AbortSignal.any([request.signal, AbortSignal.timeout(timeout)]) });
     const outputHeaders = new Headers({ 'cache-control': 'no-store', 'x-content-type-options': 'nosniff' });
     const contentType = response.headers.get('content-type');
     if (contentType) outputHeaders.set('content-type', contentType);

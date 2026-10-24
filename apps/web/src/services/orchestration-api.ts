@@ -32,4 +32,5 @@ export const getMonitoring = () => request<MonitoringSnapshot>('/monitoring');
 export const pollMonitoring = () => request<MonitoringSnapshot>('/monitoring/poll', {method: 'POST', body: '{}'});
 export const updateMonitoring = (changes: {enabled?: boolean; intervalSeconds?: number}) => request<MonitoringSnapshot>('/monitoring', {method: 'PATCH', body: JSON.stringify(changes)});
 export const getFindings = () => request<{findings: SupplyFinding[]}>('/findings');
+export const closePullRequestsAndDeleteFindings = (repositoryIds: string[], expectedFindingCount: number, expectedPullRequestCount: number) => request<{deletedFindings: number; closedPullRequests: number; alreadyClosedPullRequests: number}>('/findings', {method: 'DELETE', body: JSON.stringify({repositoryIds, expectedFindingCount, expectedPullRequestCount})});
 export const remediateFinding = (id: string) => request<{run: LiveRun}>(`/findings/${encodeURIComponent(id)}/remediate`, {method: 'POST', body: '{}'});

@@ -22,6 +22,32 @@ export class RunStore {
   }
   list(): Run[] { return (this.db.prepare('SELECT data FROM runs ORDER BY created_at DESC LIMIT 30').all() as { data: string }[]).map((row) => JSON.parse(row.data)); }
   active(): Run | undefined { return this.list().find((run) => !terminalStatuses.has(run.status)); }
+  hasActiveForRepositories(repositories: readonly MonitoredRepository[]): boolean {
+    if (!repositories.length) return false;
+    const terminal = [...terminalStatuses];
+    const placeholders = terminal.map(() => '?').join(',');
+    const rows = this.db.prepare(`SELECT data FROM runs WHERE status NOT IN (${placeholders})`).all(...terminal) as {data: string}[];
+    return rows.some(row => {
+      const run = JSON.parse(row.data) as Run;
+      return repositories.some(repo => run.repositoryId === repo.id || run.repo.owner.toLowerCase() === repo.owner.toLowerCase() && run.repo.name.toLowerCase() === repo.name.toLowerCase());
+    });
+  }
+  markPullRequestsClosed(requests: readonly {repo: MonitoredRepository; number: number; url: string}[]): void {
+    if (!requests.length) return;
+    const references = new Set(requests.map(({repo, number, url}) => `${repo.owner.toLowerCase()}/${repo.name.toLowerCase()}#${number}:${url}`));
+    this.db.exec('BEGIN IMMEDIATE');
+    try {
+      const rows = this.db.prepare("SELECT id,data FROM runs WHERE json_extract(data,'$.pullRequest.number') IS NOT NULL").all() as {id: string; data: string}[];
+      const update = this.db.prepare('UPDATE runs SET data=? WHERE id=?');
+      for (const row of rows) {
+        const run = JSON.parse(row.data) as Run;
+        if (!run.pullRequest || !references.has(`${run.repo.owner.toLowerCase()}/${run.repo.name.toLowerCase()}#${run.pullRequest.number}:${run.pullRequest.url}`)) continue;
+        run.pullRequestClosedAt = new Date().toISOString();
+        update.run(JSON.stringify(run), row.id);
+      }
+      this.db.exec('COMMIT');
+    } catch (error) { this.db.exec('ROLLBACK'); throw error; }
+  }
   clearHistory(): {blocked: boolean; deletedIds: string[]} {
     this.db.exec('BEGIN IMMEDIATE');
     try {
@@ -51,7 +77,7 @@ export class RunStore {
   createForFinding(repository: MonitoredRepository, finding: SupplyFinding): { run: Run; reused: boolean } {
     this.db.exec('BEGIN IMMEDIATE');
     try {
-      const prior = this.db.prepare("SELECT data FROM runs WHERE json_extract(data,'$.target.repositoryId')=? AND json_extract(data,'$.target.ecosystem')=? AND json_extract(data,'$.target.packageName')=? AND json_extract(data,'$.target.installedVersion')=? AND json_extract(data,'$.target.fixedVersion')=? AND json_extract(data,'$.target.manifestPath')=? AND json_extract(data,'$.target.fixedDigest') IS ? AND json_extract(data,'$.target.repairPolicyVersion')='generic-v1' AND status NOT IN ('failed','blocked','cancelled') ORDER BY created_at DESC LIMIT 1").get(repository.id, finding.ecosystem, finding.packageName, finding.installedVersion, finding.fixedVersion, finding.manifestPath, finding.fixedDigest ?? null) as { data: string } | undefined;
+      const prior = this.db.prepare("SELECT data FROM runs WHERE json_extract(data,'$.target.repositoryId')=? AND json_extract(data,'$.target.ecosystem')=? AND json_extract(data,'$.target.packageName')=? AND json_extract(data,'$.target.installedVersion')=? AND json_extract(data,'$.target.fixedVersion')=? AND json_extract(data,'$.target.manifestPath')=? AND json_extract(data,'$.target.fixedDigest') IS ? AND json_extract(data,'$.target.repairPolicyVersion')='generic-v1' AND json_extract(data,'$.pullRequestClosedAt') IS NULL AND status NOT IN ('failed','blocked','cancelled') ORDER BY created_at DESC LIMIT 1").get(repository.id, finding.ecosystem, finding.packageName, finding.installedVersion, finding.fixedVersion, finding.manifestPath, finding.fixedDigest ?? null) as { data: string } | undefined;
       if (prior) { const run: Run = JSON.parse(prior.data); if (!['failed','blocked','cancelled'].includes(run.status)) { this.db.exec('COMMIT'); return { run, reused: true }; } }
       const now = new Date().toISOString();
       const run: Run = { id: randomUUID(), status: 'queued', createdAt: now, updatedAt: now, sourceMode: 'live', mode: 'live-groq', repositoryId: repository.id, orchestrationEngine: 'langgraph', repo: { owner: repository.owner, name: repository.name }, target: { repositoryId: repository.id, findingId: finding.id, advisoryId: finding.advisoryId, ecosystem: finding.ecosystem, packageName: finding.packageName, installedVersion: finding.installedVersion, fixedVersion: finding.fixedVersion, manifestPath: finding.manifestPath, imageRef: finding.imageRef, fixedImageRef: finding.fixedImageRef, fixedDigest: finding.fixedDigest, repairPolicyVersion: 'generic-v1' }, agentCalls: [], checks: [], mergeReady: false, findingClosed: false };

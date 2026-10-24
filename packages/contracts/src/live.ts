@@ -13,6 +13,7 @@ export interface Run {
   agentCalls: AgentCall[]; checks: Check[];
   review?: { decision: 'approve' | 'request_changes'; summaryEn: string; summaryJa: string; concerns: string[]; ownerTasks: string[] };
   pullRequest?: { url: string; number: number; draft: boolean; reused?: boolean };
+  pullRequestClosedAt?: string;
   ci?: { url: string; id: number; status: string; conclusion: string | null };
   failure?: { code: string; message: string };
   evidence?: { runtime?: Record<string, unknown>; businessLog?: string; policy?: Record<string, unknown>; builtImageId?: string; artifactSha256?: string; verifierSha256?: string; rawFiles?: Record<string, string> };
