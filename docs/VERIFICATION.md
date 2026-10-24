@@ -1,5 +1,15 @@
 # Redesign verification — 24 October 2026
 
+## Live integration verification — 24 October 2026 UTC
+
+The default Agents surface now connects to the Hono API and separate SQLite worker. Live run `3ea42f72-8ed5-40f3-9a46-0579fbea3a68` fetched JPCERT/vendor evidence, made three actual Groq calls (8,129 tokens), pushed candidate `d1d7341d7ecf64179203c742c12aca8aef70ae5a`, observed [successful hosted PHP checks](https://github.com/Harsh5840/arigato-php-demo/actions/runs/40120547241), and automatically created [draft PR #3](https://github.com/Harsh5840/arigato-php-demo/pull/3). All 35 recorded checks passed, including 15 real business assertions. [Preserved run](../output/live-runs/3ea42f72-8ed5-40f3-9a46-0579fbea3a68/run.json).
+
+29 backend tests and seven frontend tests pass, with TypeScript and Next production build. Tests cover source/redirect limits, strict model output, missing credentials, parser directives, candidate scope, artifact identities, stale heads, cancellation at write boundaries and stale worker recovery. Dummy CI has 11 policy tests and actionlint validation. Actual hosted execution is separate from mocked network tests.
+
+Browser integration verified immediate SSE snapshots through the Next rewrite, persisted trace recovery after reload, real CI/PR links, model summaries, Japanese switch, six rendered React Flow nodes and no horizontal overflow at 390px. Desktop/mobile review captures and disposition are in `apps/web/.impeccable/review/live/`; all seven rasters have embedded origin metadata. A premature top capture was replaced after measured nodes fully painted. Final finish-review records own the visual verdict.
+
+This is real execution of a bounded fixture workflow, not a general pentesting service. Baseline classification does not execute the affected runtime; passing CLI checks do not verify deployment or prove absence of compromise. The historical redesign/simulation evidence below applies to the retained Simulation/Overview and checkpoint deck.
+
 User selected a dark engineering workspace and an isometric machine.
 
 ## Three-agent extension

@@ -1,109 +1,52 @@
-# Published baseline and implementation handoff
+# Live implementation handoff
 
-Updated 24 October 2026. The system design remains a proposal for discussion.
-Publication and the prepared PHP repair below are complete foundation work;
-they are not an operating Groq remediation service.
+Updated 24 October 2026 UTC. The owned Japanese PHP advisory-to-PR integration executed with actual Groq responses, GitHub Actions PHP checks, and automatic draft publication. It is a local hackathon service scoped to one repository and one advisory case.
 
-## Repositories and review artifact
+## Inspect the result
 
-- [Product source](https://github.com/Harsh5840/arigato-hack): Next.js prototype,
-  React Flow orchestration, PRD, pitch and current system-design draft.
-- [SakuraShop target](https://github.com/Harsh5840/arigato-php-demo): fictional
-  Japanese merchant with intentionally affected PHP inventory. Do not deploy
-  its main-branch baseline.
-- [Draft repair PR #1](https://github.com/Harsh5840/arigato-php-demo/pull/1):
-  prepared three-file PHP update for human review. Its origin is explicitly
-  labelled; no Groq, Sonnet or Opus invocation generated it.
-- [Baseline classification CI](https://github.com/Harsh5840/arigato-php-demo/actions/runs/40111298358):
-  completed successfully. Success means it correctly identifies the fixture as
-  affected, not that baseline security policy passes.
-- [Candidate CI](https://github.com/Harsh5840/arigato-php-demo/actions/runs/40111416786):
-  completed successfully. The observed runtime is PHP 8.3.36 with startup
-  upload progress disabled; all 15 business checks passed. Preserved outputs
-  and their SHA-256 manifest are in [output/php-demo](../output/php-demo/manifest.json).
+- [Product source](https://github.com/Harsh5840/arigato-hack): Next.js frontend, Hono API, separate worker, SQLite records, shared contracts, tests, PRD and pitch artifacts.
+- [Owned SakuraShop fixture](https://github.com/Harsh5840/arigato-php-demo): fictional Japanese merchant. Main deliberately declares affected PHP 8.3.35; do not deploy it.
+- [Final live draft PR #3](https://github.com/Harsh5840/arigato-php-demo/pull/3): automatically created after live Japanese/vendor intake, three actual Groq role calls, frozen hosted checks and a separate senior-review context.
+- [Exact pre-publication verification](https://github.com/Harsh5840/arigato-php-demo/actions/runs/40120547241): passed. Observed PHP 8.3.36, upload progress disabled and serializer `php`; all 15 business regressions passed.
+- [Preserved live evidence](../output/live-runs/3ea42f72-8ed5-40f3-9a46-0579fbea3a68/run.json): actual model IDs/usage, sources/digests, checks, events, CI and PR identity. Raw outputs are retained beside it.
 
-| Identity | Value |
+| Identity | Final live run |
 |---|---|
-| Initial product commit | `aeed508145a7cdfaacb2e4cfc31dcd7146251fce` |
-| PHP affected baseline | `78d4958740c08fc55380469133876f89141d4d8a` |
-| Prepared PHP candidate | `04f139929f4ae068620c346c786db00b72c1b3e6` |
-| Frozen five-file verifier SHA-256 | `1273fbfe1bab9b71594dfa7d3cc3434b9958bbb590737c56fb77e9f97daa0f30` |
-
-Candidate changes are limited to Dockerfile, Composer PHP floor and startup
-configuration. No application, CI or verifier source changed in the PR.
-The CI guard rejects other changed paths, different verifier identities, extra
-Docker instructions, Composer scripts or unrelated configuration changes.
-
-## Validation and limits
-
-- Product: seven tests and production build passed before publication.
-- Fixture: seven Node tests passed; affected-baseline classification and
-  temporary application of the proposed repair passed. Static candidate policy
-  passed against a clone of the exact frozen baseline oracle.
-- Hosted candidate CI builds only the fixed image, then runs the frozen PHP
-  runtime/configuration probe and Japanese UTF-8, integer-JPY and order-access
-  regressions. Those steps passed in the linked run. The runner has no publication/model credential, no test-container
-  network, a read-only filesystem and bounded resource use.
-- No exploit, production deployment, incident-containment test or live Groq
-  call occurs. A passing configuration/behavior check cannot prove absence of
-  other vulnerabilities. Human configuration and deployment review remain open.
-
-GitHub access was verified through Git Credential Manager. No Groq key was
-configured. Local PHP was absent and Docker Desktop's Linux engine was stopped;
-hosted CI supplies the separate runtime execution path. These environment facts
-are not saved credentials and should be checked again before live integration.
+| Run | `3ea42f72-8ed5-40f3-9a46-0579fbea3a68` |
+| Baseline | `07ab564e46c0775b42b28a981101c9c510db3cc3` |
+| Candidate | `d1d7341d7ecf64179203c742c12aca8aef70ae5a` |
+| Frozen verifier SHA256 | `e1f9c9bbc040965549fc09b755359aeec4a1dac5c05256b7ce19602b0926f069` |
+| Built image ID | `sha256:212eab9f90590fba2a60c2c46622a7f170ba32e8d825f6f26cdb6aaa07c1a010` |
+| Recorded checks | 35 passed, including 15 PHP business assertions |
+| Actual Groq usage | 8,129 tokens across three calls |
+| Final authority | Draft allowed; merge ready false; finding closed false |
 
 ## Runbook and ownership
 
-Clone the product, enter `apps/web`, run `npm ci` and `npm run dev`, then open
-`http://127.0.0.1:3000`. Its frontend run outcomes remain synthetic. To inspect
-the real prepared repair, open PR #1, its three-file diff and its CI logs.
-The fixture README explains baseline assessment and candidate-only execution.
+Follow [LIVE-DEMO.md](LIVE-DEMO.md). Run `npm run setup`, configure the ignored `.env`, and run `npm run dev` from the root. The command starts API, worker and frontend. Open `http://127.0.0.1:3000` → Agents → Live service. Stored runs survive reload. Simulation and Overview retain synthetic demonstrations.
 
-A owns frontend/API events; B owns source ingestion and inventory; C owns
-candidate repair; D owns DevSec/controller/runner and PR integration. All four
-own judging rehearsal. Proposed time blocks and exact acceptance criteria are
-in [the design draft](HACKATHON-END-TO-END-PLAN.md).
+A owns frontend/events; B owns source intake/inventory; C owns candidate repair; D owns controller/checks/GitHub integration. All four rehearse source → diff → actual results → owner follow-up.
 
-## Release, rollback and operational evidence
+## Verified boundaries
 
-Publication pushed source only. No production host was deployed. PR #1 remains
-draft; human merge authority is unchanged. An unsuccessful repair branch cannot
-replace the baseline without an explicit merge. Recovery for the demonstration
-is to stop the run, retain evidence and return an isolated clone to its known
-main-branch commit; never reset or force-push another teammate's work.
+The target and source URLs are fixed by server policy. Supply Chain uses `openai/gpt-oss-20b`; fixer/reviewer use separate contexts of `openai/gpt-oss-120b`. Authenticated discovery and strict JSON are required. These are actual Groq models, not Sonnet/Opus. Separate contexts are not independent-model assurance. The cap is five role calls, two candidates and 16 minutes per run.
 
-There is no production rollout to roll back. A later rollout must record the
-approved image digest, environment, worker restart and post-deployment checks.
-Rolling back to the affected image is not a safe security default.
+Only the reviewed Docker image reference, Composer PHP floor and upload-progress setting may change. Extra files, executable Docker instructions, parser directives, Composer scripts and other INI changes are rejected. The trusted workflow checks base/head/frozen-verifier identity before building only the fixed candidate. Actual PHP tests run without network, with a read-only filesystem, non-root user, dropped capabilities and resource bounds. Artifacts bind the workflow/run/base/head/verifier. Branch and PR heads are checked against the verified SHA; a changed main blocks promotion.
 
-Current operational evidence is Git commits, draft-PR state, Actions steps and
-artifacts. The proposed job lease/event log, SSE reconnection, token/cost metrics
-and service alerts remain implementation work. There is no claimed uptime SLO.
+Independent review found parser-directive injection, cancellation timing, stale-worker and PR-head issues during implementation. Focused regressions cover the fixes: parser guards in API/CI, cancellation checks at every external write, terminal-state fences and PR-head equality. An external write already in flight cannot be atomically cancelled; any returned PR remains recorded without a successful promotion.
 
-## Maintenance and next vertical slice
+Declaration matching is not exploit reproduction. The affected baseline is never executed. Passing CLI behavior does not verify a deployed web environment or prove absence of compromise. Review, deployment/restarts, actual web configuration and incident assessment remain open tasks in the bilingual draft.
 
-This fixture preserves one historical PHP 8.3 advisory scenario. Its pinned
-8.3.36 policy is a demonstration oracle, not a rule to keep production systems
-on that release forever. Preserve the original advisory revision and retest
-new guidance separately. Keep Japanese CVE aliases correlated to avoid duplicate
-PRs; retain generated-translation labels and human review.
+## Validation and release
 
-The next implementation slice is one source fetch, one repository inventory,
-one durable run, actual Groq role calls, actual runner evidence and an idempotent
-draft-PR connector. The live provider must be configured before calling the
-service automated. X ingestion, billing, broad pentesting, filesystem watchers,
-multi-host queues and local-model downloads are deferred.
+29 backend tests, seven retained frontend tests, TypeScript and Next production build pass. Dummy-repo tests pass (11), and actionlint passes. Hosted PHP execution linked above is separate evidence from mocked adapter tests. Product CI repeats install/typecheck/tests/build without provider credentials.
 
-## Delivery checklist
+The API is loopback-only with origin/JSON checks and one fixed target; it is not a production tenant/authentication boundary. No hosting, merge or deployment occurred. Hosted CI supplies PHP execution, so the laptop needs no PHP or running Docker engine. Credentials and SQLite files are ignored; exports contain no credentials.
 
-| Item | Evidence or explicit limit |
-|---|---|
-| Problem and success criteria | [Design draft](HACKATHON-END-TO-END-PLAN.md), [Japan use case](JAPAN-USE-CASE.md) |
-| Tests and evidence | Product verification record; fixture tests, frozen-oracle check, linked CI |
-| Release plan | Source publication and draft-only review above; backend release remains proposed |
-| Rollback | No production deployment; isolated-run recovery and digest policy above |
-| Runbook and owner | Setup and four-person allocation above; fixture README |
-| Observability | Git/PR/CI evidence now; durable service telemetry explicitly deferred |
-| Maintenance | Historical fixture, advisory revision and provider availability notes above |
-| Security/data boundary | Fictional data; no committed credentials; frozen oracle, scoped edits, isolated checks; no production target |
+Restart all three processes after interruption. Expired leases fail closed. Inspect retained runs, branches and CI before retrying. Matching Git writes reconcile without force pushes. New completed runs remain separate experiments. Pricing, demand and defensibility remain hypotheses.
+
+## Historical artifacts and next phases
+
+[PR #1](https://github.com/Harsh5840/arigato-php-demo/pull/1) is the prepared repair ([old evidence](../output/php-demo/manifest.json)); it was not model-generated. [PR #2](https://github.com/Harsh5840/arigato-php-demo/pull/2) is the first actual Groq run before parser hardening. Its own record is preserved. PR #3 is the final hardened demonstration. These drafts remain unmerged.
+
+The PHP 8.3.36 pin preserves this historical case, not a permanent production upgrade rule. New guidance needs a separately reviewed policy pack. JVN expansion, forum/X leads, general repairs, continuous local watch, arbitrary code testing, onboarding, tenant authentication, billing, production operations and single-agent comparison evaluations remain future phases.

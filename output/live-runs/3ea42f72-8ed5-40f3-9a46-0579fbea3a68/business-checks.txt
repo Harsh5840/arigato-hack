@@ -1,0 +1,16 @@
+PASS: catalog remains available
+PASS: catalog currency is JPY
+PASS: integer yen price: matcha
+PASS: integer yen price: notebook
+PASS: integer yen price: tote
+PASS: Japanese UTF-8 product text survives JSON encoding
+PASS: anonymous order access is denied
+PASS: invalid token is denied
+PASS: Tokyo customer can read own order
+PASS: two matcha sets total exactly 4800 integer yen
+PASS: line totals agree with order total
+PASS: other customer cannot read or distinguish the order
+PASS: Osaka customer still receives correct own order
+PASS: read-only fixture rejects mutations
+PASS: authenticated Japanese customer profile survives
+15 business checks passed. This is application behavior evidence, not PHP RCE proof.

@@ -1,0 +1,44 @@
+{
+  "id": "JPCERT-AT-2026-0033",
+  "titleEn": "PHP runtime vulnerabilities: Japanese advisory and vendor corroboration",
+  "titleJa": "PHP の複数の脆弱性：日本語注意喚起と開発元情報の照合",
+  "sourceMode": "cached",
+  "sources": [
+    {
+      "url": "https://www.jpcert.or.jp/rss/jpcert.rdf",
+      "title": "JPCERT/CC official advisory feed",
+      "language": "ja",
+      "retrievedAt": "2026-10-24T18:19:07.042295Z",
+      "sha256": "f37736427e5f60322d81f8ac229fd8ff40cc15b1b5a9da1d186fdb37a36ababe"
+    },
+    {
+      "url": "https://www.jpcert.or.jp/at/2026/at260033.html",
+      "title": "JPCERT-AT-2026-0033",
+      "language": "ja",
+      "retrievedAt": "2026-10-24T18:19:08.850905Z",
+      "sha256": "85db7a09e865158643525fef5aa5cfc69513aaf896fcb2da4562189d43decf44",
+      "publishedAt": "2026-10-21T15:00:00.000Z"
+    },
+    {
+      "url": "https://www.php.net/archive/2026.php",
+      "title": "PHP October 2026 security notices",
+      "language": "en",
+      "retrievedAt": "2026-10-24T18:19:09.415033Z",
+      "sha256": "36cad7cc5c2d93f7b2926a82e04e515459ab570430c9ffc4f49d4b97e70694ad",
+      "publishedAt": "2026-10-21"
+    }
+  ],
+  "summary": "Recorded official-source metadata captured on 24 October 2026. The synthetic SakuraShop inventory declares PHP 8.3.35; a reviewed candidate updates to PHP 8.3.36 and includes a separate startup-setting mitigation.",
+  "body": "Recorded normalized facts: JPCERT-AT-2026-0033, published 2026-10-22, references CVE-2026-109618 and CVE-2026-109619. PHP 8.3 releases before 8.3.36 require the reviewed branch update. PHP published a separate configuration-dependent session upload-progress follow-up on 2026-10-23. For the owned synthetic fixture, propose the reviewed PHP 8.3.36 image, consistent Composer floor and disabled upload progress at startup. A declaration is not proof of deployed runtime; deployment, web configuration and incident review remain human-owned. This is a factual brief, not a full advisory reproduction.",
+  "fixedVersion": "8.3.36",
+  "image": "php:8.3.36-cli-bookworm@sha256:cdb77e306d6bb99db40e513fbe036ecc6c53b575cbcb7e581387845fef26d755",
+  "cves": [
+    "CVE-2026-109618",
+    "CVE-2026-109619"
+  ],
+  "ownerTasks": [
+    "Human review and deployment of the pinned candidate image are required; this draft does not change a running service.",
+    "Verify startup upload-progress configuration and serializer behavior in the actual web deployment, then restart relevant workers.",
+    "Review PHP/JPCERT incident guidance and retained logs; these fixture checks do not prove absence of compromise or reproduce the RCE."
+  ]
+}

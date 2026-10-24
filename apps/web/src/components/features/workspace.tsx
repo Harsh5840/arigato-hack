@@ -27,10 +27,12 @@ import type { Scenario, Severity, Stage, View } from '@/types/security';
 
 const initial: Record<string, Stage> = {'PP-001': 0, 'PP-002': 0, 'PP-003': 0};
 const AgentOrchestration = dynamic(()=>import('./agent-orchestration'),{ssr:false,loading:()=> <p role="status">Loading agent workspace…</p>});
+const LiveOrchestration = dynamic(()=>import('./live-orchestration'),{ssr:false,loading:()=> <p role="status">Connecting the live orchestration workspace…</p>});
 
 export default function Workspace() {
 
   const [view, setView] = useState<View>('Agents');
+  const [agentMode, setAgentMode] = useState<'live'|'simulation'>('live');
   const [orchestrationKey,setOrchestrationKey]=useState(0);
 
   const [selected, setSelected] = useState('PP-001');
@@ -115,14 +117,14 @@ export default function Workspace() {
 
 
   return <div className="app-shell">
-    <Sidebar view={view} onChange={setView}/>
+    <Sidebar view={view} onChange={setView} live={view==='Agents'&&agentMode==='live'}/>
     <div className="main-shell">
       <header className="topbar">
-        <div className="breadcrumb"><span className="workspace-avatar">A</span>Acme<span>/</span><strong>{view}</strong></div>
-        <div className="topbar-actions"><span className="demo-badge"><i/>Synthetic workspace</span><button onClick={reset} className="reset"><RotateCcw size={14}/>Reset demo</button></div>
+        <div className="breadcrumb"><span className="workspace-avatar">S</span>SakuraShop<span>/</span><strong>{view}</strong></div>
+        <div className="topbar-actions"><span className="demo-badge"><i/>{view==='Agents'&&agentMode==='live'?'Live orchestration':'Synthetic workspace'}</span>{!(view==='Agents'&&agentMode==='live')&&<button onClick={reset} className="reset"><RotateCcw size={14}/>Reset demo</button>}</div>
       </header>
       <main>
-        {view === 'Agents' ? <AgentOrchestration key={orchestrationKey} onOpenFindings={()=>setView('Findings')}/> : view === 'Roadmap' ? <Roadmap/> : <>
+        {view === 'Agents' ? <><div className="execution-mode-switch" role="group" aria-label="Execution mode"><button aria-pressed={agentMode==='live'} onClick={()=>setAgentMode('live')}>Live service</button><button aria-pressed={agentMode==='simulation'} onClick={()=>setAgentMode('simulation')}>Simulation</button><span>{agentMode==='live'?'Actual Groq calls, checks and GitHub draft':'Seeded cases · no external execution'}</span></div>{agentMode==='live'?<LiveOrchestration/>:<AgentOrchestration key={orchestrationKey} onOpenFindings={()=>setView('Findings')}/>}</> : view === 'Roadmap' ? <Roadmap/> : <>
           <section className="hero">
             <div><h1>{view === 'Overview' ? 'Security overview' : view === 'Findings' ? 'Findings' : 'Evidence library'}</h1><p>{view === 'Overview' ? 'From a security finding to a fix you can review.' : view === 'Findings' ? 'Prioritize the risk. Inspect the proposed repair.' : 'One trace for the failure, the patch, and the result.'}</p></div>
             <button className="button primary run-demo" onClick={runDemo} disabled={running}><Play size={15} fill="currentColor"/>{running ? 'Running demo…' : 'Run demo'}</button>

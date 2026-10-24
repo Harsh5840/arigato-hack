@@ -1,0 +1,11 @@
+{
+  "proofpatch_run_id": "cfe058b8-1445-49a2-b81e-7aab1d78f468-a1",
+  "github_run_id": "40120324870",
+  "workflow_sha": "b86ab2755505fe9f87c470948c16cc5a53758b9b",
+  "base_sha": "b86ab2755505fe9f87c470948c16cc5a53758b9b",
+  "candidate_sha": "f5f1948b3e5b0d5ec79274e73fb4178b576c7c27",
+  "verifier_sha256": "2ea05126eb11fe4e96f62ac144a861aa938c26ae09c2d22ca8cda3ac87a6f907",
+  "model_execution": "NOT_ATTESTED_BY_CI",
+  "merge_ready": false,
+  "finding_closed": false
+}

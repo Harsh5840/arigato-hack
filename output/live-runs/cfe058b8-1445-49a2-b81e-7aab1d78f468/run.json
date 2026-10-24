@@ -1,0 +1,624 @@
+{
+  "run": {
+    "id": "cfe058b8-1445-49a2-b81e-7aab1d78f468",
+    "status": "completed",
+    "createdAt": "2026-10-24T18:21:17.609Z",
+    "updatedAt": "2026-10-24T18:22:06.890Z",
+    "sourceMode": "live",
+    "mode": "live-groq",
+    "repo": {
+      "owner": "Harsh5840",
+      "name": "arigato-php-demo",
+      "baseSha": "b86ab2755505fe9f87c470948c16cc5a53758b9b",
+      "branch": "proofpatch/live-php-b86ab275-cfe058b8-a1",
+      "candidateSha": "f5f1948b3e5b0d5ec79274e73fb4178b576c7c27"
+    },
+    "agentCalls": [
+      {
+        "role": "supply",
+        "model": "openai/gpt-oss-20b",
+        "status": "completed",
+        "startedAt": "2026-10-24T18:21:22.484Z",
+        "summary": "The inventory declares PHP 8.3.35, which is below the fixed version 8.3.36 for CVE‑2026‑109618 and CVE‑2026‑109619. Therefore the environment is affected. The advisory recommends using the 8.3.36 image and disabling upload‑progress. No evidence of a running vulnerable runtime is present, only a declaration.",
+        "summaryJa": "インベントリは PHP 8.3.35 を宣言しており、CVE‑2026‑109618 と CVE‑2026‑109619 の修正バージョン 8.3.36 より低いため、影響を受けます。アドバイザリでは 8.3.36 画像の使用とアップロード進捗の無効化を推奨しています。実際に脆弱なランタイムが稼働している証拠はなく、宣言のみが確認されています。",
+        "usage": {
+          "promptTokens": 1042,
+          "completionTokens": 270,
+          "totalTokens": 1312
+        },
+        "completedAt": "2026-10-24T18:21:23.276Z"
+      },
+      {
+        "role": "fixer",
+        "model": "openai/gpt-oss-120b",
+        "status": "completed",
+        "startedAt": "2026-10-24T18:21:23.308Z",
+        "summary": "Pinned the Docker image to the fixed PHP 8.3.36 version, raised the Composer PHP requirement to match, and disabled the vulnerable session upload‑progress feature.",
+        "summaryJa": "Docker イメージを修正済みの PHP 8.3.36 に固定し、Composer の PHP バージョン要件を同等に引き上げ、脆弱な session.upload_progress 機能を無効化しました。",
+        "usage": {
+          "promptTokens": 1458,
+          "completionTokens": 723,
+          "totalTokens": 2181
+        },
+        "completedAt": "2026-10-24T18:21:25.430Z"
+      },
+      {
+        "role": "reviewer",
+        "model": "openai/gpt-oss-120b",
+        "status": "completed",
+        "startedAt": "2026-10-24T18:22:01.349Z",
+        "summary": "The candidate image updates PHP to the fixed 8.3.36 version, matches the required image digest, raises the Composer PHP floor, and disables session.upload_progress at startup. All static policy checks, runtime verification, and the full suite of 15 business tests passed. No evidence of exploit execution is required for this draft. Human review for deployment and runtime configuration verification remains necessary.",
+        "summaryJa": "候補イメージは PHP を修正済みの 8.3.36 に更新し、イメージダイジェストも一致、Composer の PHP バージョン下限を引き上げ、起動時に session.upload_progress を無効化しています。静的ポリシー、ランタイム検証、15 件のビジネスチェックすべてが合格しています。実際のデプロイや設定の最終確認は人間によるレビューが必要です。",
+        "usage": {
+          "promptTokens": 4132,
+          "completionTokens": 345,
+          "totalTokens": 4477
+        },
+        "completedAt": "2026-10-24T18:22:02.695Z"
+      }
+    ],
+    "checks": [
+      {
+        "id": "source_evidence",
+        "label": "Official Japanese + upstream source evidence",
+        "status": "passed",
+        "detail": "3 bounded source snapshots; live intake."
+      },
+      {
+        "id": "affected_inventory",
+        "label": "Affected PHP declaration matched",
+        "status": "passed",
+        "detail": "PHP 8.3.35 declared; no affected image executed and no exploit reproduced."
+      },
+      {
+        "id": "frozen_baseline",
+        "label": "Verifier frozen before repair",
+        "status": "passed",
+        "detail": "b86ab2755505fe9f87c470948c16cc5a53758b9b; verifier SHA256 2ea05126eb11fe4e96f62ac144a861aa938c26ae09c2d22ca8cda3ac87a6f907."
+      },
+      {
+        "id": "local_candidate_scope",
+        "label": "Candidate write scope",
+        "status": "passed",
+        "detail": "Exactly three reviewed substitutions. No model-generated command or verifier edit is executed."
+      },
+      {
+        "id": "evidence_identity",
+        "label": "Evidence commit and frozen verifier identity",
+        "status": "passed",
+        "detail": "Base b86ab2755505fe9f87c470948c16cc5a53758b9b; candidate f5f1948b3e5b0d5ec79274e73fb4178b576c7c27; verifier 2ea05126eb11fe4e96f62ac144a861aa938c26ae09c2d22ca8cda3ac87a6f907."
+      },
+      {
+        "id": "workflow_provenance",
+        "label": "Run-bound trusted workflow provenance",
+        "status": "passed",
+        "detail": "ProofPatch run cfe058b8-1445-49a2-b81e-7aab1d78f468-a1; GitHub run 40120324870; trusted workflow b86ab2755505fe9f87c470948c16cc5a53758b9b. CI does not attest model invocation."
+      },
+      {
+        "id": "policy_reviewed_runtime_release",
+        "label": "reviewed runtime release",
+        "status": "passed",
+        "detail": "8.3.36"
+      },
+      {
+        "id": "policy_reviewed_image_digest",
+        "label": "reviewed image digest",
+        "status": "passed",
+        "detail": "cdb77e306d6bb99db40e513fbe036ecc6c53b575cbcb7e581387845fef26d755"
+      },
+      {
+        "id": "policy_composer_floor",
+        "label": "composer floor",
+        "status": "passed",
+        "detail": ">=8.3.36 <8.4"
+      },
+      {
+        "id": "policy_upload_progress_startup_setting",
+        "label": "upload progress startup setting",
+        "status": "passed",
+        "detail": "0"
+      },
+      {
+        "id": "policy_startup_config_is_copied",
+        "label": "startup config is copied",
+        "status": "passed",
+        "detail": "expected startup configuration COPY"
+      },
+      {
+        "id": "policy_unprivileged_fixture_user",
+        "label": "unprivileged fixture user",
+        "status": "passed",
+        "detail": "expected fixture user"
+      },
+      {
+        "id": "candidate_policy",
+        "label": "Candidate scope and static policy",
+        "status": "passed",
+        "detail": "Three allowed changed paths: true; static policy PASS."
+      },
+      {
+        "id": "runtime_runtime_matches_reviewed_release",
+        "label": "runtime matches reviewed release",
+        "status": "passed",
+        "detail": "Observed PHP 8.3.36; upload progress 0; serializer php."
+      },
+      {
+        "id": "runtime_upload_progress_disabled_at_startup",
+        "label": "upload progress disabled at startup",
+        "status": "passed",
+        "detail": "Observed PHP 8.3.36; upload progress 0; serializer php."
+      },
+      {
+        "id": "runtime_expected_serializer",
+        "label": "expected serializer",
+        "status": "passed",
+        "detail": "Observed PHP 8.3.36; upload progress 0; serializer php."
+      },
+      {
+        "id": "business_1",
+        "label": "catalog remains available",
+        "status": "passed",
+        "detail": "Observed frozen PHP business assertion."
+      },
+      {
+        "id": "business_2",
+        "label": "catalog currency is JPY",
+        "status": "passed",
+        "detail": "Observed frozen PHP business assertion."
+      },
+      {
+        "id": "business_3",
+        "label": "integer yen price: matcha",
+        "status": "passed",
+        "detail": "Observed frozen PHP business assertion."
+      },
+      {
+        "id": "business_4",
+        "label": "integer yen price: notebook",
+        "status": "passed",
+        "detail": "Observed frozen PHP business assertion."
+      },
+      {
+        "id": "business_5",
+        "label": "integer yen price: tote",
+        "status": "passed",
+        "detail": "Observed frozen PHP business assertion."
+      },
+      {
+        "id": "business_6",
+        "label": "Japanese UTF-8 product text survives JSON encoding",
+        "status": "passed",
+        "detail": "Observed frozen PHP business assertion."
+      },
+      {
+        "id": "business_7",
+        "label": "anonymous order access is denied",
+        "status": "passed",
+        "detail": "Observed frozen PHP business assertion."
+      },
+      {
+        "id": "business_8",
+        "label": "invalid token is denied",
+        "status": "passed",
+        "detail": "Observed frozen PHP business assertion."
+      },
+      {
+        "id": "business_9",
+        "label": "Tokyo customer can read own order",
+        "status": "passed",
+        "detail": "Observed frozen PHP business assertion."
+      },
+      {
+        "id": "business_10",
+        "label": "two matcha sets total exactly 4800 integer yen",
+        "status": "passed",
+        "detail": "Observed frozen PHP business assertion."
+      },
+      {
+        "id": "business_11",
+        "label": "line totals agree with order total",
+        "status": "passed",
+        "detail": "Observed frozen PHP business assertion."
+      },
+      {
+        "id": "business_12",
+        "label": "other customer cannot read or distinguish the order",
+        "status": "passed",
+        "detail": "Observed frozen PHP business assertion."
+      },
+      {
+        "id": "business_13",
+        "label": "Osaka customer still receives correct own order",
+        "status": "passed",
+        "detail": "Observed frozen PHP business assertion."
+      },
+      {
+        "id": "business_14",
+        "label": "read-only fixture rejects mutations",
+        "status": "passed",
+        "detail": "Observed frozen PHP business assertion."
+      },
+      {
+        "id": "business_15",
+        "label": "authenticated Japanese customer profile survives",
+        "status": "passed",
+        "detail": "Observed frozen PHP business assertion."
+      },
+      {
+        "id": "business_suite",
+        "label": "All 15 business regressions",
+        "status": "passed",
+        "detail": "15 passing business assertions recorded; expected exactly 15."
+      },
+      {
+        "id": "built_image",
+        "label": "Candidate container image built",
+        "status": "passed",
+        "detail": "sha256:c334ccd55aaf5d6cc16d87e08da6baa42e31922ed1937476eb88262e8fbe39b7"
+      },
+      {
+        "id": "trusted_workflow",
+        "label": "Trusted hosted workflow completed",
+        "status": "passed",
+        "detail": "Actions completed; conclusion success."
+      }
+    ],
+    "mergeReady": false,
+    "findingClosed": false,
+    "advisory": {
+      "id": "JPCERT-AT-2026-0033",
+      "titleEn": "PHP runtime vulnerabilities: Japanese advisory and vendor corroboration",
+      "titleJa": "PHP の複数の脆弱性：日本語注意喚起と開発元情報の照合",
+      "sources": [
+        {
+          "url": "https://www.jpcert.or.jp/rss/jpcert.rdf",
+          "title": "JPCERT/CC official advisory feed",
+          "language": "ja",
+          "retrievedAt": "2026-10-24T18:21:19.811Z",
+          "sha256": "f37736427e5f60322d81f8ac229fd8ff40cc15b1b5a9da1d186fdb37a36ababe"
+        },
+        {
+          "url": "https://www.jpcert.or.jp/at/2026/at260033.html",
+          "title": "JPCERT-AT-2026-0033",
+          "language": "ja",
+          "publishedAt": "2026-10-21T15:00:00.000Z",
+          "retrievedAt": "2026-10-24T18:21:20.552Z",
+          "sha256": "85db7a09e865158643525fef5aa5cfc69513aaf896fcb2da4562189d43decf44"
+        },
+        {
+          "url": "https://www.php.net/archive/2026.php",
+          "title": "PHP October 2026 security notices",
+          "language": "en",
+          "publishedAt": "2026-10-21",
+          "retrievedAt": "2026-10-24T18:21:20.719Z",
+          "sha256": "36cad7cc5c2d93f7b2926a82e04e515459ab570430c9ffc4f49d4b97e70694ad"
+        }
+      ],
+      "summary": "The owned SakuraShop fixture declares PHP 8.3.35. This case reviews a pinned PHP 8.3.36 candidate plus a separate startup-setting mitigation; deployment and incident review remain open.",
+      "fixedVersion": "8.3.36",
+      "cves": [
+        "CVE-2026-109618",
+        "CVE-2026-109619"
+      ],
+      "ownerTasks": [
+        "Human review and deployment of the pinned candidate image are required; this draft does not change a running service.",
+        "Verify the startup upload-progress setting and serializer behavior in the actual web deployment, then restart relevant workers.",
+        "Review PHP/JPCERT incident guidance and retained logs; passing these fixture checks does not prove absence of compromise or reproduce the RCE."
+      ]
+    },
+    "evidence": {
+      "runtime": {
+        "evidence_class": "observed_runtime_configuration",
+        "php_version": "8.3.36",
+        "upload_progress_enabled": "0",
+        "serialize_handler": "php",
+        "checks": {
+          "runtime_matches_reviewed_release": true,
+          "upload_progress_disabled_at_startup": true,
+          "expected_serializer": true
+        },
+        "limitation": "No exploit was executed. Deployment and worker restart are not verified by this CLI probe."
+      },
+      "businessLog": "PASS: catalog remains available\nPASS: catalog currency is JPY\nPASS: integer yen price: matcha\nPASS: integer yen price: notebook\nPASS: integer yen price: tote\nPASS: Japanese UTF-8 product text survives JSON encoding\nPASS: anonymous order access is denied\nPASS: invalid token is denied\nPASS: Tokyo customer can read own order\nPASS: two matcha sets total exactly 4800 integer yen\nPASS: line totals agree with order total\nPASS: other customer cannot read or distinguish the order\nPASS: Osaka customer still receives correct own order\nPASS: read-only fixture rejects mutations\nPASS: authenticated Japanese customer profile survives\n15 business checks passed. This is application behavior evidence, not PHP RCE proof.\n",
+      "policy": {
+        "evidence_class": "frozen_oracle_candidate_policy",
+        "execution_origin": "candidate_source_not_attested_by_verifier",
+        "base_sha": "b86ab2755505fe9f87c470948c16cc5a53758b9b",
+        "candidate_sha": "f5f1948b3e5b0d5ec79274e73fb4178b576c7c27",
+        "changed_paths": [
+          "Dockerfile",
+          "composer.json",
+          "config/security.ini"
+        ],
+        "verifier_sha256": "2ea05126eb11fe4e96f62ac144a861aa938c26ae09c2d22ca8cda3ac87a6f907",
+        "source_snapshot": {
+          "schema_version": 1,
+          "scenario": "php-runtime-october-2026",
+          "trigger_mode": "historical_advisory_replay",
+          "inventory_kind": "synthetic_repository_fixture",
+          "source_verified_date": "2026-10-24",
+          "advisory_ids": [
+            "CVE-2026-109618",
+            "CVE-2026-109619"
+          ],
+          "component": {
+            "ecosystem": "PHP runtime",
+            "branch": "8.3",
+            "fixture_version": "8.3.35",
+            "fixed_version": "8.3.36"
+          },
+          "sources": [
+            "https://www.php.net/archive/2026.php",
+            "https://github.com/php/php-src/security/advisories/GHSA-w8hw-w9fx-j79w",
+            "https://github.com/php/php-src/security/advisories/GHSA-6wmf-4rv5-p3rp"
+          ],
+          "reviewed_candidate_image": {
+            "reference": "php:8.3.36-cli-bookworm@sha256:cdb77e306d6bb99db40e513fbe036ecc6c53b575cbcb7e581387845fef26d755",
+            "metadata_source": "https://hub.docker.com/v2/repositories/library/php/tags/8.3.36-cli-bookworm",
+            "metadata_last_updated": "2026-10-21T22:05:24.82223Z",
+            "image_execution_during_research": false
+          },
+          "follow_up": {
+            "date": "2026-10-23",
+            "pending_advisory_id": "CVE-2026-115560",
+            "action": "Review effective session-upload configuration and runtime serializer changes; apply startup mitigation and restart workers when deployed.",
+            "closure": "Human environment review remains required. A CLI check does not verify the deployed service."
+          },
+          "japan_context": {
+            "application": "Fictional Japanese SME storefront with Japanese UTF-8 catalog and integer JPY order controls.",
+            "planned_sources": [
+              "https://jvn.jp/en/",
+              "https://www.jpcert.or.jp/english/",
+              "https://www.ipa.go.jp/en/"
+            ],
+            "integration_status": "not_implemented",
+            "source_availability_note": "JVN announced a temporary MyJVN/JVN iPedia service outage on 2026-10-22; production adapters need explicit degraded mode."
+          },
+          "live_agent_inference": false,
+          "exploit_executed": false
+        },
+        "assessment": {
+          "evidence_class": "static_runtime_inventory_policy",
+          "advisory_ids": [
+            "CVE-2026-109618",
+            "CVE-2026-109619"
+          ],
+          "inventory_kind": "synthetic_repository_fixture",
+          "runtime_version": "8.3.36",
+          "affected_version_match": false,
+          "security_policy": "PASS",
+          "checks": [
+            {
+              "id": "reviewed_runtime_release",
+              "pass": true,
+              "detail": "8.3.36"
+            },
+            {
+              "id": "reviewed_image_digest",
+              "pass": true,
+              "detail": "cdb77e306d6bb99db40e513fbe036ecc6c53b575cbcb7e581387845fef26d755"
+            },
+            {
+              "id": "composer_floor",
+              "pass": true,
+              "detail": ">=8.3.36 <8.4"
+            },
+            {
+              "id": "upload_progress_startup_setting",
+              "pass": true,
+              "detail": "0"
+            },
+            {
+              "id": "startup_config_is_copied",
+              "pass": true,
+              "detail": "expected startup configuration COPY"
+            },
+            {
+              "id": "unprivileged_fixture_user",
+              "pass": true,
+              "detail": "expected fixture user"
+            }
+          ],
+          "limitation": "Static declaration assessment only; no installed runtime, RCE reproduction, deployment or containment is established."
+        },
+        "runtime_checks": "SEPARATE_CI_STEPS",
+        "merge_ready": false,
+        "finding_closed": false
+      },
+      "builtImageId": "sha256:c334ccd55aaf5d6cc16d87e08da6baa42e31922ed1937476eb88262e8fbe39b7",
+      "artifactSha256": "43e2ac917436ed1736ae446b0437d6d6f376a475da3f26efc49790a2ca7df5c0",
+      "verifierSha256": "2ea05126eb11fe4e96f62ac144a861aa938c26ae09c2d22ca8cda3ac87a6f907",
+      "rawFiles": {
+        "built-image-id.txt": "sha256:c334ccd55aaf5d6cc16d87e08da6baa42e31922ed1937476eb88262e8fbe39b7\n",
+        "candidate-policy.json": "{\n  \"evidence_class\": \"frozen_oracle_candidate_policy\",\n  \"execution_origin\": \"candidate_source_not_attested_by_verifier\",\n  \"base_sha\": \"b86ab2755505fe9f87c470948c16cc5a53758b9b\",\n  \"candidate_sha\": \"f5f1948b3e5b0d5ec79274e73fb4178b576c7c27\",\n  \"changed_paths\": [\n    \"Dockerfile\",\n    \"composer.json\",\n    \"config/security.ini\"\n  ],\n  \"verifier_sha256\": \"2ea05126eb11fe4e96f62ac144a861aa938c26ae09c2d22ca8cda3ac87a6f907\",\n  \"source_snapshot\": {\n    \"schema_version\": 1,\n    \"scenario\": \"php-runtime-october-2026\",\n    \"trigger_mode\": \"historical_advisory_replay\",\n    \"inventory_kind\": \"synthetic_repository_fixture\",\n    \"source_verified_date\": \"2026-10-24\",\n    \"advisory_ids\": [\n      \"CVE-2026-109618\",\n      \"CVE-2026-109619\"\n    ],\n    \"component\": {\n      \"ecosystem\": \"PHP runtime\",\n      \"branch\": \"8.3\",\n      \"fixture_version\": \"8.3.35\",\n      \"fixed_version\": \"8.3.36\"\n    },\n    \"sources\": [\n      \"https://www.php.net/archive/2026.php\",\n      \"https://github.com/php/php-src/security/advisories/GHSA-w8hw-w9fx-j79w\",\n      \"https://github.com/php/php-src/security/advisories/GHSA-6wmf-4rv5-p3rp\"\n    ],\n    \"reviewed_candidate_image\": {\n      \"reference\": \"php:8.3.36-cli-bookworm@sha256:cdb77e306d6bb99db40e513fbe036ecc6c53b575cbcb7e581387845fef26d755\",\n      \"metadata_source\": \"https://hub.docker.com/v2/repositories/library/php/tags/8.3.36-cli-bookworm\",\n      \"metadata_last_updated\": \"2026-10-21T22:05:24.82223Z\",\n      \"image_execution_during_research\": false\n    },\n    \"follow_up\": {\n      \"date\": \"2026-10-23\",\n      \"pending_advisory_id\": \"CVE-2026-115560\",\n      \"action\": \"Review effective session-upload configuration and runtime serializer changes; apply startup mitigation and restart workers when deployed.\",\n      \"closure\": \"Human environment review remains required. A CLI check does not verify the deployed service.\"\n    },\n    \"japan_context\": {\n      \"application\": \"Fictional Japanese SME storefront with Japanese UTF-8 catalog and integer JPY order controls.\",\n      \"planned_sources\": [\n        \"https://jvn.jp/en/\",\n        \"https://www.jpcert.or.jp/english/\",\n        \"https://www.ipa.go.jp/en/\"\n      ],\n      \"integration_status\": \"not_implemented\",\n      \"source_availability_note\": \"JVN announced a temporary MyJVN/JVN iPedia service outage on 2026-10-22; production adapters need explicit degraded mode.\"\n    },\n    \"live_agent_inference\": false,\n    \"exploit_executed\": false\n  },\n  \"assessment\": {\n    \"evidence_class\": \"static_runtime_inventory_policy\",\n    \"advisory_ids\": [\n      \"CVE-2026-109618\",\n      \"CVE-2026-109619\"\n    ],\n    \"inventory_kind\": \"synthetic_repository_fixture\",\n    \"runtime_version\": \"8.3.36\",\n    \"affected_version_match\": false,\n    \"security_policy\": \"PASS\",\n    \"checks\": [\n      {\n        \"id\": \"reviewed_runtime_release\",\n        \"pass\": true,\n        \"detail\": \"8.3.36\"\n      },\n      {\n        \"id\": \"reviewed_image_digest\",\n        \"pass\": true,\n        \"detail\": \"cdb77e306d6bb99db40e513fbe036ecc6c53b575cbcb7e581387845fef26d755\"\n      },\n      {\n        \"id\": \"composer_floor\",\n        \"pass\": true,\n        \"detail\": \">=8.3.36 <8.4\"\n      },\n      {\n        \"id\": \"upload_progress_startup_setting\",\n        \"pass\": true,\n        \"detail\": \"0\"\n      },\n      {\n        \"id\": \"startup_config_is_copied\",\n        \"pass\": true,\n        \"detail\": \"expected startup configuration COPY\"\n      },\n      {\n        \"id\": \"unprivileged_fixture_user\",\n        \"pass\": true,\n        \"detail\": \"expected fixture user\"\n      }\n    ],\n    \"limitation\": \"Static declaration assessment only; no installed runtime, RCE reproduction, deployment or containment is established.\"\n  },\n  \"runtime_checks\": \"SEPARATE_CI_STEPS\",\n  \"merge_ready\": false,\n  \"finding_closed\": false\n}\n",
+        "business-checks.txt": "PASS: catalog remains available\nPASS: catalog currency is JPY\nPASS: integer yen price: matcha\nPASS: integer yen price: notebook\nPASS: integer yen price: tote\nPASS: Japanese UTF-8 product text survives JSON encoding\nPASS: anonymous order access is denied\nPASS: invalid token is denied\nPASS: Tokyo customer can read own order\nPASS: two matcha sets total exactly 4800 integer yen\nPASS: line totals agree with order total\nPASS: other customer cannot read or distinguish the order\nPASS: Osaka customer still receives correct own order\nPASS: read-only fixture rejects mutations\nPASS: authenticated Japanese customer profile survives\n15 business checks passed. This is application behavior evidence, not PHP RCE proof.\n",
+        "run-provenance.json": "{\n  \"proofpatch_run_id\": \"cfe058b8-1445-49a2-b81e-7aab1d78f468-a1\",\n  \"github_run_id\": \"40120324870\",\n  \"workflow_sha\": \"b86ab2755505fe9f87c470948c16cc5a53758b9b\",\n  \"base_sha\": \"b86ab2755505fe9f87c470948c16cc5a53758b9b\",\n  \"candidate_sha\": \"f5f1948b3e5b0d5ec79274e73fb4178b576c7c27\",\n  \"verifier_sha256\": \"2ea05126eb11fe4e96f62ac144a861aa938c26ae09c2d22ca8cda3ac87a6f907\",\n  \"model_execution\": \"NOT_ATTESTED_BY_CI\",\n  \"merge_ready\": false,\n  \"finding_closed\": false\n}",
+        "runtime-probe.json": "{\n    \"evidence_class\": \"observed_runtime_configuration\",\n    \"php_version\": \"8.3.36\",\n    \"upload_progress_enabled\": \"0\",\n    \"serialize_handler\": \"php\",\n    \"checks\": {\n        \"runtime_matches_reviewed_release\": true,\n        \"upload_progress_disabled_at_startup\": true,\n        \"expected_serializer\": true\n    },\n    \"limitation\": \"No exploit was executed. Deployment and worker restart are not verified by this CLI probe.\"\n}\n"
+      }
+    },
+    "ci": {
+      "id": 40120324870,
+      "url": "https://github.com/Harsh5840/arigato-php-demo/actions/runs/40120324870",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "review": {
+      "decision": "approve",
+      "summaryEn": "The candidate image updates PHP to the fixed 8.3.36 version, matches the required image digest, raises the Composer PHP floor, and disables session.upload_progress at startup. All static policy checks, runtime verification, and the full suite of 15 business tests passed. No evidence of exploit execution is required for this draft. Human review for deployment and runtime configuration verification remains necessary.",
+      "summaryJa": "候補イメージは PHP を修正済みの 8.3.36 に更新し、イメージダイジェストも一致、Composer の PHP バージョン下限を引き上げ、起動時に session.upload_progress を無効化しています。静的ポリシー、ランタイム検証、15 件のビジネスチェックすべてが合格しています。実際のデプロイや設定の最終確認は人間によるレビューが必要です。",
+      "concerns": [],
+      "ownerTasks": [
+        "Human review and deployment of the pinned candidate image are required; this draft does not change a running service.",
+        "Verify the startup upload-progress setting and serializer behavior in the actual web deployment, then restart relevant workers.",
+        "Review PHP/JPCERT incident guidance and retained logs; passing these fixture checks does not prove absence of compromise or reproduce the RCE."
+      ],
+      "usage": {
+        "promptTokens": 4132,
+        "completionTokens": 345,
+        "totalTokens": 4477
+      },
+      "model": "openai/gpt-oss-120b"
+    },
+    "draftPRAllowed": true,
+    "pullRequest": {
+      "url": "https://github.com/Harsh5840/arigato-php-demo/pull/2",
+      "number": 2,
+      "draft": true,
+      "reused": false
+    }
+  },
+  "events": [
+    {
+      "id": 1,
+      "runId": "cfe058b8-1445-49a2-b81e-7aab1d78f468",
+      "at": "2026-10-24T18:21:17.610Z",
+      "node": "controller",
+      "kind": "queued",
+      "message": "Run persisted. Waiting for the local worker."
+    },
+    {
+      "id": 2,
+      "runId": "cfe058b8-1445-49a2-b81e-7aab1d78f468",
+      "at": "2026-10-24T18:21:19.230Z",
+      "node": "supply-chain",
+      "kind": "source-fetching",
+      "message": "Fetching the official Japanese PHP advisory and upstream corroboration."
+    },
+    {
+      "id": 3,
+      "runId": "cfe058b8-1445-49a2-b81e-7aab1d78f468",
+      "at": "2026-10-24T18:21:20.724Z",
+      "node": "supply-chain",
+      "kind": "sources",
+      "message": "PHP runtime vulnerabilities: Japanese advisory and vendor corroboration; CVE-2026-109618, CVE-2026-109619. Source bodies hashed at intake."
+    },
+    {
+      "id": 4,
+      "runId": "cfe058b8-1445-49a2-b81e-7aab1d78f468",
+      "at": "2026-10-24T18:21:22.483Z",
+      "node": "supply-chain",
+      "kind": "triaging",
+      "message": "Groq openai/gpt-oss-20b is correlating the advisory with the repository inventory."
+    },
+    {
+      "id": 5,
+      "runId": "cfe058b8-1445-49a2-b81e-7aab1d78f468",
+      "at": "2026-10-24T18:21:23.286Z",
+      "node": "supply-chain",
+      "kind": "agent-completed",
+      "message": "supply: openai/gpt-oss-20b; 1312 actual tokens. The inventory declares PHP 8.3.35, which is below the fixed version 8.3.36 for CVE‑2026‑109618 and CVE‑2026‑109619. Therefore the environment is affected. The advisory recommends using the 8.3.36 image and disabling upload‑progress. No evidence of a running vulnerable runtime is present, only a declaration."
+    },
+    {
+      "id": 6,
+      "runId": "cfe058b8-1445-49a2-b81e-7aab1d78f468",
+      "at": "2026-10-24T18:21:23.290Z",
+      "node": "controller",
+      "kind": "matching",
+      "message": "Checking the model triage against deterministic runtime inventory matching."
+    },
+    {
+      "id": 7,
+      "runId": "cfe058b8-1445-49a2-b81e-7aab1d78f468",
+      "at": "2026-10-24T18:21:23.297Z",
+      "node": "devsec",
+      "kind": "baseline",
+      "message": "Freezing the trusted verifier before the remediation model receives editable files."
+    },
+    {
+      "id": 8,
+      "runId": "cfe058b8-1445-49a2-b81e-7aab1d78f468",
+      "at": "2026-10-24T18:21:23.306Z",
+      "node": "remediation",
+      "kind": "patching",
+      "message": "Groq openai/gpt-oss-120b is generating candidate 1/2 within the three-file scope."
+    },
+    {
+      "id": 9,
+      "runId": "cfe058b8-1445-49a2-b81e-7aab1d78f468",
+      "at": "2026-10-24T18:21:25.431Z",
+      "node": "remediation",
+      "kind": "agent-completed",
+      "message": "fixer: openai/gpt-oss-120b; 2181 actual tokens. Pinned the Docker image to the fixed PHP 8.3.36 version, raised the Composer PHP requirement to match, and disabled the vulnerable session upload‑progress feature."
+    },
+    {
+      "id": 10,
+      "runId": "cfe058b8-1445-49a2-b81e-7aab1d78f468",
+      "at": "2026-10-24T18:21:28.444Z",
+      "node": "remediation",
+      "kind": "candidate-pushed",
+      "message": "Candidate f5f1948b3e5b0d5ec79274e73fb4178b576c7c27 pushed to proofpatch/live-php-b86ab275-cfe058b8-a1."
+    },
+    {
+      "id": 11,
+      "runId": "cfe058b8-1445-49a2-b81e-7aab1d78f468",
+      "at": "2026-10-24T18:21:28.447Z",
+      "node": "devsec",
+      "kind": "verifying",
+      "message": "Dispatching the frozen verifier on GitHub Actions. Only the fixed candidate image is built and executed."
+    },
+    {
+      "id": 12,
+      "runId": "cfe058b8-1445-49a2-b81e-7aab1d78f468",
+      "at": "2026-10-24T18:21:30.313Z",
+      "node": "devsec",
+      "kind": "ci-progress",
+      "message": "Waiting for GitHub to schedule the trusted dispatch workflow."
+    },
+    {
+      "id": 13,
+      "runId": "cfe058b8-1445-49a2-b81e-7aab1d78f468",
+      "at": "2026-10-24T18:21:37.514Z",
+      "node": "devsec",
+      "kind": "ci-progress",
+      "message": "GitHub Actions: in_progress — 6/13 steps finished"
+    },
+    {
+      "id": 14,
+      "runId": "cfe058b8-1445-49a2-b81e-7aab1d78f468",
+      "at": "2026-10-24T18:21:51.632Z",
+      "node": "devsec",
+      "kind": "ci-progress",
+      "message": "GitHub Actions: in_progress — 11/13 steps finished"
+    },
+    {
+      "id": 15,
+      "runId": "cfe058b8-1445-49a2-b81e-7aab1d78f468",
+      "at": "2026-10-24T18:21:58.766Z",
+      "node": "devsec",
+      "kind": "ci-progress",
+      "message": "GitHub Actions: completed (success) — 14/14 steps finished"
+    },
+    {
+      "id": 16,
+      "runId": "cfe058b8-1445-49a2-b81e-7aab1d78f468",
+      "at": "2026-10-24T18:22:01.348Z",
+      "node": "devsec",
+      "kind": "reviewing",
+      "message": "Groq openai/gpt-oss-120b is reviewing the actual diff and frozen test evidence in a separate context."
+    },
+    {
+      "id": 17,
+      "runId": "cfe058b8-1445-49a2-b81e-7aab1d78f468",
+      "at": "2026-10-24T18:22:02.699Z",
+      "node": "devsec",
+      "kind": "agent-completed",
+      "message": "reviewer: openai/gpt-oss-120b; 4477 actual tokens. The candidate image updates PHP to the fixed 8.3.36 version, matches the required image digest, raises the Composer PHP floor, and disables session.upload_progress at startup. All static policy checks, runtime verification, and the full suite of 15 business tests passed. No evidence of exploit execution is required for this draft. Human review for deployment and runtime configuration verification remains necessary."
+    },
+    {
+      "id": 18,
+      "runId": "cfe058b8-1445-49a2-b81e-7aab1d78f468",
+      "at": "2026-10-24T18:22:04.282Z",
+      "node": "gate",
+      "kind": "publishing",
+      "message": "All required frozen checks and scoped senior review passed. Creating the bilingual draft PR for human review."
+    },
+    {
+      "id": 19,
+      "runId": "cfe058b8-1445-49a2-b81e-7aab1d78f468",
+      "at": "2026-10-24T18:22:06.892Z",
+      "node": "review",
+      "kind": "completed",
+      "message": "Draft PR #2 created: https://github.com/Harsh5840/arigato-php-demo/pull/2. Human review is required; merge ready and finding closed remain false."
+    }
+  ]
+}

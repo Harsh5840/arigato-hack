@@ -4,6 +4,8 @@
 **Stage:** Checkpoint 1 · **Working name:** ProofPatch (name availability not checked)  
 **Planning assumption:** 48-hour MVP build window; duration remains unconfirmed.
 
+**Implementation update (24 October 2026 UTC):** Japan-focused PHP intake → actual Groq roles → frozen PHP verification → automatic draft PR is live. See [the executed handoff](IMPLEMENTATION-HANDOFF.md) and [judge runbook](LIVE-DEMO.md). The initial TypeScript persona and broader phases below remain research hypotheses; the implemented pilot uses a fictional Japanese PHP merchant. General pentesting, local watch, SaaS onboarding and billing remain planned.
+
 ## 1. Product decision
 
 Build a narrow, evidence-first security remediation workflow for small TypeScript SaaS teams. Three agents help developers identify relevant risk, reproduce a failure, and propose a fix. A deterministic gate and developer review decide whether the change can advance.

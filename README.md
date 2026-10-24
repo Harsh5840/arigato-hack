@@ -2,28 +2,33 @@
 
 Four-member hackathon package. Checkpoint 1 weights: problem 35%, idea 30%, business 25%, development 10%. Research and redesign checked 24 October 2026.
 
-The team is in the Thapar Japan Hackathon's **Open Innovation** track. The next
-build proposal connects Japanese PHP advisories to repository inventory and a
-bilingual human-review PR. Read [the end-to-end system-design draft](docs/HACKATHON-END-TO-END-PLAN.md)
-and [the verified Japan use case](docs/JAPAN-USE-CASE.md) before building the backend.
-Current agent execution in the frontend remains simulated.
+The team is in the Thapar Japan Hackathon's **Open Innovation** track. The live
+flow connects Japanese PHP advisories to actual Groq analysis/repair/review,
+frozen PHP checks on GitHub Actions, and an automatically created bilingual
+draft PR. Read [the live demo guide](docs/LIVE-DEMO.md) for setup, the judge's
+walkthrough and the exact execution boundaries.
 
 Published review target: [SakuraShop PHP demo](https://github.com/Harsh5840/arigato-php-demo)
-and [draft repair PR #1](https://github.com/Harsh5840/arigato-php-demo/pull/1).
-This is a prepared fixture repair, not a live Groq run. Read the
+and its draft repair PRs. PR #1 is the earlier prepared fixture repair;
+live runs and their own PR/CI links are recorded under `output/live-runs/`. Read the
 [implementation handoff](docs/IMPLEMENTATION-HANDOFF.md) for exact commits,
 checks, current limits and the next implementation slice.
+
+Judge target: [live draft PR #3](https://github.com/Harsh5840/arigato-php-demo/pull/3),
+[passing PHP verification](https://github.com/Harsh5840/arigato-php-demo/actions/runs/40120547241),
+and [preserved run evidence](output/live-runs/3ea42f72-8ed5-40f3-9a46-0579fbea3a68/run.json).
 
 ## Run
 Requires Node 22.12+ and npm. From a fresh clone:
 
 ```sh
-cd apps/web
-npm ci
+npm run setup
+# Copy .env.example to .env and configure Groq/GitHub authentication.
 npm run dev
 ```
 
-Open http://127.0.0.1:3000. For production use `npm run build` then `npm start`.
+Open http://127.0.0.1:3000. The command starts frontend, API and worker.
+The server is a local demo; see the live guide before hosting it elsewhere.
 
 ## Deliverables
 - docs/PRD.md: phased product requirements, research, architecture and business model.
@@ -40,9 +45,9 @@ Open http://127.0.0.1:3000. For production use `npm run build` then `npm start`.
 Original presentation filenames also point to the current orchestration revision. The earlier Redesigned filenames retain the preceding revision. Historical files are preserved in output/archive-v1.
 
 ## Prototype
-The default Agents screen uses actual React Flow. Select a role, inspect its inputs/outputs/permissions, drag nodes, zoom or fit the diagram, then simulate a dependency or local-code handoff. Regression failures hold the draft. PHP and Composer snapshots retain owner follow-up even when represented checks pass. Stop/reset and JSON trace export work. The existing Overview keeps its finding-level demo, local draft and persistent evidence workflow.
+The default Agents screen uses actual React Flow and persisted live execution. It shows official source evidence, Groq calls, CI progress, runtime/business results and the resulting draft PR. Select a role, inspect English/Japanese summaries, drag/zoom the graph, cancel work, recover stored runs and export evidence. The separate Simulation mode keeps the earlier dependency/local-code scenarios; Overview keeps its synthetic finding-level demo.
 
-This is a synthetic frontend prototype. No scanner, model agent, external pentest, repository mutation, GitHub write or recurring monitor is implemented. The dependency example uses a fictional package. Production controls in the PRD are planned requirements.
+The live integration is deliberately scoped to one owned PHP fixture and one verified advisory case. General scanning, RCE exploitation, forum/X discovery, continuous local monitoring, multi-tenant authentication and production SaaS controls remain planned. Prepared/synthetic examples retain their labels. No automatic merge or deployment is performed.
 
 Real Bklit Gauge source and an original 63-part Anatomy mechanism drive the review display. Skills were fetched into .agents/skills and read for this redesign. The original white/cobalt concept is now a legacy reference.
 
@@ -51,7 +56,7 @@ Anatomy geometry modules and MIT licence are vendored under
 `design/anatomy/vendor/` so artwork generation does not depend on those tools.
 
 ## Verification
-Run npm run typecheck, npm test and npm run build from apps/web. Tests reject a patch if any evidence gate fails, including benign regression. Browser checks cover the main workflow, failure/retry, local draft, persistence, reset, filter, navigation, console and mobile layout.
+Run `npm run typecheck`, `npm test` and `npm run build` from the root. Product CI runs the same checks. Backend tests cover scoped repair, evidence identity, cancellation, provider failures and GitHub publication boundaries; browser checks cover the connected live surface and retained simulator. Actual live-run artifacts are separate from mocked unit tests.
 
 ## Team
 A: frontend/demo. B: Supply Chain. C: Remediation. D: DevSec/controller. Research and pitch are shared. A 48-hour MVP window is provisional.

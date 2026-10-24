@@ -1,6 +1,6 @@
 # ProofPatch end-to-end hackathon plan
 
-Status: DRAFT for system-design discussion, 24 October 2026. This document proposes the automated service. A separate prepared fixture PR and its hosted PHP checks now work; backend agents, product feed ingestion and automatic PR orchestration are not implemented. See [current evidence](IMPLEMENTATION-HANDOFF.md).
+Status: initial system-design plan, with the first bounded vertical flow implemented and executed on 24 October 2026 UTC. Live Japanese intake, actual Groq roles, persisted progress, frozen hosted PHP checks and automatic [draft PR #3](https://github.com/Harsh5840/arigato-php-demo/pull/3) work. [Current evidence](IMPLEMENTATION-HANDOFF.md) supersedes planned behavior below; [LIVE-DEMO.md](LIVE-DEMO.md) is the runbook. Broader phases remain proposals.
 
 ## The output judges can inspect
 
@@ -8,7 +8,7 @@ The proposed demo follows a Japanese advisory into a fictional Japanese SME's re
 
 The product repository is `Harsh5840/arigato-hack`. The separate demonstration target `Harsh5840/arigato-php-demo` has now been created, with a [prepared draft repair PR](https://github.com/Harsh5840/arigato-php-demo/pull/1). That foundation PR does not come from live Groq orchestration. Keep demo application code separate from the product so judges can inspect the PR as a customer's artifact. Current publication/evidence status is in [the handoff](IMPLEMENTATION-HANDOFF.md).
 
-The proposed Japan connection is functional: ingest Japanese JPCERT/CC and JVN sources, preserve their original text and timestamps, explain the impact in Japanese and English, and test a Japanese storefront. Source availability has been researched; product ingestion and translation still need implementation.
+The Japan connection is functional: live JPCERT/CC intake and PHP corroboration preserve source links/timestamps/digests, actual Groq calls explain impact in Japanese and English, and hosted checks test a Japanese storefront. JVN expansion remains planned. The implementation retains a normalized factual brief rather than reproducing entire advisory pages.
 
 ## Three agents and a deterministic controller
 
