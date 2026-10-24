@@ -3,7 +3,7 @@ import { afterEach, beforeEach, test } from 'node:test';
 import { zipSync, strToU8 } from 'fflate';
 import { fetchAdvisory } from '../src/adapters/advisory.js';
 import { analyzeAdvisory, clearGroqModelCacheForTests, proposeRepair, verifyGroqModels } from '../src/adapters/groq.js';
-import { clearGitHubCredentialCacheForTests, dispatchVerification, ensureCandidateBranch, ensureDraftPullRequest, parseEvidenceFiles, waitForVerification } from '../src/adapters/github.js';
+import { clearGitHubCredentialCacheForTests, dispatchVerification, ensureCandidateBranch, ensureDraftPullRequest, parseEvidenceFiles, readCandidateDiff, waitForVerification } from '../src/adapters/github.js';
 import { allowedPaths } from '../src/adapters/types.js';
 import { boundedBytes, sha256 } from '../src/adapters/http.js';
 
@@ -284,4 +284,27 @@ test('workflow dispatch guard rejects persisted cancellation before the external
   globalThis.fetch = async () => { requests++; return new Response(null, { status: 204 }); };
   await assert.rejects(dispatchVerification({ baseSha, headSha, runId, beforeWrite: () => { throw new Error('Controller cancelled.'); } }), /Controller cancelled/);
   assert.equal(requests, 0);
+});
+
+test('candidate diff returns only the immutable stored comparison and reports missing patches', async () => {
+  process.env.GITHUB_TOKEN = 'unit-test-placeholder';
+  globalThis.fetch = async (input, init) => {
+    assert.equal(String(input), `https://api.github.com/repos/Harsh5840/arigato-php-demo/compare/${baseSha}...${headSha}`);
+    assert.equal(init?.method, 'GET');
+    return response({ base_commit: { sha: baseSha }, merge_base_commit: { sha: baseSha }, total_commits: 1, commits: [{ sha: headSha }], files: allowedPaths.map((filename, index) => ({ filename, status: 'modified', additions: 1, deletions: 1, ...(index ? { patch: '@@ -1 +1 @@\n-old\n+new' } : {}) })) });
+  };
+  const diff = await readCandidateDiff(baseSha, headSha);
+  assert.equal(diff.truncated, true);
+  assert.equal(diff.files.length, 3);
+  assert.equal(diff.files[0].patch, '');
+  assert.match(diff.compareUrl, new RegExp(`${headSha}$`));
+});
+
+test('candidate diff rejects stale identities and paths outside the repair scope', async () => {
+  process.env.GITHUB_TOKEN = 'unit-test-placeholder';
+  const comparison = { base_commit: { sha: baseSha }, merge_base_commit: { sha: baseSha }, total_commits: 1, commits: [{ sha: headSha }], files: allowedPaths.map((filename) => ({ filename, status: 'modified', additions: 1, deletions: 1, patch: '@@ -1 +1 @@\n-old\n+new' })) };
+  globalThis.fetch = async () => response({ ...comparison, commits: [{ sha: 'f'.repeat(40) }] });
+  await assert.rejects(readCandidateDiff(baseSha, headSha), /identities/);
+  globalThis.fetch = async () => response({ ...comparison, files: [{ ...comparison.files[0], filename: '.env' }, ...comparison.files.slice(1)] });
+  await assert.rejects(readCandidateDiff(baseSha, headSha), /unexpected path/);
 });

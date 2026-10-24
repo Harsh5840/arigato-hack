@@ -5,7 +5,8 @@ Four-member hackathon package. Checkpoint 1 weights: problem 35%, idea 30%, busi
 The team is in the Thapar Japan Hackathon's **Open Innovation** track. The live
 flow connects Japanese PHP advisories to actual Groq analysis/repair/review,
 frozen PHP checks on GitHub Actions, and an automatically created bilingual
-draft PR. Read [the live demo guide](docs/LIVE-DEMO.md) for setup, the judge's
+draft PR. A single developer dashboard brings the flow, events, real metrics,
+candidate diff, checks and PR review together. Read [the live demo guide](docs/LIVE-DEMO.md) for setup, the judge's
 walkthrough and the exact execution boundaries.
 
 Published review target: [SakuraShop PHP demo](https://github.com/Harsh5840/arigato-php-demo)
@@ -45,7 +46,9 @@ The server is a local demo; see the live guide before hosting it elsewhere.
 Original presentation filenames also point to the current orchestration revision. The earlier Redesigned filenames retain the preceding revision. Historical files are preserved in output/archive-v1.
 
 ## Prototype
-The default Agents screen uses actual React Flow and persisted live execution. It shows official source evidence, Groq calls, CI progress, runtime/business results and the resulting draft PR. Select a role, inspect English/Japanese summaries, drag/zoom the graph, cancel work, recover stored runs and export evidence. The separate Simulation mode keeps the earlier dependency/local-code scenarios; Overview keeps its synthetic finding-level demo.
+The default screen is one component-based operations dashboard. There are no routed synthetic Findings, Overview, Evidence, Roadmap or Simulation screens. Start a live run from the sticky repository header, follow the actual React Flow and event rail, inspect grouped checks and the real GitHub diff, and open the generated draft PR. Model usage, observed phase timing, recorded outcomes and median completed duration come from stored runs with visible sample counts. Historical prototype source and pitch assets remain in the repository but are not routed into the developer experience.
+
+For companies, the proposed connection is a GitHub App installed on selected repositories. The current pilot remains fixed to the owned PHP repo; it does not pretend arbitrary customer onboarding works. [Repository onboarding plan](docs/REPOSITORY-ONBOARDING.md).
 
 The live integration is deliberately scoped to one owned PHP fixture and one verified advisory case. General scanning, RCE exploitation, forum/X discovery, continuous local monitoring, multi-tenant authentication and production SaaS controls remain planned. Prepared/synthetic examples retain their labels. No automatic merge or deployment is performed.
 

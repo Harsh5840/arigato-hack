@@ -1,2 +1,2 @@
-import Workspace from '@/components/features/workspace';
-export default function Page() { return <Workspace />; }
+import OperationsDashboard from '@/components/features/operations-dashboard';
+export default function Page() { return <OperationsDashboard />; }

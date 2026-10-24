@@ -1,6 +1,6 @@
 # Japanese PHP advisory → Groq → draft PR
 
-This is a working, bounded integration for the Open Innovation hackathon. It targets only the team's owned `Harsh5840/arigato-php-demo` repository. The default Agents screen uses actual service state. The separate Simulation tab and Overview remain synthetic demonstrations.
+This is a working, bounded integration for the Open Innovation hackathon. It targets only the team's owned `Harsh5840/arigato-php-demo` repository. The single operations dashboard uses actual service state; seeded prototype screens are no longer routed into it.
 
 ## Start from a fresh clone
 
@@ -22,12 +22,14 @@ The API intentionally binds to loopback and accepts only the local frontend orig
 
 ## What judges can do
 
-1. Open **Agents → Live service**. Confirm service readiness and the fixed target.
-2. Select **Fetch Japanese + vendor sources** and start the flow. This performs live JPCERT feed/notice and PHP vendor requests. A missing corroboration stops the run. Recorded-source mode is explicit and still makes real Groq, GitHub and runner calls.
-3. Follow the React Flow stages and persisted trace. Inspect model IDs, actual token usage and English/Japanese role summaries.
-4. Follow the real CI link while checks run. Observe the immutable candidate SHA, frozen verifier digest, actual PHP version/startup configuration and 15 business checks.
-5. Open the automatically created **draft PR**. Inspect the three-file diff, bilingual review, evidence links, rollback notes and remaining owner actions. A human owns review, merge and deployment.
-6. Reload the page to recover history or export the run JSON. Cancel stops later stages; already in-flight external writes or CI may remain recorded. A run that loses its worker is marked failed after its lease expires.
+1. Open the dashboard. Confirm the service status and owned repository in the sticky header. The repository menu explains the current connection and the planned company GitHub App flow.
+2. Click **Run live demo**. The default performs real JPCERT feed/notice and PHP vendor requests. A missing corroboration stops the run. **Run options** can explicitly select a recorded source; Groq, GitHub and runner execution remain real.
+3. Follow the interactive agent graph and newest-first event rail on the same page. Select a role and expand its actual model call. On mobile, the role summary precedes the expandable detailed graph.
+4. Inspect **Developer workbench**: expand grouped checks, switch to **Candidate diff** for the actual immutable GitHub comparison, or **Runner output** for runtime/business logs and verifier identities. The linked CI shows work in progress.
+5. Open the automatically created **draft PR** beside the workbench. Inspect the three-file diff, bilingual review, evidence, rollback notes and remaining owner actions. A human owns review, merge and deployment.
+6. Inspect **Run observations** for recorded outcomes, actual phase timings/tokens and sample counts. Select a dated record from history. Reload to recover it; **Run options** contains JSON export. Cancel stops later stages; in-flight external writes or CI may remain recorded. Lost worker leases fail closed.
+
+For a short judging slot, start one live run before the talk and keep a dated completed run available. Provider and hosted-runner queues vary. Use the previous actual record transparently if the new runner is still busy; do not label historical results as the new run. The [90-second judging path and company onboarding design](REPOSITORY-ONBOARDING.md) give the exact story.
 
 ## Execution and boundaries
 

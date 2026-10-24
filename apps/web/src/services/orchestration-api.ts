@@ -1,4 +1,4 @@
-import type { LiveEvent, LiveRun, ServiceStatus } from '@/types/live-orchestration';
+import type { CandidateDiff, LiveEvent, LiveRun, ServiceStatus } from '@/types/live-orchestration';
 
 export const orchestrationApi = '/api/proofpatch';
 export class OrchestrationError extends Error {
@@ -19,5 +19,6 @@ export const getServiceStatus = () => request<ServiceStatus>('/status');
 export const getRuns = () => request<{runs: LiveRun[]}>('/runs');
 export const getRun = (id: string) => request<{run: LiveRun}>(`/runs/${encodeURIComponent(id)}`);
 export const getRunEvidence = (id: string) => request<{run: LiveRun; events: LiveEvent[]}>(`/runs/${encodeURIComponent(id)}/evidence`);
+export const getCandidateDiff = (id: string) => request<CandidateDiff>(`/runs/${encodeURIComponent(id)}/diff`);
 export const startRun = (sourceMode: 'live' | 'cached') => request<{run: LiveRun}>('/runs', {method: 'POST', body: JSON.stringify({sourceMode})});
 export const cancelRun = (id: string) => request<{run: LiveRun}>(`/runs/${encodeURIComponent(id)}/cancel`, {method: 'POST', body: '{}'});

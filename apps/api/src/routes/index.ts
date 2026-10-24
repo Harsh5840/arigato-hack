@@ -8,5 +8,6 @@ export function routes(store: RunStore) {
   router.get('/runs', handlers.list); router.post('/runs', handlers.create);
   router.get('/runs/:id', handlers.get); router.get('/runs/:id/events', handlers.events);
   router.get('/runs/:id/evidence', handlers.evidence); router.post('/runs/:id/cancel', handlers.cancel);
+  router.get('/runs/:id/diff', handlers.diff);
   return router;
 }

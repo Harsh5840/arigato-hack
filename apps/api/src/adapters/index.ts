@@ -1,7 +1,7 @@
 export * from './types.js';
 export { fetchAdvisory } from './advisory.js';
 export { analyzeAdvisory, proposeRepair, reviewRepair } from './groq.js';
-export { computeVerifierDigest, readBaseline, ensureCandidateBranch, dispatchVerification, waitForVerification, ensureDraftPullRequest } from './github.js';
+export { computeVerifierDigest, readBaseline, readCandidateDiff, ensureCandidateBranch, dispatchVerification, waitForVerification, ensureDraftPullRequest } from './github.js';
 
 import { configuredModels, verifyGroqModels } from './groq.js';
 import { getGitHubCredential } from './github.js';

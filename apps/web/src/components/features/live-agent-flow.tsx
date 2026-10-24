@@ -29,7 +29,7 @@ function LiveAgentNode({id, data}: NodeProps<FlowNode>) {
   </div>;
 }
 const nodeTypes = {liveAgent: LiveAgentNode};
-function InitialFit({mobile}: {mobile: boolean}) {
+function InitialFit({mobile, compact}: {mobile: boolean; compact: boolean}) {
   const initialized = useNodesInitialized();
   const {fitView, fitBounds} = useReactFlow();
   const width = useStore(state => state.width);
@@ -37,19 +37,19 @@ function InitialFit({mobile}: {mobile: boolean}) {
   const fit = useCallback(() => {
     // Mobile return paths use two reserved lanes beyond the node bounds.
     if (mobile) void fitBounds({x: -8, y: -10, width: 356, height: 1000}, {padding: .05, duration: 0});
-    else void fitView({padding: .08, duration: 0});
-  }, [mobile, fitView, fitBounds]);
+    else void fitView({padding: compact ? .05 : .08, duration: 0});
+  }, [mobile, compact, fitView, fitBounds]);
   useEffect(() => { if (initialized && width && height) fit(); }, [initialized, width, height, fit]);
   return <Controls showInteractive={false} onFitView={fit}/>;
 }
-function initialNodes(mobile: boolean): FlowNode[] {
-  return definitions.map(item => ({id: item.id, type: 'liveAgent', position: mobile ? {x: 0, y: mobileOrder.indexOf(item.id) * 174} : positions[item.id], data: {...item, state: 'Not run', active: false, done: false, held: false}, style: {width: 250}}));
+function initialNodes(mobile: boolean, compact = false): FlowNode[] {
+  return definitions.map(item => ({id: item.id, type: 'liveAgent', position: mobile ? {x: 0, y: mobileOrder.indexOf(item.id) * 174} : {...positions[item.id], x: compact ? positions[item.id].x / 410 * 340 : positions[item.id].x}, data: {...item, state: 'Not run', active: false, done: false, held: false}, style: {width: 250}}));
 }
 const statusNode: Partial<Record<LiveRun['status'], LiveNode>> = {queued: 'controller', 'source-fetching': 'supply-chain', triaging: 'supply-chain', matching: 'supply-chain', baseline: 'devsec', patching: 'remediation', verifying: 'devsec', reviewing: 'devsec', publishing: 'review'};
-export default function LiveAgentFlow({run, events, onSelect}: {run: LiveRun | null; events: LiveEvent[]; onSelect: (node: LiveNode) => void}) {
+export default function LiveAgentFlow({run, events, onSelect, compact = false}: {run: LiveRun | null; events: LiveEvent[]; onSelect: (node: LiveNode) => void; compact?: boolean}) {
   const [mobile, setMobile] = useState(false);
-  const [nodes, setNodes] = useState<FlowNode[]>(() => initialNodes(false));
-  useEffect(() => { const query = matchMedia('(max-width: 680px)'); const update = () => {setMobile(query.matches); setNodes(initialNodes(query.matches));}; update(); query.addEventListener('change', update); return () => query.removeEventListener('change', update); }, []);
+  const [nodes, setNodes] = useState<FlowNode[]>(() => initialNodes(false, compact));
+  useEffect(() => { const query = matchMedia('(max-width: 680px)'); const update = () => {setMobile(query.matches); setNodes(initialNodes(query.matches, compact));}; update(); query.addEventListener('change', update); return () => query.removeEventListener('change', update); }, [compact]);
   const active = run ? statusNode[run.status] : undefined;
   const shownNodes = useMemo(() => nodes.map(node => {
     const role = node.id === 'supply-chain' ? 'supply' : node.id === 'remediation' ? 'fixer' : node.id === 'devsec' ? 'reviewer' : null;
@@ -75,12 +75,12 @@ export default function LiveAgentFlow({run, events, onSelect}: {run: LiveRun | n
       ['evidence', 'devsec', 'gate', 'Checks + review', 'bottom-out', 'top-in'],
       ['pr', 'gate', 'review', 'Draft PR', 'right-out', 'left-in'],
     ];
-    return links.map(([id, source, target, label, sourceHandle, targetHandle], index) => ({id, source, target, label: mobile ? String(index + 1) : label, ariaLabel: mobile ? `${index + 1}. ${mobileHandoffs[index]}` : label, sourceHandle, targetHandle, type: 'smoothstep', pathOptions: {offset: mobile && id === 'candidate' ? 40 : mobile && id === 'evidence' ? 72 : 20}, animated: !!active && (source === active || target === active), markerEnd: {type: MarkerType.ArrowClosed, color: '#879878'}, style: {stroke: '#69795b', strokeWidth: 1.4}, labelStyle: {fill: '#c5cdbb', fontSize: 11}, labelBgStyle: {fill: '#181c16'}, labelBgPadding: [6, 4]} as Edge));
-  }, [mobile, active]);
+    return links.map(([id, source, target, label, sourceHandle, targetHandle], index) => ({id, source, target, label: mobile || compact ? String(index + 1) : label, ariaLabel: mobile || compact ? `${index + 1}. ${mobileHandoffs[index]}` : label, sourceHandle, targetHandle, type: 'smoothstep', pathOptions: {offset: mobile && id === 'candidate' ? 40 : mobile && id === 'evidence' ? 72 : 20}, animated: !!active && (source === active || target === active), markerEnd: {type: MarkerType.ArrowClosed, color: '#879878'}, style: {stroke: '#69795b', strokeWidth: 1.4}, labelStyle: {fill: '#c5cdbb', fontSize: 11}, labelBgStyle: {fill: '#181c16'}, labelBgPadding: [6, 4]} as Edge));
+  }, [mobile, compact, active]);
   const onNodesChange = useCallback((changes: NodeChange<FlowNode>[]) => setNodes(previous => applyNodeChanges(changes, previous)), []);
   return <><div className={`orchestration-canvas live-flow-canvas ${mobile ? 'is-mobile' : ''}`} aria-label="Live agent orchestration diagram">
     <ReactFlow key={mobile ? 'mobile' : 'desktop'} nodes={shownNodes} edges={edges} nodeTypes={nodeTypes} onNodesChange={onNodesChange} onNodeClick={(_, node) => onSelect(node.id as LiveNode)} nodesConnectable={false} deleteKeyCode={null} minZoom={.3} maxZoom={1.6} colorMode="dark" preventScrolling={false}>
-      <InitialFit mobile={mobile}/><Background gap={24} color="#394131" size={1}/>
+      <InitialFit mobile={mobile} compact={compact}/><Background gap={24} color="#394131" size={1}/>
     </ReactFlow>
-  </div>{mobile && <ol className="live-flow-legend" aria-label="Numbered diagram handoffs">{mobileHandoffs.map((handoff, index) => <li key={handoff}><span>{index + 1}</span>{handoff}</li>)}</ol>}</>;
+  </div>{(mobile || compact) && <ol className={`live-flow-legend ${compact ? 'compact' : ''}`} aria-label="Numbered diagram handoffs">{mobileHandoffs.map((handoff, index) => <li key={handoff}><span>{index + 1}</span>{handoff}</li>)}</ol>}</>;
 }

@@ -15,4 +15,11 @@ export interface Run {
   draftPRAllowed?: boolean; mergeReady: false; findingClosed: false; cancelRequested?: boolean;
 }
 export interface RunEvent { id: number; runId: string; at: string; node: 'controller' | 'supply-chain' | 'remediation' | 'devsec' | 'gate' | 'review'; kind: string; message: string }
+export interface CandidateDiff {
+  baseSha: string;
+  candidateSha: string;
+  compareUrl: string;
+  files: { path: string; status: 'modified' | 'added' | 'removed'; additions: number; deletions: number; patch: string }[];
+  truncated: boolean;
+}
 export const terminalStatuses: ReadonlySet<RunStatus> = new Set(['completed', 'blocked', 'failed', 'cancelled']);

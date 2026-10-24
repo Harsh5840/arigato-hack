@@ -1,5 +1,13 @@
 # Redesign verification — 24 October 2026
 
+## One-page dashboard — 25 October 2026 (Asia/Calcutta)
+
+The default route now renders a component-based OperationsDashboard. Static multi-view navigation and seeded Simulation/Overview content are absent from the routed interface. Real run history drives metrics, outcome bars, phase durations and actual token usage; sample sizes and recorded-data limits are visible. The workbench fetches the exact stored base/candidate GitHub comparison, rejects out-of-scope files/identities and displays actual added/deleted lines.
+
+Browser interaction with **Run live demo** created run `bc7050bc-a41e-4f47-a903-fe00c22e3734`, ending in [draft PR #4](https://github.com/Harsh5840/arigato-php-demo/pull/4) after [successful hosted PHP checks](https://github.com/Harsh5840/arigato-php-demo/actions/runs/40123778532). All 35 recorded checks passed, including 15 business regressions. Three Groq calls reported 8,080 tokens. Reload recovered the actual run, 20 events and its three-file diff.
+
+All 46 automated tests and the production build pass. Initial browser QA recorded zero console errors/page exceptions, no horizontal document overflow at 390px, correct diff line highlighting and no literal backslash-newline artifacts. Repository connection and run-option popovers work; the connection panel explicitly distinguishes the current owned repo from planned GitHub App onboarding. Eight actual captures are in `.impeccable/review/dashboard/`, all with embedded origin metadata. The independent review records own the final visual disposition.
+
 ## Live integration verification — 24 October 2026 UTC
 
 The default Agents surface now connects to the Hono API and separate SQLite worker. Live run `3ea42f72-8ed5-40f3-9a46-0579fbea3a68` fetched JPCERT/vendor evidence, made three actual Groq calls (8,129 tokens), pushed candidate `d1d7341d7ecf64179203c742c12aca8aef70ae5a`, observed [successful hosted PHP checks](https://github.com/Harsh5840/arigato-php-demo/actions/runs/40120547241), and automatically created [draft PR #3](https://github.com/Harsh5840/arigato-php-demo/pull/3). All 35 recorded checks passed, including 15 real business assertions. [Preserved run](../output/live-runs/3ea42f72-8ed5-40f3-9a46-0579fbea3a68/run.json).

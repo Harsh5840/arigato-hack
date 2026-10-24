@@ -1,7 +1,7 @@
 import type { Context } from 'hono';
 import { streamSSE } from 'hono/streaming';
 import { terminalStatuses } from '../../../../packages/contracts/src/live.js';
-import { getProviderStatus } from '../adapters/index.js';
+import { getProviderStatus, readCandidateDiff } from '../adapters/index.js';
 import type { RunStore } from '../db/client.js';
 
 export function runHandlers(store: RunStore) {
@@ -19,6 +19,11 @@ export function runHandlers(store: RunStore) {
     },
     get: (c: Context) => { const run = store.get(c.req.param('id')!); return run ? c.json({ run }) : missing(c); },
     evidence: (c: Context) => { const run = store.get(c.req.param('id')!); return run ? c.json({ run, events: store.events(run.id) }) : missing(c); },
+    diff: async (c: Context) => {
+      const run = store.get(c.req.param('id')!); if (!run) return missing(c);
+      if (!run.repo.baseSha || !run.repo.candidateSha) return c.json({ error: { code: 'CANDIDATE_PENDING', message: 'The selected run has not published a candidate commit yet.' } }, 409);
+      return c.json(await readCandidateDiff(run.repo.baseSha, run.repo.candidateSha, c.req.raw.signal));
+    },
     cancel: (c: Context) => {
       const run = store.get(c.req.param('id')!); if (!run) return missing(c);
       if (terminalStatuses.has(run.status)) return c.json({ run });

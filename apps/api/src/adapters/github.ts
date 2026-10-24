@@ -2,6 +2,7 @@ import { spawn } from 'node:child_process';
 import { strFromU8, unzipSync } from 'fflate';
 import { abortableDelay, boundedBytes, boundedJson, combinedSignal, object, sha256, string } from './http.js';
 import { allowedPaths, targetRepository, verifierPaths, type Baseline, type Evidence, type EvidenceCheck, type Repair, type VerificationProgress } from './types.js';
+import type { CandidateDiff } from '../../../../packages/contracts/src/live.js';
 
 const apiRoot = 'https://api.github.com';
 const repoPath = `/repos/${targetRepository}`;
@@ -111,6 +112,24 @@ export async function readBaseline(signal?: AbortSignal): Promise<Baseline> {
   const treeSha = commitSha(object(commit.tree, 'Baseline tree').sha, 'Tree SHA');
   const files = await contentsAt(sha, [...allowedPaths, ...verifierPaths], signal);
   return { sha, treeSha, files, verifierSha256: computeVerifierDigest(files) };
+}
+
+export async function readCandidateDiff(baseSha: string, candidateSha: string, signal?: AbortSignal): Promise<CandidateDiff> {
+  commitSha(baseSha); commitSha(candidateSha);
+  const data = object(await json(`${repoPath}/compare/${baseSha}...${candidateSha}`, { signal }), 'Candidate comparison');
+  if (object(data.base_commit, 'Compare base').sha !== baseSha || object(data.merge_base_commit, 'Compare merge base').sha !== baseSha || data.total_commits !== 1 || !Array.isArray(data.commits) || data.commits.length !== 1 || object(data.commits[0], 'Compare candidate').sha !== candidateSha) throw new Error('GitHub comparison did not match the stored direct-parent base/candidate identities.');
+  if (!Array.isArray(data.files) || data.files.length !== 3) throw new Error('Candidate comparison exceeded the three-file repair scope.');
+  let truncated = false;
+  const files = data.files.map((entry) => {
+    const file = object(entry, 'Compared file');
+    const path = string(file.filename, 'Compared path', 100);
+    if (!(allowedPaths as readonly string[]).includes(path) || file.status !== 'modified' || !Number.isInteger(file.additions) || !Number.isInteger(file.deletions) || (file.additions as number) < 0 || (file.deletions as number) < 0) throw new Error('Candidate comparison includes an unexpected path, status or line count.');
+    if (typeof file.patch !== 'string') truncated = true;
+    const patch = typeof file.patch === 'string' ? string(file.patch, 'Compared patch', 90_000) : '';
+    return { path, status: 'modified' as const, additions: file.additions as number, deletions: file.deletions as number, patch };
+  });
+  if (new Set(files.map((file) => file.path)).size !== 3) throw new Error('Candidate comparison contains duplicate repair paths.');
+  return { baseSha, candidateSha, compareUrl: `https://github.com/${targetRepository}/compare/${baseSha}...${candidateSha}`, files, truncated };
 }
 
 async function existingBranch(base: Baseline, candidate: Repair['files'], branch: string, signal?: AbortSignal): Promise<{ sha: string; branch: string } | null> {

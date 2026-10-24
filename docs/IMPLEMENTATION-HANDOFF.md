@@ -1,6 +1,20 @@
 # Live implementation handoff
 
-Updated 24 October 2026 UTC. The owned Japanese PHP advisory-to-PR integration executed with actual Groq responses, GitHub Actions PHP checks, and automatic draft publication. It is a local hackathon service scoped to one repository and one advisory case.
+Updated 25 October 2026 (Asia/Calcutta). The owned Japanese PHP advisory-to-PR integration executes from one developer dashboard with actual Groq responses, GitHub Actions PHP checks, and automatic draft publication. It is scoped to one repository and one advisory case.
+
+## Latest dashboard demonstration
+
+The new dashboard replaces the routed synthetic prototype views. Its sticky run controls, visual agent/event workspace, grouped check components, real GitHub diff, bilingual PR review and observed analytics share one screen. The main button was exercised in a real browser to create [draft PR #4](https://github.com/Harsh5840/arigato-php-demo/pull/4).
+
+- Run: `bc7050bc-a41e-4f47-a903-fe00c22e3734`; source mode: live.
+- Candidate: `ce79f0ccb3d424c49bd5ed2af9c8da6b83a9e632`; unchanged baseline/verifier policy below.
+- [Hosted verification](https://github.com/Harsh5840/arigato-php-demo/actions/runs/40123778532): passed; 35 recorded checks including 15 actual PHP business assertions.
+- Three real Groq calls reported 8,080 tokens. End-to-end elapsed time was 64.543 seconds for this run; runner times vary.
+- [Preserved run and raw outputs](../output/live-runs/bc7050bc-a41e-4f47-a903-fe00c22e3734/run.json).
+- Dashboard metrics now observe three stored runs, three unique draft URLs and 24,179 reported tokens. These are repeated workflow experiments for this PHP case, not three distinct vulnerabilities.
+- 31 backend tests and 15 frontend tests pass; the production build passes. New tests cover immutable comparison scope and analytics with missing data, retries and duplicate records.
+
+Company repository onboarding would use a selected-repository GitHub App. That registration and multi-tenant backend are planned; the current connection is the owned demo target. [Onboarding and judging plan](REPOSITORY-ONBOARDING.md).
 
 ## Inspect the result
 
@@ -23,7 +37,7 @@ Updated 24 October 2026 UTC. The owned Japanese PHP advisory-to-PR integration e
 
 ## Runbook and ownership
 
-Follow [LIVE-DEMO.md](LIVE-DEMO.md). Run `npm run setup`, configure the ignored `.env`, and run `npm run dev` from the root. The command starts API, worker and frontend. Open `http://127.0.0.1:3000` → Agents → Live service. Stored runs survive reload. Simulation and Overview retain synthetic demonstrations.
+Follow [LIVE-DEMO.md](LIVE-DEMO.md). Run `npm run setup`, configure the ignored `.env`, and run `npm run dev` from the root. The command starts API, worker and frontend. Open `http://127.0.0.1:3000` and click **Run live demo**. Stored runs survive reload. Historical synthetic source/assets remain available in Git; they are no longer routed into the developer dashboard.
 
 A owns frontend/events; B owns source intake/inventory; C owns candidate repair; D owns controller/checks/GitHub integration. All four rehearse source → diff → actual results → owner follow-up.
 

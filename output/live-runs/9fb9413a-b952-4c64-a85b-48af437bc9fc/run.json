@@ -1,0 +1,37 @@
+{
+  "run": {
+    "id": "9fb9413a-b952-4c64-a85b-48af437bc9fc",
+    "status": "cancelled",
+    "createdAt": "2026-10-24T19:10:34.513Z",
+    "updatedAt": "2026-10-24T19:10:34.694Z",
+    "sourceMode": "live",
+    "mode": "live-groq",
+    "repo": {
+      "owner": "Harsh5840",
+      "name": "arigato-php-demo"
+    },
+    "agentCalls": [],
+    "checks": [],
+    "mergeReady": false,
+    "findingClosed": false,
+    "cancelRequested": true
+  },
+  "events": [
+    {
+      "id": 58,
+      "runId": "9fb9413a-b952-4c64-a85b-48af437bc9fc",
+      "at": "2026-10-24T19:10:34.513Z",
+      "node": "controller",
+      "kind": "queued",
+      "message": "Run persisted. Waiting for the local worker."
+    },
+    {
+      "id": 59,
+      "runId": "9fb9413a-b952-4c64-a85b-48af437bc9fc",
+      "at": "2026-10-24T19:10:34.695Z",
+      "node": "controller",
+      "kind": "cancel-requested",
+      "message": "Cancellation requested. In-flight external work may finish; no later promotion is allowed."
+    }
+  ]
+}

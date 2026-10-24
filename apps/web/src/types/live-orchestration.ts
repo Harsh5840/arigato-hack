@@ -1,4 +1,5 @@
 import type {AgentCall, Run, RunEvent, RunStatus} from '../../../../packages/contracts/src/live';
+export type {CandidateDiff} from '../../../../packages/contracts/src/live';
 
 export type LiveStatus = RunStatus;
 export type AgentRole = AgentCall['role'];
