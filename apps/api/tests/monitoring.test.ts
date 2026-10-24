@@ -77,6 +77,33 @@ test('registry, settings, findings and worker heartbeat survive a SQLite restart
   assert.equal(second.snapshot().workerLastSeenAt, '2026-10-25T00:00:01Z');
 });
 
+test('saved-run deletion refuses active work, then clears history without reopening draft findings', async () => {
+  const {monitor, runs} = memory();
+  const repo = repository(); monitor.saveRepository(repo);
+  const {run} = runs.createForFinding(repo, finding());
+  monitor.saveFinding(finding());
+  monitor.patchFinding('finding-unit', {status: 'draft-created', runId: run.id});
+  monitor.saveFinding(finding({id: 'queued-alias'}));
+  monitor.patchFinding('queued-alias', {status: 'queued', runId: run.id});
+  const app = createApp(runs, undefined, monitor);
+  const remove = () => app.request('http://localhost/api/runs', {method: 'DELETE', headers, body: '{}'});
+  assert.equal((await remove()).status, 409);
+  assert.ok(runs.get(run.id)); assert.ok(runs.events(run.id).length);
+  assert.equal(monitor.finding('finding-unit')?.runId, run.id);
+
+  runs.update(run.id, {status: 'completed'});
+  const response = await remove();
+  assert.equal(response.status, 200);
+  assert.equal((await response.json()).deleted, 1);
+  assert.equal(runs.get(run.id), undefined);
+  assert.deepEqual(runs.events(run.id), []);
+  assert.equal(monitor.finding('finding-unit')?.status, 'draft-created');
+  assert.equal(monitor.finding('finding-unit')?.runId, undefined);
+  assert.equal(monitor.finding('queued-alias')?.status, 'detected');
+  assert.equal(monitor.finding('queued-alias')?.runId, undefined);
+  assert.equal((await (await remove()).json()).deleted, 0);
+});
+
 test('repository onboarding inventories a frozen commit and leaves repositories without tests monitor-only', async () => {
   const {monitor} = memory(); const calls: string[] = [];
   globalThis.fetch = async (input, init) => {

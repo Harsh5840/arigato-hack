@@ -22,6 +22,19 @@ export class RunStore {
   }
   list(): Run[] { return (this.db.prepare('SELECT data FROM runs ORDER BY created_at DESC LIMIT 30').all() as { data: string }[]).map((row) => JSON.parse(row.data)); }
   active(): Run | undefined { return this.list().find((run) => !terminalStatuses.has(run.status)); }
+  clearHistory(): {blocked: boolean; deletedIds: string[]} {
+    this.db.exec('BEGIN IMMEDIATE');
+    try {
+      const terminal = [...terminalStatuses];
+      const placeholders = terminal.map(() => '?').join(',');
+      const active = this.db.prepare(`SELECT 1 FROM runs WHERE status NOT IN (${placeholders}) LIMIT 1`).get(...terminal);
+      if (active) { this.db.exec('COMMIT'); return {blocked: true, deletedIds: []}; }
+      const deletedIds = (this.db.prepare('SELECT id FROM runs').all() as {id: string}[]).map(row => row.id);
+      this.db.exec('DELETE FROM events; DELETE FROM runs;');
+      this.db.exec('COMMIT');
+      return {blocked: false, deletedIds};
+    } catch (error) { this.db.exec('ROLLBACK'); throw error; }
+  }
   create(sourceMode: Run['sourceMode']): { run: Run; reused: boolean } {
     this.db.exec('BEGIN IMMEDIATE');
     try {

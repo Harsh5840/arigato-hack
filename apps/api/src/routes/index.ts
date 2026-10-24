@@ -5,9 +5,9 @@ import type { MonitoringStore } from '../db/monitoring.js';
 import { monitoringHandlers } from '../handlers/monitoring.handler.js';
 
 export function routes(store: RunStore, monitor?: MonitoringStore) {
-  const router = new Hono(); const handlers = runHandlers(store);
+  const router = new Hono(); const handlers = runHandlers(store, monitor);
   router.get('/status', handlers.status);
-  router.get('/runs', handlers.list); router.post('/runs', handlers.create);
+  router.get('/runs', handlers.list); router.post('/runs', handlers.create); router.delete('/runs', handlers.clear);
   router.get('/runs/:id', handlers.get); router.get('/runs/:id/events', handlers.events);
   router.get('/runs/:id/evidence', handlers.evidence); router.post('/runs/:id/cancel', handlers.cancel);
   router.get('/runs/:id/diff', handlers.diff);

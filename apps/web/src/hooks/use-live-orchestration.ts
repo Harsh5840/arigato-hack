@@ -1,7 +1,7 @@
 'use client';
 
 import {useCallback, useEffect, useRef, useState} from 'react';
-import {cancelRun, getRunEvidence, getRuns, getServiceStatus, orchestrationApi, startRun, OrchestrationError} from '@/services/orchestration-api';
+import {cancelRun, deleteSavedRuns, getRunEvidence, getRuns, getServiceStatus, orchestrationApi, startRun, OrchestrationError} from '@/services/orchestration-api';
 import {isTerminal, type LiveEvent, type LiveRun, type ServiceStatus} from '@/types/live-orchestration';
 
 export function useLiveOrchestration() {
@@ -26,6 +26,7 @@ export function useLiveOrchestration() {
       setService(status); setRuns(history.runs); setConnection('connected');
       const target = status.activeRunId ?? history.runs[0]?.id;
       if (target) { const result = await getRunEvidence(target); if (mounted.current) {selectedRunId.current = result.run.id; setRun(result.run); setEvents(result.events);} }
+      else {selectedRunId.current = undefined; setRun(null); setEvents([]);}
     } catch (cause) { report(cause); if (mounted.current) setConnection('offline'); }
   }, [report]);
   useEffect(() => { mounted.current = true; void refresh(); return () => { mounted.current = false; }; }, [refresh]);
@@ -35,6 +36,7 @@ export function useLiveOrchestration() {
     if (!runId) return;
     const stream = new EventSource(`${orchestrationApi}/runs/${encodeURIComponent(runId)}/events`);
     function receive(event: MessageEvent) {
+      if (selectedRunId.current !== runId) return;
       try {
         const data = JSON.parse(event.data) as {run?: LiveRun; events?: LiveEvent[]; event?: LiveEvent};
         if (data.run) {
@@ -77,11 +79,21 @@ export function useLiveOrchestration() {
     catch (cause) { report(cause); }
     finally { if (mounted.current) setBusy(false); }
   }
+  async function clearSavedRuns() {
+    setBusy(true); setError(null);
+    try {
+      const result = await deleteSavedRuns();
+      selectedRunId.current = undefined; setRun(null); setRuns([]); setEvents([]);
+      setService(previous => previous ? {...previous, activeRunId: undefined} : previous);
+      return result;
+    } catch (cause) {report(cause);}
+    finally {if (mounted.current) setBusy(false);}
+  }
   async function selectRun(id: string) {
     selectedRunId.current = id;
     setError(null);
     try { const result = await getRunEvidence(id); if (selectedRunId.current !== id) return; setRun(result.run); setEvents(result.events); }
     catch (cause) { report(cause); }
   }
-  return {service, run, runs, events, connection, error, busy, refresh, start, cancel, selectRun, adoptRun, clearSelection};
+  return {service, run, runs, events, connection, error, busy, refresh, start, cancel, clearSavedRuns, selectRun, adoptRun, clearSelection};
 }

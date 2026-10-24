@@ -18,6 +18,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 }
 export const getServiceStatus = () => request<ServiceStatus>('/status');
 export const getRuns = () => request<{runs: LiveRun[]}>('/runs');
+export const deleteSavedRuns = () => request<{deleted: number}>('/runs', {method: 'DELETE', body: '{}'});
 export const getRun = (id: string) => request<{run: LiveRun}>(`/runs/${encodeURIComponent(id)}`);
 export const getRunEvidence = (id: string) => request<{run: LiveRun; events: LiveEvent[]}>(`/runs/${encodeURIComponent(id)}/evidence`);
 export const getCandidateDiff = (id: string) => request<CandidateDiff>(`/runs/${encodeURIComponent(id)}/diff`);

@@ -3,9 +3,10 @@ import { streamSSE } from 'hono/streaming';
 import { terminalStatuses } from '../../../../packages/contracts/src/live.js';
 import { getProviderStatus, readCandidateDiff } from '../adapters/index.js';
 import type { RunStore } from '../db/client.js';
+import type { MonitoringStore } from '../db/monitoring.js';
 import { readRepositoryCandidateDiff } from '../adapters/repository.js';
 
-export function runHandlers(store: RunStore) {
+export function runHandlers(store: RunStore, monitor?: MonitoringStore) {
   const missing = (c: Context) => c.json({ error: { code: 'NOT_FOUND', message: 'Run not found.' } }, 404);
   return {
     status: async (c: Context) => {
@@ -13,6 +14,12 @@ export function runHandlers(store: RunStore) {
       return c.json({ ...state, target: 'Harsh5840/arigato-php-demo', runner: 'github-actions', activeRunId: store.active()?.id, service: 'ProofPatch', ready: state.groqConfigured && state.githubConfigured });
     },
     list: (c: Context) => c.json({ runs: store.list() }),
+    clear: (c: Context) => {
+      const result = store.clearHistory();
+      if (result.blocked) return c.json({error: {code: 'RUN_ACTIVE', message: 'Wait for the active run to finish or cancel it before deleting saved run history.'}}, 409);
+      monitor?.clearRunLinks(result.deletedIds);
+      return c.json({deleted: result.deletedIds.length});
+    },
     create: async (c: Context) => {
       const body: unknown = await c.req.json().catch(() => null);
       if (!body || typeof body !== 'object' || Object.keys(body).length !== 1 || !('sourceMode' in body) || !['live', 'cached'].includes(String(body.sourceMode))) return c.json({ error: { code: 'INVALID_INPUT', message: 'Provide only sourceMode: live or cached. The repository and write scope are fixed by the server.' } }, 400);

@@ -1,7 +1,7 @@
 'use client';
 
 import {useEffect, useRef, useState} from 'react';
-import {AlertTriangle, ArrowRight, GitBranch, ListChecks, Network, RefreshCw, SearchCheck} from 'lucide-react';
+import {AlertTriangle, ArrowRight, GitBranch, ListChecks, Network, RefreshCw, SearchCheck, Trash2} from 'lucide-react';
 import {useLiveOrchestration} from '@/hooks/use-live-orchestration';
 import {useRepositoryMonitoring} from '@/hooks/use-repository-monitoring';
 import {isTerminal} from '@/types/live-orchestration';
@@ -32,13 +32,14 @@ function belongsTo(run: LiveRun, repository?: MonitoredRepository) {
 }
 
 export default function OperationsDashboard() {
-  const {service, run: selectedRun, runs: allRuns, events: storedEvents, connection, error, busy, refresh, cancel, selectRun, adoptRun, clearSelection} = useLiveOrchestration();
+  const {service, run: selectedRun, runs: allRuns, events: storedEvents, connection, error, busy, refresh, cancel, clearSavedRuns, selectRun, adoptRun, clearSelection} = useLiveOrchestration();
   const monitoring = useRepositoryMonitoring();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [focusedId, setFocusedId] = useState('');
   const [initialized, setInitialized] = useState(false);
   const [tab, setTab] = useState<DashboardTab>('services');
   const [notice, setNotice] = useState('');
+  const [historyNotice, setHistoryNotice] = useState('');
   const requestedRun = useRef<string | null>(null);
   const followedAutomaticRuns = useRef(new Set<string>());
 
@@ -166,6 +167,16 @@ export default function OperationsDashboard() {
     const url = URL.createObjectURL(new Blob([JSON.stringify({product: 'ProofPatch', exportedAt: new Date().toISOString(), run, events}, null, 2)], {type: 'application/json'}));
     const anchor = document.createElement('a'); anchor.href = url; anchor.download = `proofpatch-${run.id}.json`; anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
+  async function deleteHistory() {
+    if (!window.confirm('Delete all locally saved runs and their event history? This cannot be undone. Findings and GitHub draft PRs will remain.')) return;
+    setHistoryNotice('');
+    const result = await clearSavedRuns();
+    if (!result) return;
+    requestedRun.current = null;
+    followedAutomaticRuns.current.clear();
+    await monitoring.refresh();
+    setHistoryNotice(`${result.deleted} saved run${result.deleted === 1 ? '' : 's'} deleted. Existing GitHub draft PRs remain.`);
+  }
 
   return <div className="operations-dashboard" id="operations">
     <DashboardHeader service={service} connection={connection} busy={busy || !!monitoring.pending} run={run} activeRun={activeRun} onCancel={() => void cancel()} onFollow={() => void followActive()} onRefresh={() => {void refresh(); void monitoring.refresh();}} onExport={exportRun}/>
@@ -191,7 +202,8 @@ export default function OperationsDashboard() {
         <button className="ops-text-next" onClick={() => changeTab('results')}>Open checks, model usage, and draft PR<ArrowRight size={15}/></button>
       </div>}
 
-      {tab === 'results' && <div className="ops-results-view"><div className="ops-tab-intro"><div><span>04 / INSPECT THE PROOF</span><h2>Results and human review</h2><p>Observed checks, each model call, token use, code diff, and the actual draft PR.</p></div><strong>{run ? `Run ${run.id.slice(0, 8)}` : 'No run selected'}</strong></div>
+      {tab === 'results' && <div className="ops-results-view"><div className="ops-tab-intro"><div><span>04 / INSPECT THE PROOF</span><h2>Results and human review</h2><p>Observed checks, each model call, token use, code diff, and the actual draft PR.</p></div><div className="ops-results-actions"><strong>{run ? `Run ${run.id.slice(0, 8)}` : 'No run selected'}</strong><button className="ops-delete-runs" disabled={!allRuns.length || !!activeRun || busy} title={activeRun ? 'Wait for the active run to finish or cancel it first' : !allRuns.length ? 'No saved runs to delete' : 'Delete locally saved run history across all services'} onClick={() => void deleteHistory()}><Trash2 size={14}/>Delete saved runs</button></div></div>
+        {historyNotice && <div className="ops-history-notice" role="status">{historyNotice}</div>}
         <RunMetrics runs={runs} loaded={service !== null && monitoring.loaded && !!selectedRepositories.length}/>
         {run && <section className="ops-run-facts"><h2>Selected run</h2><p>{run.advisory?.titleEn ?? focusedFindings[0]?.summary ?? 'No advisory summary recorded.'}</p><dl><div><dt>Started</dt><dd>{new Date(run.createdAt).toLocaleString('en-GB',{timeZone:'Asia/Tokyo',dateStyle:'medium',timeStyle:'medium'})} JST</dd></div><div><dt>Last activity</dt><dd>{new Date(run.updatedAt).toLocaleString('en-GB',{timeZone:'Asia/Tokyo',dateStyle:'medium',timeStyle:'medium'})} JST</dd></div><div><dt>Checks passed</dt><dd>{run.checks.filter(check => check.status === 'passed').length} / {run.checks.length}</dd></div></dl></section>}
         {runs.length ? <RunAnalytics runs={runs} run={run} events={events} onSelect={id => void showRun(id)}/> : <div className="ops-tab-empty"><strong>No run results yet</strong><p>Scan a selected service. In Step by step mode, choose a finding to start the repair run; Complete pipeline mode starts supported repairs automatically.</p><button className="button primary" onClick={() => changeTab('services')}>Go to Services</button></div>}
