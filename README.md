@@ -15,9 +15,9 @@ live runs and their own PR/CI links are recorded under `output/live-runs/`. Read
 [implementation handoff](docs/IMPLEMENTATION-HANDOFF.md) for exact commits,
 checks, current limits and the next implementation slice.
 
-Judge target: [live draft PR #3](https://github.com/Harsh5840/arigato-php-demo/pull/3),
-[passing PHP verification](https://github.com/Harsh5840/arigato-php-demo/actions/runs/40120547241),
-and [preserved run evidence](output/live-runs/3ea42f72-8ed5-40f3-9a46-0579fbea3a68/run.json).
+Judge target: [dashboard-generated draft PR #4](https://github.com/Harsh5840/arigato-php-demo/pull/4),
+[passing PHP verification](https://github.com/Harsh5840/arigato-php-demo/actions/runs/40123778532),
+and [preserved run evidence](output/live-runs/bc7050bc-a41e-4f47-a903-fe00c22e3734/run.json).
 
 ## Run
 Requires Node 22.12+ and npm. From a fresh clone:

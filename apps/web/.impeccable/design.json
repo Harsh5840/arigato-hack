@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-24T18:34:01.0659348Z",
+  "generatedAt": "2026-10-24T19:13:32.9273820Z",
   "title": "Design System: ProofPatch",
   "extensions": {
     "colorMeta": {
@@ -643,6 +643,18 @@
       "live-mobile-role-name": {
         "displayName": "Live mobile full role name",
         "purpose": "Names all three live agents beside their responsibilities before the detailed graph."
+      },
+      "console-heading": {
+        "displayName": "Developer console title",
+        "purpose": "Current one-page heading; adapts to 20px on mobile."
+      },
+      "measured-metric": {
+        "displayName": "Observed metric",
+        "purpose": "Tabular stored-run, draft, timing and token measurements with explicit samples."
+      },
+      "console-flow-title": {
+        "displayName": "Compact console graph title",
+        "purpose": "Current graph agent names; separate from smaller infrastructure headings."
       }
     },
     "shadows": [
@@ -650,6 +662,11 @@
         "name": "dialog",
         "value": "0 24px 90px #0008",
         "purpose": "Separate the modal from the workspace; resting panels rely on tone and borders."
+      },
+      {
+        "name": "operations-popover",
+        "value": "0 12px 32px #11130f",
+        "purpose": "Native repository and Run options popovers above the flat console."
       }
     ],
     "motion": [
@@ -708,6 +725,18 @@
       {
         "name": "live-toolbar-wrap",
         "value": "1100px"
+      },
+      {
+        "name": "console-compact-desktop",
+        "value": "1150px"
+      },
+      {
+        "name": "console-stack",
+        "value": "960px"
+      },
+      {
+        "name": "console-mobile",
+        "value": "740px"
       }
     ]
   },
@@ -716,9 +745,9 @@
       "name": "Primary action",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Start the bounded actual advisory-to-PR workflow in Live service.",
-      "html": "<button class=\"ds-primary\"><svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"m6 3 14 9-14 9z\" fill=\"currentColor\"/></svg>Start advisory-to-PR</button>",
-      "css": ".ds-primary{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:1px solid transparent;border-radius:7px;padding:10px 15px;font:600 12px/1.3 var(--font-public,'Public Sans'),sans-serif;white-space:nowrap;cursor:pointer;transition:background .16s,color .16s;background:var(--blue,#c7ef79);color:#18220e}.ds-primary:hover{background:#d6f99d}.ds-primary:focus-visible{outline:2px solid var(--blue,#c7ef79);outline-offset:4px}.ds-primary:disabled{cursor:not-allowed;opacity:.5}@media(prefers-reduced-motion:reduce){.ds-primary{transition:none}}"
+      "description": "Sticky header action starts the actual bounded pipeline.",
+      "html": "<button class=\"ds-primary\"><svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"m6 3 14 9-14 9z\" fill=\"currentColor\"/></svg>Run live demo</button>",
+      "css": ".ds-primary{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:1px solid transparent;border-radius:7px;padding:10px 15px;font:600 11px/1.3 var(--font-public,'Public Sans'),sans-serif;white-space:nowrap;cursor:pointer;transition:background .16s,color .16s;background:var(--blue,#c7ef79);color:#18220e}.ds-primary:hover{background:#d6f99d}.ds-primary:focus-visible{outline:2px solid var(--blue,#c7ef79);outline-offset:4px}.ds-primary:disabled{cursor:not-allowed;opacity:.5}@media(prefers-reduced-motion:reduce){.ds-primary{transition:none}}"
     },
     {
       "name": "Outline action",
@@ -726,78 +755,78 @@
       "refersTo": "button-outline",
       "description": "Cancel an active live run; already in-flight external work may remain recorded.",
       "html": "<button class=\"ds-outline\"><svg width=\"13\" height=\"13\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><rect x=\"5\" y=\"5\" width=\"14\" height=\"14\" rx=\"1\"/></svg>Cancel run</button>",
-      "css": ".ds-outline{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:1px solid transparent;border-radius:7px;padding:10px 15px;font:600 12px/1.3 var(--font-public,'Public Sans'),sans-serif;white-space:nowrap;cursor:pointer;transition:background .16s,color .16s;border-color:#555d48;background:#252c1e;color:#d3efb0}.ds-outline:hover{background:#323e27;border-color:#879c6b}.ds-outline:focus-visible{outline:2px solid var(--blue,#c7ef79);outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-outline{transition:none}}"
-    },
-    {
-      "name": "Subtle action",
-      "kind": "button",
-      "description": "Export the selected stored live run and its recorded events.",
-      "html": "<button class=\"ds-subtle\">Export run</button>",
-      "css": ".ds-subtle{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:1px solid transparent;border-radius:7px;padding:10px 15px;font:600 12px/1.3 var(--font-public,'Public Sans'),sans-serif;white-space:nowrap;cursor:pointer;transition:background .16s,color .16s;background:#252a20;border-color:#3c4333;color:#d1d8c4}.ds-subtle:hover{background:#303a26}.ds-subtle:focus-visible{outline:2px solid var(--blue,#c7ef79);outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-subtle{transition:none}}"
+      "css": ".ds-outline{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:1px solid transparent;border-radius:7px;padding:10px 15px;font:600 11px/1.3 var(--font-public,'Public Sans'),sans-serif;white-space:nowrap;cursor:pointer;transition:background .16s,color .16s;border-color:#555d48;background:#252c1e;color:#d3efb0}.ds-outline:hover{background:#323e27;border-color:#879c6b}.ds-outline:focus-visible{outline:2px solid var(--blue,#c7ef79);outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-outline{transition:none}}"
     },
     {
       "name": "Advisory source chooser",
       "kind": "input",
       "refersTo": "live-source-select",
-      "description": "Native Live source choice; both choices retain actual model, check and PR execution.",
-      "html": "<label class=\"ds-source\">Advisory source<select aria-label=\"Advisory source\"><option>Fetch Japanese + vendor sources</option><option>Recorded advisory snapshot</option></select></label>",
+      "description": "Native source input inside Run options; recorded input still uses actual execution.",
+      "html": "<label class=\"ds-source\">Advisory intake<select aria-label=\"Advisory intake\"><option>Fetch official sources</option><option>Recorded source snapshot</option></select></label>",
       "css": ".ds-source{display:flex;flex-direction:column;gap:8px;max-width:260px;font:10px var(--font-public,'Public Sans'),sans-serif;color:#c5cdbb}.ds-source select{width:100%;min-width:0;font:11px var(--font-public,'Public Sans'),sans-serif;padding:10px 8px;border:1px solid #505c43;border-radius:6px;background:#252c1e;color:#d6e5c6}.ds-source select:hover{border-color:#69795b}.ds-source select:focus-visible{outline:2px solid var(--blue,#c7ef79);outline-offset:4px}.ds-source select:disabled{cursor:not-allowed;opacity:.5}"
     },
     {
-      "name": "Workspace navigation",
-      "kind": "nav",
-      "description": "Five destinations; mobile uses an icon above every label in an equal-column grid.",
-      "html": "<nav class=\"ds-nav\" aria-label=\"Workspace\"><button aria-current=\"page\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"3\" y=\"3\" width=\"8\" height=\"8\" rx=\"2\"/><path d=\"M7 11v4a2 2 0 0 0 2 2h4\"/><rect x=\"13\" y=\"13\" width=\"8\" height=\"8\" rx=\"2\"/></svg><span>Agents</span></button><button><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"9\" rx=\"1\"/><rect x=\"14\" y=\"3\" width=\"7\" height=\"5\" rx=\"1\"/><rect x=\"14\" y=\"12\" width=\"7\" height=\"9\" rx=\"1\"/><rect x=\"3\" y=\"16\" width=\"7\" height=\"5\" rx=\"1\"/></svg><span>Overview</span></button><button><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6\"/><circle cx=\"11\" cy=\"13\" r=\"2\"/><path d=\"m13 15 2 2\"/></svg><span>Findings</span></button><button><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><ellipse cx=\"12\" cy=\"5\" rx=\"9\" ry=\"3\"/><path d=\"M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5M3 12c0 1.66 4 3 9 3s9-1.34 9-3\"/></svg><span>Evidence</span></button><button><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"6\" cy=\"6\" r=\"3\"/><circle cx=\"18\" cy=\"18\" r=\"3\"/><path d=\"M9 6h8a4 4 0 0 1 0 8H7a4 4 0 0 0 0 8h8\"/></svg><span>Roadmap</span></button></nav>",
-      "css": ".ds-nav{display:flex;flex-direction:column;gap:5px;max-width:196px;padding:12px;background:#11130f}.ds-nav button{display:flex;align-items:center;gap:11px;border:0;background:transparent;padding:12px;border-radius:8px;text-align:left;font:13px var(--font-public,'Public Sans'),sans-serif;color:#a9aca3;cursor:pointer;transition:background .16s,color .16s}.ds-nav button:hover{color:var(--ink,#f1f1eb);background:#22261e}.ds-nav button[aria-current=page]{background:#2c3423;color:#d2f39d}.ds-nav button:focus-visible{outline:2px solid var(--blue,#c7ef79);outline-offset:4px}.ds-nav svg{flex-shrink:0}@media(max-width:680px){.ds-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));max-width:none;gap:2px}.ds-nav button{min-width:0;flex-direction:column;justify-content:center;gap:5px;padding:10px 1px;border-radius:6px 6px 0 0;font-size:9px}.ds-nav svg{width:15px;height:15px}}@media(prefers-reduced-motion:reduce){.ds-nav button{transition:none}}"
-    },
-    {
-      "name": "Critical severity",
-      "kind": "chip",
-      "refersTo": "severity-critical",
-      "description": "Written severity with clay tint; a status is separate.",
-      "html": "<span class=\"ds-critical\">Critical</span>",
-      "css": ".ds-critical{display:inline-flex;align-items:center;gap:5px;border:1px solid #684236;border-radius:4px;padding:3px 6px;background:#39231f;color:#ffb2a8;font:500 10px/1.4 var(--font-public,'Public Sans'),sans-serif;white-space:nowrap}"
-    },
-    {
-      "name": "Evidence preview",
-      "kind": "card",
-      "refersTo": "panel",
-      "description": "Retained Overview synthetic evidence card; separate from Live observed checks and actual CI.",
-      "html": "<section class=\"ds-evidence\"><h2>Evidence preview</h2><h3>Cross-tenant invoice access</h3><span class=\"ds-fixture\">Synthetic demo fixture</span><dl><div><dt>Before</dt><dd>200 · unauthorized access</dd></div><div><dt>After</dt><dd>404 · access denied</dd></div></dl><p>Regression failed. Draft preparation is blocked until all required checks pass.</p></section>",
-      "css": ".ds-evidence{max-width:355px;padding:20px;border:1px solid var(--line,#32352f);background:#1a1d17;border-radius:12px;color:var(--ink,#f1f1eb);font-family:var(--font-public,'Public Sans'),sans-serif}.ds-evidence h2{margin:0 0 16px;font-size:15px;font-weight:600}.ds-evidence h3{margin:0 0 9px;font-size:17px;line-height:1.35;font-weight:600;letter-spacing:-.02em}.ds-fixture{font-size:9px;padding:3px 6px;border:1px solid #3c4730;border-radius:4px;color:#b9c5aa;background:#252d1e}.ds-evidence dl{margin:14px 0 2px;background:#151a10;border:1px solid #354029;border-radius:6px;font-size:10px;overflow:hidden}.ds-evidence dl>div{display:flex}.ds-evidence dl>div+div{border-top:1px solid #354029}.ds-evidence dt{padding:9px 10px;width:58px;color:#98a688;flex-shrink:0;background:#1d2516}.ds-evidence dd{margin:0;padding:9px 10px;color:#d5dec9;overflow-wrap:anywhere}.ds-evidence p{margin:9px 0 0;font-size:10px;line-height:1.6;color:#abb69b}"
-    },
-    {
-      "name": "Five-condition evidence gate",
+      "name": "Repository connection popover",
       "kind": "custom",
-      "description": "Retained Overview synthetic 4/5 gauge specimen; Live uses the recorded check list and publication verdict.",
-      "html": "<section class=\"ds-gate\" aria-label=\"4 of 5 evidence gates satisfied in the synthetic demo\"><div><h2>Evidence gate</h2><p>Benign regression blocks the draft.</p><strong>4 / 5 satisfied</strong></div><svg width=\"95\" height=\"54\" viewBox=\"0 0 95 70\" role=\"img\" aria-label=\"Four active notches, one inactive\"><g fill=\"var(--chart-1,#c7ef79)\"><path d=\"M14 33 22 19 29 23 21 37z\"/><path d=\"M29 10h19v8H29z\"/><path d=\"m54 18 10 14-7 5-10-14z\"/><path d=\"m8 43 8-3 7 17-8 3z\"/></g><path fill=\"var(--border,#34392e)\" d=\"m58 43 8-3 7 17-8 3z\"/></svg></section>",
-      "css": ".ds-gate{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:20px;max-width:380px;border:1px solid var(--line,#32352f);border-radius:12px;background:#1a1d17;color:var(--ink,#f1f1eb);font-family:var(--font-public,'Public Sans'),sans-serif}.ds-gate h2{margin:0;font-size:13px;font-weight:600}.ds-gate p{font-size:10px;line-height:1.6;margin:6px 0;color:#aab59a}.ds-gate strong{font-size:11px;color:#c7dfac;font-variant-numeric:tabular-nums}.ds-gate svg{flex-shrink:0}"
+      "refersTo": "repository-popover",
+      "description": "Open-state specimen of the native connection popover; GitHub App onboarding is explicitly planned.",
+      "html": "<section class=\"ds-connection\"><h2>Repository connection</h2><p class=\"ds-repo\">Harsh5840/arigato-php-demo</p><p>This pilot is scoped to the owned SakuraShop PHP repository.</p><dl><div><dt>Access</dt><dd>Candidate branch, hosted checks, draft PR</dd></div><div><dt>Authority</dt><dd>No automatic merge or deployment</dd></div></dl><p>App installation and other repository connections are planned.</p></section>",
+      "css": ".ds-connection{width:300px;max-width:calc(100vw - 76px);padding:20px;border:1px solid #505c43;border-radius:10px;background:#1a1d17;color:#f1f1eb;box-shadow:0 12px 32px #11130f;font-family:var(--font-public,'Public Sans'),sans-serif}.ds-connection h2{font-size:16px;margin:0 0 13px}.ds-connection p{font-size:11px;line-height:1.7;color:#bac7ac;margin:10px 0 0}.ds-connection .ds-repo{font-size:12px;color:#d6e5c6;overflow-wrap:anywhere}.ds-connection dl{margin:17px 0;display:grid;gap:12px}.ds-connection dl>div{display:grid;grid-template-columns:62px 1fr;gap:10px}.ds-connection dt{font-size:11px;color:#bac7ac}.ds-connection dd{font-size:11px;line-height:1.6;margin:0}"
+    },
+    {
+      "name": "Grouped observed checks",
+      "kind": "card",
+      "refersTo": "console-panel",
+      "description": "Native disclosure groups actual check evidence; this specimen uses the preserved 15 business assertions.",
+      "html": "<section class=\"ds-checks\"><h2>Developer workbench</h2><details><summary><strong>Business assertions</strong><span>15 / 15 passed</span></summary><p>Observed PHP business checks are recorded by hosted verification. Missing evidence never counts as a pass.</p></details></section>",
+      "css": ".ds-checks{max-width:540px;border:1px solid var(--line,#32352f);border-radius:12px;background:#1a1d17;color:#d6e5c6;font-family:var(--font-public,'Public Sans'),sans-serif}.ds-checks h2{font-size:15px;margin:0;padding:17px 20px;border-bottom:1px solid var(--line,#32352f)}.ds-checks details{margin:0 20px;border-bottom:1px solid var(--line,#32352f)}.ds-checks summary{display:flex;align-items:center;gap:9px;cursor:pointer;padding:15px 0;font-size:12px}.ds-checks summary span{margin-left:auto;font-size:10px;color:#d3efb0}.ds-checks summary:hover{color:#f1f1eb}.ds-checks summary:focus-visible{outline:2px solid #c7ef79;outline-offset:4px}.ds-checks p{font-size:11px;line-height:1.7;color:#bac7ac;margin:0 0 15px}"
+    },
+    {
+      "name": "Actual check coverage",
+      "kind": "custom",
+      "description": "Static written-count specimen. Production uses the actual installed client-only Bklit Gauge with one notch per recorded check; the gauge hides on mobile.",
+      "html": "<div class=\"ds-coverage\"><svg width=\"58\" height=\"39\" viewBox=\"0 0 58 39\" aria-hidden=\"true\"><path d=\"M5 34a24 24 0 0 1 48 0\" fill=\"none\" stroke=\"#c7ef79\" stroke-width=\"7\" stroke-dasharray=\"1 1\"/></svg><span>35 / 35 checks passed</span></div>",
+      "css": ".ds-coverage{display:flex;align-items:center;gap:8px;font:10px var(--font-public,'Public Sans'),sans-serif;color:#bac7ac}.ds-coverage svg{overflow:visible}@media(max-width:740px){.ds-coverage svg{display:none}}"
     },
     {
       "name": "Live agent node",
       "kind": "custom",
       "refersTo": "live-flow-agent",
-      "description": "Static specimen of the DevSec live graph node; state in the app is derived from stored events and model calls.",
+      "description": "Current compact orchestration card; numbered routes and the full legend explain handoffs.",
       "html": "<div class=\"ds-agent\" tabindex=\"0\"><div class=\"ds-agent-heading\"><svg width=\"17\" height=\"17\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11\"/><path d=\"m9 12 2 2 4-4\"/></svg><span>Agent</span><span>Recorded</span></div><strong>Development Security Agent</strong><p>Baseline, real checks and senior review</p><b class=\"ds-port ds-port-left\"></b><b class=\"ds-port ds-port-right\"></b></div>",
-      "css": ".ds-agent{width:214px;min-height:94px;padding:17px;background:#22291d;border:1px solid #536144;border-radius:10px;position:relative;color:var(--ink,#f1f1eb);font-family:var(--font-public,'Public Sans'),sans-serif}.ds-agent-heading{display:flex;align-items:center;gap:7px;color:#d3efb0;margin-bottom:12px}.ds-agent-heading span{font-size:10px}.ds-agent-heading span:last-child{margin-left:auto;color:#c5cdbb}.ds-agent>strong{display:block;font-size:16px;letter-spacing:-.025em;line-height:1.3;font-weight:600}.ds-agent>p{font-size:10px;color:#bac7ac;margin:7px 0 0;line-height:1.5}.ds-port{position:absolute;width:6px;height:6px;border:1px solid #181c16;background:#9daf8d;border-radius:50%;top:50%}.ds-port-left{left:-4px}.ds-port-right{right:-4px}.ds-agent:focus-visible{outline:2px solid #c7ef79;outline-offset:4px}"
+      "css": ".ds-agent{width:214px;min-height:94px;padding:17px;background:#22291d;border:1px solid #536144;border-radius:10px;position:relative;color:var(--ink,#f1f1eb);font-family:var(--font-public,'Public Sans'),sans-serif}.ds-agent-heading{display:flex;align-items:center;gap:7px;color:#d3efb0;margin-bottom:12px}.ds-agent-heading span{font-size:10px}.ds-agent-heading span:last-child{margin-left:auto;color:#c5cdbb}.ds-agent>strong{display:block;font-size:17px;letter-spacing:-.025em;line-height:1.3;font-weight:600}.ds-agent>p{font-size:12px;color:#bac7ac;margin:7px 0 0;line-height:1.4}.ds-port{position:absolute;width:6px;height:6px;border:1px solid #181c16;background:#9daf8d;border-radius:50%;top:50%}.ds-port-left{left:-4px}.ds-port-right{right:-4px}.ds-agent:focus-visible{outline:2px solid #c7ef79;outline-offset:4px}"
     },
     {
       "name": "Live mobile role orientation",
       "kind": "custom",
-      "refersTo": "live-mobile-orientation",
-      "description": "Mobile semantic names and live responsibilities before service controls and the longer graph; hidden above 680px.",
-      "html": "<section class=\"ds-mobile-agent-summary\" aria-label=\"Three agent roles and handoff\"><dl><div><dt>Supply Chain Agent</dt><dd>Match Japanese alerts to inventory</dd></div><div><dt>Remediation Agent</dt><dd>Prepare a scoped repair</dd></div><div><dt>Development Security Agent</dt><dd>Baseline, checks and senior review</dd></div></dl><p>Supply Chain → DevSec baseline → Remediation → DevSec checks → human review</p></section>",
-      "css": ".ds-mobile-agent-summary{display:none;font-family:var(--font-public,'Public Sans'),sans-serif}@media(max-width:680px){.ds-mobile-agent-summary{display:block;margin:0 0 20px;padding-bottom:16px;border-bottom:1px solid var(--line,#32352f)}.ds-mobile-agent-summary dl{display:grid;gap:9px;margin:0}.ds-mobile-agent-summary dl>div{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:13px}.ds-mobile-agent-summary dt{width:auto;padding:0;background:transparent;font-size:11px;font-weight:600;line-height:1.5;color:var(--ink,#f1f1eb)}.ds-mobile-agent-summary dd{padding:0;font-size:10px;line-height:1.6;color:#bac7ac;margin:0}.ds-mobile-agent-summary>p{font-size:10px;line-height:1.8;color:#d3efb0;margin:13px 0 0;max-width:48ch}}"
+      "refersTo": "console-mobile-roles",
+      "description": "Mobile role summary remains visible before the initially collapsed full interactive graph.",
+      "html": "<section class=\"ds-mobile-roles\"><dl><div><dt>Supply Chain</dt><dd>Advisory → inventory</dd></div><div><dt>Remediation</dt><dd>Scoped candidate repair</dd></div><div><dt>Development Security</dt><dd>Baseline, checks, senior review</dd></div></dl><p>Supply Chain → DevSec baseline → Remediation → DevSec checks → human review</p><details><summary>Interactive agent flow</summary><p>The full vertical graph and six-entry legend open here in the application.</p></details></section>",
+      "css": ".ds-mobile-roles{display:none;font-family:var(--font-public,'Public Sans'),sans-serif}@media(max-width:740px){.ds-mobile-roles{display:block;padding:17px 15px;border-bottom:1px solid var(--line,#32352f);background:#1a1d17}.ds-mobile-roles dl{display:grid;gap:9px;margin:0}.ds-mobile-roles dl>div{display:grid;grid-template-columns:1fr 1.15fr;gap:12px}.ds-mobile-roles dt{font-size:11px;font-weight:500;line-height:1.6;color:#d6e5c6}.ds-mobile-roles dd{margin:0;font-size:10px;line-height:1.7;color:#bac7ac}.ds-mobile-roles>p{color:#d3efb0;font-size:10px;line-height:1.8;margin:12px 0 0;max-width:48ch}.ds-mobile-roles details{margin-top:16px}.ds-mobile-roles summary{cursor:pointer;padding:13px 0;color:#d6e5c6;font-size:11px}.ds-mobile-roles summary:hover{color:#f1f1eb}.ds-mobile-roles summary:focus-visible{outline:2px solid #c7ef79;outline-offset:4px}.ds-mobile-roles details p{font-size:11px;line-height:1.7;color:#bac7ac}}"
+    },
+    {
+      "name": "Actual candidate diff",
+      "kind": "custom",
+      "description": "File-disclosure specimen for the three-file candidate; the application retrieves immutable GitHub patch text and has error/retry and comparison-link states.",
+      "html": "<section class=\"ds-diff\"><p>3 changed files · immutable base → candidate</p><details><summary><strong>composer.json</strong><span>Inspect patch</span></summary><p>Actual GitHub patch text is loaded by the candidate-diff component.</p></details><details><summary><strong>Dockerfile</strong><span>Inspect patch</span></summary></details><details><summary><strong>config/security.ini</strong><span>Inspect patch</span></summary></details></section>",
+      "css": ".ds-diff{max-width:540px;font-family:var(--font-public,'Public Sans'),sans-serif;color:#d6e5c6}.ds-diff>p{font-size:10px;color:#bac7ac;margin:0;padding:15px 0}.ds-diff details{border-top:1px solid var(--line,#32352f)}.ds-diff summary{display:flex;align-items:center;gap:8px;cursor:pointer;padding:13px 0;font-size:11px}.ds-diff summary strong{font-weight:500;flex:1}.ds-diff summary span{color:#9daf8d;font-size:10px}.ds-diff summary:hover{color:#f1f1eb}.ds-diff summary:focus-visible{outline:2px solid #c7ef79;outline-offset:4px}.ds-diff details p{background:#11130f;color:#c5cdbb;font:11px/1.8 Consolas,monospace;padding:13px;border-radius:6px;margin:0 0 16px}"
+    },
+    {
+      "name": "Observed outcome chart",
+      "kind": "custom",
+      "description": "Capture-time specimen after the queued/cancel experiment: four stored runs, three completed and one cancelled; these are workflow observations of one PHP case.",
+      "html": "<section class=\"ds-outcomes\"><h3>Recorded outcomes<span>n = 4</span></h3><div role=\"img\" aria-label=\"Completed: 3; cancelled: 1\" class=\"ds-outcome-bar\"><span></span><span></span></div><dl><div><dt>Completed</dt><dd>3</dd></div><div><dt>Cancelled</dt><dd>1</dd></div></dl><p>Stored runs of this PHP case. These are workflow observations, not unique vulnerabilities.</p></section>",
+      "css": ".ds-outcomes{max-width:330px;font-family:var(--font-public,'Public Sans'),sans-serif;color:#d6e5c6}.ds-outcomes h3{display:flex;justify-content:space-between;gap:12px;font-size:12px;margin:0 0 20px}.ds-outcomes h3 span{font-size:10px;font-weight:400;color:#9daf8d}.ds-outcome-bar{display:flex;gap:3px;height:10px;overflow:hidden;border-radius:3px;margin-bottom:19px;background:#32352f}.ds-outcome-bar>span:first-child{flex:3;background:#c7ef79}.ds-outcome-bar>span:last-child{flex:1;background:#a0a29c}.ds-outcomes dl{display:grid;gap:10px;margin:0}.ds-outcomes dl>div{display:flex;justify-content:space-between;gap:15px}.ds-outcomes dt{font-size:11px;color:#bac7ac}.ds-outcomes dd{font-size:11px;margin:0;font-variant-numeric:tabular-nums}.ds-outcomes p{font-size:10px;color:#9daf8d;line-height:1.7;margin:16px 0 0}"
     }
   ],
   "narrative": {
     "northStar": "Verification Interlock",
-    "overview": "A patch moves only when its proof aligns. The user-selected dark engineering workspace gives the evidence workflow the character of a precise instrument: charcoal surfaces, warm white type, restrained lime and an isometric mechanism whose position carries meaning.\n\nThe workspace is compact and operational. Selected findings, before/after evidence and explicit verification states carry the hierarchy. Public Sans keeps interface copy direct; thin borders and small tonal shifts organize dense information. The machine provides the signature silhouette and makes the gate tangible.",
+    "overview": "A patch moves only when its proof aligns. The user-selected dark engineering workspace gives the evidence workflow the character of a precise instrument: charcoal surfaces, warm white type, restrained lime and precise diagram geometry.\n\nThe current product is one compact developer console. Live orchestration, adjacent events, grouped verification, the actual candidate diff and review handoff share one operational surface. Public Sans, thin borders and small tonal shifts retain the established identity. Measured run counts and proportional charts describe stored execution; they never imply a vulnerability score.",
     "keyCharacteristics": [
       "Charcoal surfaces with a muted olive cast and warm white text.",
       "Restrained lime for primary action, selection and satisfied evidence gates.",
       "Compact evidence surfaces with explicit status and human review authority.",
-      "Functional isometric geometry tied to the selected finding's state."
+      "Functional agent geometry and measured bars tied to recorded run state."
     ],
     "rules": [
       {
@@ -828,7 +857,9 @@
       "Do distinguish Live service results from the fictional inventory and test outcomes in Simulation and Overview.",
       "Do retain owner follow-up after live draft publication; Simulation follow-up cases remain held even when all five represented checks pass.",
       "Do preserve the compact live mobile role summary, six directional legend entries and return-lane fit bounds.",
-      "Do expose actual model IDs, observed checks and the CI/PR identity without implying merge approval."
+      "Do expose actual model IDs, observed checks and the CI/PR identity without implying merge approval.",
+      "Do compose the current product through the operations components on one route; keep legacy prototype surfaces off-route.",
+      "Do label observed chart samples and timing/token sources; count unique runs and draft URLs rather than implying distinct vulnerabilities."
     ],
     "donts": [
       "Don't describe simulated evidence, placeholder identifiers or local draft previews as live execution or a sent pull request.",

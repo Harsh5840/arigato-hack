@@ -1,0 +1,13 @@
+# Developer console documentation handoff
+
+The built product is one `OperationsDashboard` route. `workspace.tsx` is a compatibility export; sidebar, Simulation, Overview, Findings, Evidence and Roadmap sources are historical and off-route. DESIGN.md and PRODUCT.md now identify the current operations components and retain older design descriptions with an explicit historical boundary. The five-block contract in `src/app/layout.tsx` and incumbent charcoal/Public Sans/lime identity remain authoritative.
+
+The documentation records sticky Run/Cancel/Follow controls, native repository/Run options popovers, the fixed owned PHP target, and planned selected-repository GitHub App onboarding. It covers the numbered React Flow graph and event rail, actual model state, mobile role summary before the expandable full graph, grouped checks, actual-count Bklit Gauge, immutable GitHub candidate diff, bilingual review and open owner work.
+
+Metrics are observations of deduplicated stored runs, unique draft URLs, valid completed durations and API-reported usage. Outcome charts disclose their sample; phase charts use recorded transition intervals and repeat visits; token charts use role/model buckets. Missing data does not become a zero result or inferred phase. These repeated PHP-case runs are not distinct vulnerabilities, a security score or customer evidence.
+
+The actual dashboard button created [draft PR #4](https://github.com/Harsh5840/arigato-php-demo/pull/4) in run `bc7050bc-a41e-4f47-a903-fe00c22e3734`: 35 observed passes, 15 actual PHP assertions and 8,080 reported tokens. [IMPLEMENTATION-HANDOFF.md](../../../../../docs/IMPLEMENTATION-HANDOFF.md) owns the exact CI and evidence identities. No merge or deployment occurred.
+
+The final [VERDICT.md](VERDICT.md) records **ship**, scoped only to the resolved queued-event copy fix. Its eight captures are `desktop.png`, `desktop-live-start.png`, `desktop-diff.png`, `desktop-analytics.png`, `desktop-connection.png`, `mobile.png`, `mobile-flow.png` and `mobile-workbench.png`. The final desktop first viewport shows four stored records after a real queued/cancel experiment; the other captures were taken with three completed runs. Their different counts reflect capture time, not fixed product claims. The queued capture now says “Run queued” and explains that the worker has not begun and cancellation is available.
+
+The sidecar is refreshed with current console specimens, breakpoints and popover depth. Existing colors are reused; no identity/configuration repair is implied. This documentation pass changed only its four owned files, ran no detector or review, and does not widen the scoped verdict into whole-surface or production certification.

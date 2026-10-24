@@ -11,20 +11,20 @@ The new dashboard replaces the routed synthetic prototype views. Its sticky run 
 - [Hosted verification](https://github.com/Harsh5840/arigato-php-demo/actions/runs/40123778532): passed; 35 recorded checks including 15 actual PHP business assertions.
 - Three real Groq calls reported 8,080 tokens. End-to-end elapsed time was 64.543 seconds for this run; runner times vary.
 - [Preserved run and raw outputs](../output/live-runs/bc7050bc-a41e-4f47-a903-fe00c22e3734/run.json).
-- Dashboard metrics now observe three stored runs, three unique draft URLs and 24,179 reported tokens. These are repeated workflow experiments for this PHP case, not three distinct vulnerabilities.
+- After the completed button demo, metrics observed three completed runs, three unique draft URLs and 24,179 reported tokens. A separate actual queued-cancellation test subsequently added one cancelled record with zero model calls, candidate writes or PRs ([record](../output/live-runs/9fb9413a-b952-4c64-a85b-48af437bc9fc/run.json)). These are repeated workflow experiments for this PHP case, not distinct vulnerabilities.
 - 31 backend tests and 15 frontend tests pass; the production build passes. New tests cover immutable comparison scope and analytics with missing data, retries and duplicate records.
 
 Company repository onboarding would use a selected-repository GitHub App. That registration and multi-tenant backend are planned; the current connection is the owned demo target. [Onboarding and judging plan](REPOSITORY-ONBOARDING.md).
 
-## Inspect the result
+## Earlier hardened live record
 
 - [Product source](https://github.com/Harsh5840/arigato-hack): Next.js frontend, Hono API, separate worker, SQLite records, shared contracts, tests, PRD and pitch artifacts.
 - [Owned SakuraShop fixture](https://github.com/Harsh5840/arigato-php-demo): fictional Japanese merchant. Main deliberately declares affected PHP 8.3.35; do not deploy it.
-- [Final live draft PR #3](https://github.com/Harsh5840/arigato-php-demo/pull/3): automatically created after live Japanese/vendor intake, three actual Groq role calls, frozen hosted checks and a separate senior-review context.
+- [Earlier hardened draft PR #3](https://github.com/Harsh5840/arigato-php-demo/pull/3): automatically created after live Japanese/vendor intake, three actual Groq role calls, frozen hosted checks and a separate senior-review context.
 - [Exact pre-publication verification](https://github.com/Harsh5840/arigato-php-demo/actions/runs/40120547241): passed. Observed PHP 8.3.36, upload progress disabled and serializer `php`; all 15 business regressions passed.
 - [Preserved live evidence](../output/live-runs/3ea42f72-8ed5-40f3-9a46-0579fbea3a68/run.json): actual model IDs/usage, sources/digests, checks, events, CI and PR identity. Raw outputs are retained beside it.
 
-| Identity | Final live run |
+| Identity | Earlier live run |
 |---|---|
 | Run | `3ea42f72-8ed5-40f3-9a46-0579fbea3a68` |
 | Baseline | `07ab564e46c0775b42b28a981101c9c510db3cc3` |

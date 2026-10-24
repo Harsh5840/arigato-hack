@@ -1,6 +1,6 @@
 ---
 name: ProofPatch
-description: A dark engineering workspace where evidence controls patch progression.
+description: One dark developer console for live orchestration, measured runs and reviewed repairs.
 colors:
   primary: "#c7ef79"
   primary-hover: "#d6f99d"
@@ -117,6 +117,23 @@ typography:
     fontSize: "11px"
     fontWeight: 600
     lineHeight: 1.5
+  console-heading:
+    fontFamily: "Public Sans, sans-serif"
+    fontSize: "22px"
+    lineHeight: 1.3
+    letterSpacing: "-0.025em"
+  measured-metric:
+    fontFamily: "Public Sans, sans-serif"
+    fontSize: "27px"
+    fontWeight: 500
+    lineHeight: 1.25
+    letterSpacing: "-0.025em"
+  console-flow-title:
+    fontFamily: "Public Sans, sans-serif"
+    fontSize: "17px"
+    fontWeight: 600
+    lineHeight: 1.3
+    letterSpacing: "-0.025em"
 rounded:
   chip: "4px"
   control: "6px"
@@ -140,6 +157,8 @@ spacing:
   mobile-summary-row-y: "9px"
   live-mobile-role-gap: "13px"
   live-mobile-summary-after: "20px"
+  console-gutter: "28px"
+  console-section-gap: "27px"
 components:
   button-primary:
     backgroundColor: "{colors.primary}"
@@ -215,6 +234,24 @@ components:
   live-mobile-orientation:
     textColor: "{colors.ink}"
     padding: "0 0 16px"
+  repository-control:
+    backgroundColor: "{colors.card}"
+    textColor: "{colors.flow-control-ink}"
+    rounded: "{rounded.control}"
+    padding: "8px 10px"
+  repository-popover:
+    backgroundColor: "{colors.panel}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.flow-node}"
+    padding: "20px"
+    width: "340px"
+  console-panel:
+    backgroundColor: "{colors.panel}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.panel}"
+  console-mobile-roles:
+    textColor: "{colors.flow-control-ink}"
+    padding: "17px 15px"
 ---
 
 # Design System: ProofPatch
@@ -223,20 +260,20 @@ components:
 
 **Creative North Star: "Verification Interlock"**
 
-A patch moves only when its proof aligns. The user-selected dark engineering workspace gives the evidence workflow the character of a precise instrument: charcoal surfaces, warm white type, restrained lime and an isometric mechanism whose position carries meaning.
+A patch moves only when its proof aligns. The user-selected dark engineering workspace gives the evidence workflow the character of a precise instrument: charcoal surfaces, warm white type, restrained lime and precise diagram geometry.
 
-The workspace is compact and operational. Selected findings, before/after evidence and explicit verification states carry the hierarchy. Public Sans keeps interface copy direct; thin borders and small tonal shifts organize dense information. The machine provides the signature silhouette and makes the gate tangible.
+The current product is one compact developer console. Live orchestration, adjacent events, grouped verification, the actual candidate diff and review handoff share one operational surface. Public Sans, thin borders and small tonal shifts retain the established identity. Measured run counts and proportional charts describe stored execution; they never imply a vulnerability score.
 
 **Key Characteristics:**
 
 - Charcoal surfaces with a muted olive cast and warm white text.
 - Restrained lime for primary action, selection and satisfied evidence gates.
 - Compact evidence surfaces with explicit status and human review authority.
-- Functional isometric geometry tied to the selected finding's state.
+- Functional agent geometry and measured bars tied to recorded run state.
 
 This is the built frontend in `src/styles/workspace.css`, imported after the general stylesheet by `src/app/layout.tsx`. Its tokens override the starter dark theme. Implementation uses Next.js (16.4.3), React (19.3.1), Tailwind (4), locally loaded Public Sans, the installed Bklit gauge source and generated Anatomy geometry. `PRODUCT.md` and the layout direction contract constrain this document; the earlier root `design/DESIGN-SPEC.md` describes a rejected concept and is not visual authority.
 
-Agents is the default view, and its **Live service** mode reads actual service state through a real `@xyflow/react` orchestration canvas. The separate **Simulation** mode retains the seeded architecture demonstration; Overview retains the isometric interlock and original synthetic evidence workspace. `src/styles/orchestration.css` and then `src/styles/live-orchestration.css` follow the workspace stylesheet. The three product roles and their handoffs are governed by `../../docs/THREE-AGENT-ARCHITECTURE.md` and the bounded implementation described in `../../docs/IMPLEMENTATION-HANDOFF.md`. The five-block direction contract in `src/app/layout.tsx` remains visual authority, including mobile role orientation before the detailed graph.
+`src/app/page.tsx` now routes only `OperationsDashboard`; `workspace.tsx` is a thin compatibility export. `operations.css` is imported last after the incumbent workspace and orchestration styles. There is no routed sidebar, Agents/Simulation switch, Overview, Findings, Evidence or Roadmap page. Their source and Anatomy assets remain historical, off-route material. The layout contract now commits the sticky repository/execution header, four measured metrics, three-agent flow with adjacent events, actual evidence and bilingual human handoff. This current-console contract takes precedence over the historical surface descriptions retained below.
 
 ## Colors
 
@@ -274,6 +311,8 @@ The Live extension normalizes its status, controls, source rows and evidence sur
 
 **The State Has Words Rule.** Color reinforces a written verification state. A lime cartridge alone never asserts that a patch is verified.
 
+The console reuses the saved palette without adding colors: lime for completed runs and reported token bars, sage for phase durations, amber for held outcomes and owner tasks, coral for failed outcomes, and grey for cancelled outcomes. Each chart pairs color with a label and measured count. The repository control and popover reuse the card/panel roles; actual diff additions and deletions reuse outline and critical roles.
+
 ## Typography
 
 **Display and Body Font:** Public Sans, loaded locally from `src/assets/fonts/PublicSans-Variable.ttf` through `next/font/local`, with sans-serif fallback.
@@ -283,6 +322,8 @@ The Live extension normalizes its status, controls, source rows and evidence sur
 The type is close-set and functional. Large case titles contrast with small, regular-weight metadata; metrics use tabular numerals. Font synthesis is disabled.
 
 ### Hierarchy
+
+- **Current console:** `console-heading` is the desktop title, adapting to (20px) below (740px). `measured-metric` uses tabular numerals and adapts to (25px). Panel headings use (15px), compact labels (10–11px), actual diff text (11px) and the mobile diff (10px). Compact flow agent titles use `console-flow-title`; system titles are (14px), with agent descriptions (12px) and system descriptions (11px). The following earlier hierarchy remains specific to historical surfaces.
 
 - **Headline:** page heading; desktop role is in frontmatter, adapting to (26px) on mobile.
 - **Case title:** selected finding; (35px) above the large-screen breakpoint, (26px) at the intermediate width, (31px) in the stacked tablet layout and the frontmatter size on mobile.
@@ -297,6 +338,16 @@ The type is close-set and functional. Large case titles contrast with small, reg
 - **Mobile role names and handoff:** `live-mobile-role-name` names the three live roles beside compact responsibility text; `mobile-role-name` belongs to the retained Simulation summary. The written handoff uses `mobile-handoff` rhythm and existing pale lime.
 
 ## Layout
+
+### Current single console
+
+The sticky header and content share a maximum width (1540px), desktop gutters (28px) and mobile gutters (18px). There is no left navigation. Header controls include the repository popover, written service status, Run options and Run/Cancel/Follow active run. Four measured metrics form equal columns. Below the current advisory, a bordered orchestration stage uses `minmax(0,1fr) 300px` for graph and latest-first event rail; the rail narrows to (260px) below (1150px). The developer workbench and review use `minmax(0,1.6fr) minmax(0,1fr)` with a (28px) gap. Outcomes, phase durations and tokens use columns `.85fr 1.2fr 1fr`; history follows in the same document.
+
+At (960px), events move below the graph, workbench/review stack, and analytics become two columns with token usage beneath. At (740px), the header becomes two rows with a full-width repository control; metrics become two-by-two and observations stack. The mobile role summary remains above an initially collapsed **Interactive agent flow** disclosure; expanding it reveals the full vertical graph and six-entry numbered legend. The graph switches to vertical coordinates at (680px). Desktop graph height is (410px), (440px) on large screens and (430px) at the intermediate width; vertical mobile height is (1070px). Compact desktop nodes use x (0,340,680), padding (0.05), numbered edges and a three-column legend; mobile preserves the reserved return-lane bounds described below. The event rail and runner output scroll inside bounded regions. Mobile run history intentionally scrolls horizontally at a (640px) table minimum; the selected run identity and outcome remain visible at its start.
+
+### Historical off-route workspace
+
+The following sidebar, standalone Live Agents and Simulation layouts document retained source. They do not describe the routed console or add destinations to it.
 
 The desktop shell has fixed left navigation (228px) and a top bar (64px). Content has a maximum width (1590px), desktop gutters (32px), a compact header and four metrics divided by vertical rules. The selected case and machine share a single bordered review stage, with columns `minmax(0,1fr) minmax(360px,1.23fr)`. The queue/evidence grid uses `minmax(0,1.85fr) minmax(270px,1fr)` with a (20px) gap.
 
@@ -330,6 +381,8 @@ The dialog is bounded to (860px), scrolls internally and stays within the viewpo
 
 ## Elevation & Depth
 
+The current console keeps the flat panel-and-divider vocabulary. Its native repository and Run options popovers use the functional shadow `0 12px 32px #11130f`; the header remains sticky above the document. Grouped disclosures replace additional floating cards. The older modal and machine treatments below belong to retained, off-route components.
+
 Resting surfaces use tonal layering and one-pixel borders. The isometric machine supplies literal depth through faces, edges, rails, feet and occlusion. Avoid adding shadow to each evidence panel; the implemented shadow belongs to the modal (`0 24px 90px #0008`), separated from the page by its dark translucent backdrop.
 
 The Agents canvas uses a quiet dotted field, flat bordered nodes and labelled orthogonal routes. React Flow controls explicitly have no box shadow. Active and selected nodes gain a lime border or outline; held gates gain a peach border. These are state treatments rather than elevation.
@@ -343,6 +396,16 @@ Panels have gently rounded corners; controls are tighter and severity chips tigh
 Flow nodes use the dedicated `flow-node` radius. Live nodes have minimum height (128px), while live infrastructure nodes use (90px); retained Simulation agent nodes use (170px) and infrastructure (88px). Small circular port handles (6px) and closed arrowheads distinguish connection points from status dots. Routes are smooth-step orthogonal paths; Simulation's failed-check return uses a dashed stroke (`5 5`).
 
 ## Components
+
+### Current console composition
+
+`OperationsDashboard` composes `DashboardHeader`, `RunMetrics`, `OrchestrationPanel`, `VerificationWorkbench`, `ReviewPanel` and `RunAnalytics`. The header starts the real bounded workflow, cancels the active run, or follows it while another history entry is selected. Native popovers explain the fixed demo connection and disclose that selected-repository GitHub App onboarding is planned. Run options contain source mode, reconnect and export. The queued event rail says **Run queued** and explains that it is waiting for the worker; it does not prompt another start.
+
+The four metrics are deduplicated stored runs, unique recorded draft URLs, median valid completed duration with its sample count, and API-reported tokens with metered-call count. Outcome bars disclose `n`; phase bars derive from transition intervals and aggregate repeated visits; token bars group reported usage by role/model. Missing timing or usage remains absent or a dash. These are observations of repeated runs of one PHP case, not unique vulnerabilities, savings or population performance.
+
+The workbench has keyboard-operable **Checks**, **Candidate diff** and **Runner output** tabs. Check disclosures group source/inventory, policy, runtime, individual business assertions and CI provenance. A client-only installed Bklit `Gauge` uses the actual check total, uniform notches and solid lime; its adjacent written count remains authoritative and the gauge is hidden on mobile. The diff comes from the API's immutable base/candidate GitHub comparison, with per-file disclosures, addition/deletion colors, actual patch text, error/retry states and a complete-comparison link when bounded. Runner output exposes recorded logs and identities.
+
+Review shows the actual draft PR action, publication-gate state, English/Japanese senior summary and advisory evidence, plus owner-task and concern disclosures. Model role controls expose actual IDs, recorded call state and usage. The compact mobile role summary and expandable full graph retain the three-agent/control-layer distinction. Legacy controls and specimens described below are historical unless explicitly reused here.
 
 ### Buttons and controls
 
@@ -426,6 +489,8 @@ Only edges incident to the currently running node animate. The reduced-motion ru
 - **Do** retain owner follow-up after live draft publication; Simulation follow-up cases remain held even when all five represented checks pass.
 - **Do** preserve the compact live mobile role summary, six directional legend entries and return-lane fit bounds.
 - **Do** expose actual model IDs, observed checks and the CI/PR identity without implying merge approval.
+- **Do** compose the current product through the operations components on one route; keep legacy prototype surfaces off-route.
+- **Do** label observed chart samples and timing/token sources; count unique runs and draft URLs rather than implying distinct vulnerabilities.
 
 ### Don't:
 
@@ -437,4 +502,4 @@ Only edges incident to the currently running node animate. The reduced-motion ru
 - **Don't** present the deterministic controller as a fourth agent or grant an agent merge authority.
 - **Don't** turn a ready graph state into an automatic merge or a guarantee of complete security.
 
-Documentation basis: current source, the direction contract in `src/app/layout.tsx`, the final live run in `../../docs/IMPLEMENTATION-HANDOFF.md`, and the seven final captures in `.impeccable/review/live`. Its `VERDICT.md` records **ship**, scoped to two resolved material fixes: graph handoff readability and mobile role orientation. `DOCUMENTATION.md` records this refresh. Earlier review and Simulation records remain historical evidence. This document records built design truth without extending the verdict's scope or rerunning review/detection.
+Documentation basis: current operations components/styles, the direction contract in `src/app/layout.tsx`, the actual dashboard run/PR #4 in `../../docs/IMPLEMENTATION-HANDOFF.md`, and eight provenance-bearing captures in `.impeccable/review/dashboard`. Its `VERDICT.md` records **ship**, scoped to the resolved queued-event copy fix. `DOCUMENTATION.md` records the current console refresh. Earlier live and Simulation records remain historical evidence. This document records built design truth without extending the verdict's scope or rerunning review/detection.
