@@ -41,6 +41,8 @@ Declaration matching is not exploit reproduction. The affected baseline is never
 
 29 backend tests, seven retained frontend tests, TypeScript and Next production build pass. Dummy-repo tests pass (11), and actionlint passes. Hosted PHP execution linked above is separate evidence from mocked adapter tests. Product CI repeats install/typecheck/tests/build without provider credentials.
 
+[Product CI passed](https://github.com/Harsh5840/arigato-hack/actions/runs/40121067871) on implementation commit `4bd682587b1a7aa827234fc6da2c3a7e1f9a5a38`. The final live draft's own [post-publication candidate CI](https://github.com/Harsh5840/arigato-php-demo/actions/runs/40120596310) also passed. The independent UI reviewer scored both listed fixes resolved; that ship verdict covers those fixes.
+
 The API is loopback-only with origin/JSON checks and one fixed target; it is not a production tenant/authentication boundary. No hosting, merge or deployment occurred. Hosted CI supplies PHP execution, so the laptop needs no PHP or running Docker engine. Credentials and SQLite files are ignored; exports contain no credentials.
 
 Restart all three processes after interruption. Expired leases fail closed. Inspect retained runs, branches and CI before retrying. Matching Git writes reconcile without force pushes. New completed runs remain separate experiments. Pricing, demand and defensibility remain hypotheses.

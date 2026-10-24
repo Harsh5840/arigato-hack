@@ -10,6 +10,8 @@ Browser integration verified immediate SSE snapshots through the Next rewrite, p
 
 This is real execution of a bounded fixture workflow, not a general pentesting service. Baseline classification does not execute the affected runtime; passing CLI checks do not verify deployment or prove absence of compromise. The historical redesign/simulation evidence below applies to the retained Simulation/Overview and checkpoint deck.
 
+Independent live UI review identified graph-label occlusion and missing mobile role orientation. Both were fixed in one batch; all seven recaptures passed and the reviewer scored both fixes resolved (`live/VERDICT.md`). The ship verdict covers that scored list. [Product CI](https://github.com/Harsh5840/arigato-hack/actions/runs/40121067871) passed after push; [PR3 candidate CI](https://github.com/Harsh5840/arigato-php-demo/actions/runs/40120596310) passed as well. Root `npm run dev` was restarted successfully and recovered the completed 35-check run through the frontend proxy.
+
 User selected a dark engineering workspace and an isometric machine.
 
 ## Three-agent extension

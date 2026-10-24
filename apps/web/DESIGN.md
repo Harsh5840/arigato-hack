@@ -24,6 +24,7 @@ colors:
   medium-text: "#d1d59c"
   destructive: "#f69790"
   flow-canvas: "#181c16"
+  flow-grid: "#394131"
   flow-toolbar: "#20251c"
   flow-node: "#22291d"
   flow-node-border: "#536144"
@@ -108,6 +109,14 @@ typography:
   mobile-handoff:
     fontSize: "10px"
     lineHeight: 1.8
+  live-flow-body:
+    fontFamily: "Public Sans, sans-serif"
+    fontSize: "10px"
+    lineHeight: 1.5
+  live-mobile-role-name:
+    fontSize: "11px"
+    fontWeight: 600
+    lineHeight: 1.5
 rounded:
   chip: "4px"
   control: "6px"
@@ -129,6 +138,8 @@ spacing:
   flow-toolbar-x: "22px"
   mobile-summary-after: "23px"
   mobile-summary-row-y: "9px"
+  live-mobile-role-gap: "13px"
+  live-mobile-summary-after: "20px"
 components:
   button-primary:
     backgroundColor: "{colors.primary}"
@@ -182,6 +193,28 @@ components:
   mobile-agent-summary:
     textColor: "{colors.ink}"
     padding: "0 0 18px"
+  live-flow-agent:
+    backgroundColor: "{colors.flow-node}"
+    textColor: "{colors.ink}"
+    typography: "{typography.flow-agent-title}"
+    rounded: "{rounded.flow-node}"
+    padding: "17px"
+    width: "250px"
+  live-flow-system:
+    backgroundColor: "{colors.flow-node}"
+    textColor: "{colors.ink}"
+    typography: "{typography.flow-system-title}"
+    rounded: "{rounded.flow-node}"
+    padding: "14px 17px"
+    width: "250px"
+  live-source-select:
+    backgroundColor: "{colors.outline-background}"
+    textColor: "{colors.flow-control-ink}"
+    rounded: "{rounded.control}"
+    padding: "10px 8px"
+  live-mobile-orientation:
+    textColor: "{colors.ink}"
+    padding: "0 0 16px"
 ---
 
 # Design System: ProofPatch
@@ -203,7 +236,7 @@ The workspace is compact and operational. Selected findings, before/after eviden
 
 This is the built frontend in `src/styles/workspace.css`, imported after the general stylesheet by `src/app/layout.tsx`. Its tokens override the starter dark theme. Implementation uses Next.js (16.4.3), React (19.3.1), Tailwind (4), locally loaded Public Sans, the installed Bklit gauge source and generated Anatomy geometry. `PRODUCT.md` and the layout direction contract constrain this document; the earlier root `design/DESIGN-SPEC.md` describes a rejected concept and is not visual authority.
 
-Agents is the default view. It extends this identity with a real `@xyflow/react` orchestration canvas; Overview retains the isometric interlock and original evidence workspace. `src/styles/orchestration.css` follows the workspace stylesheet. The three product roles and their handoffs are governed by `../../docs/THREE-AGENT-ARCHITECTURE.md`, rather than inferred from decorative graph arrangement.
+Agents is the default view, and its **Live service** mode reads actual service state through a real `@xyflow/react` orchestration canvas. The separate **Simulation** mode retains the seeded architecture demonstration; Overview retains the isometric interlock and original synthetic evidence workspace. `src/styles/orchestration.css` and then `src/styles/live-orchestration.css` follow the workspace stylesheet. The three product roles and their handoffs are governed by `../../docs/THREE-AGENT-ARCHITECTURE.md` and the bounded implementation described in `../../docs/IMPLEMENTATION-HANDOFF.md`. The five-block direction contract in `src/app/layout.tsx` remains visual authority, including mobile role orientation before the detailed graph.
 
 ## Colors
 
@@ -231,13 +264,13 @@ The palette combines olive charcoal neutrals with a clear lime signal and warm s
 - **Warm White** (`ink`): headings and main text.
 - **Sage Grey** (`muted`): supporting copy and metadata.
 - **Olive Dividers** (`line`, `border`): panel outlines, rows and structural divisions.
-- **Diagram Charcoal** (`flow-canvas`) and **Toolbar Olive** (`flow-toolbar`): canvas field and grouped run controls.
-- **Agent Olive** (`flow-node`, `flow-node-border`, `flow-node-active`): graph cards at rest and during the current simulated step. Completed role headings brighten to existing pale lime.
+- **Diagram Charcoal** (`flow-canvas`), **Grid Olive** (`flow-grid`) and **Toolbar Olive** (`flow-toolbar`): canvas field, quiet diagram dots and grouped run controls.
+- **Agent Olive** (`flow-node`, `flow-node-border`, `flow-node-active`): graph cards at rest and during the current step. In Live service the state comes from the stored worker run; in Simulation it comes from the local timer. Completed role headings brighten to existing pale lime.
 - **Routing Sage** (`flow-edge`, `flow-arrow`, `flow-edge-label`, `flow-handle`): visible connections, arrow direction, labels and port dots. `flow-node-body` carries secondary node copy.
 - **Control Olive** (`flow-control`, `flow-control-hover`, `flow-control-border`, `flow-control-ink`): React Flow zoom/fit controls.
 - **Selected Role Olive** (`role-selected`, `role-selected-border`, `role-selected-ink`): the inspector's pressed agent selector.
 
-These Agents additions are intentional design advisory drift from the earlier saved record: adjacent olive tones and functional state colors, not a new visual world. Their exact built values are merged into frontmatter. The sidecar supplies named color metadata and derived tonal ramps; generated ramp steps are panel aids, not additional shipped application colors.
+The Live extension normalizes its status, controls, source rows and evidence surfaces to these existing charcoal, sage, lime and peach roles. The observed diagram-dot color is now named `flow-grid`. This is legitimate documentation of built color use within the incumbent world; it does not repair detector drift or alter `.impeccable/config.json`. Frontmatter records the shipped values, while the sidecar supplies named metadata and derived tonal ramps. Generated ramp steps are panel aids, not additional shipped application colors.
 
 **The State Has Words Rule.** Color reinforces a written verification state. A lime cartridge alone never asserts that a patch is verified.
 
@@ -259,9 +292,9 @@ The type is close-set and functional. Large case titles contrast with small, reg
 - **Metric:** principal count (29px), line-height (1), weight (600), tracking (-0.025em); mobile count (26px).
 - **Code:** readable, horizontally scrollable diff with distinct added/removed surfaces.
 - **Graph role title:** `flow-agent-title`; system nodes use `flow-system-title`, preserving the distinction between three agents and infrastructure.
-- **Graph body and routing:** `flow-agent-body` describes each agent; `flow-edge-label` names the handoff on its own dark backing. Graph labels are authored at their recorded size and scale with the React Flow viewport.
-- **Inspector title:** `inspector-title`; the selected role's inputs, outputs and permissions use the incumbent compact body and label styles. The Agents mobile page heading is (27px).
-- **Mobile role names and handoff:** `mobile-role-name` names all three agents in the first viewport; verbs use the existing label size and `flow-node-body` color. `mobile-handoff` uses existing lime for the written baseline → repair → replay → review sequence.
+- **Graph body and routing:** `flow-agent-body` describes Simulation nodes; `live-flow-body` describes Live nodes. `flow-edge-label` names the desktop handoff on its own dark backing. Live mobile edges use numbered keys with a full directional legend beneath the graph. Labels scale with the React Flow viewport.
+- **Inspector title:** `inspector-title` belongs to Simulation; Live uses the existing title size for the selected execution role, followed by actual model ID, call status, summary and optional token usage. Live mobile page heading is (30px); Simulation uses (27px).
+- **Mobile role names and handoff:** `live-mobile-role-name` names the three live roles beside compact responsibility text; `mobile-role-name` belongs to the retained Simulation summary. The written handoff uses `mobile-handoff` rhythm and existing pale lime.
 
 ## Layout
 
@@ -271,11 +304,19 @@ At (1180px) and below, navigation narrows to (196px), content gutters become (23
 
 All views share five destinations in order: Agents, Overview, Findings, Evidence and Roadmap. The final orchestration stylesheet makes mobile navigation a five-column grid with an icon above each label, small gaps (2px), icons (15px) and labels (9px). Keep every destination visible at the available width.
 
-On Agents at (680px) and below, a mobile-only role summary appears immediately after the hero and before the introduction/workbench. It uses three vertically stacked definition-list rows, then a written handoff. Each row has vertical padding (9px), each verb sits (4px) below its name, and the handoff has top margin (11px) and maximum width (48ch). Bottom padding (18px), an olive divider and bottom margin (23px) separate it from the introduction. It is hidden on desktop. The supplied (390 × 900) first-viewport capture exposes all three names, verbs and the handoff before the graph.
+On Agents at (680px) and below, Live service places a compact semantic role summary immediately after the hero and before service status and the workbench. Three definition-list rows pair full agent names with live responsibilities in two equal columns, separated by a (13px) gap and (9px) row gap. A written handoff follows with top margin (13px), line-height (1.8) and maximum width (48ch). Bottom padding (16px), an olive divider and bottom margin (20px) separate the summary from service controls. It is hidden on desktop. The final (390 × 844) mobile first-viewport evidence exposes all three roles and the handoff before the detailed graph. Simulation retains its stacked name/verb summary with bottom padding (18px) and bottom margin (23px).
 
-### Agents workbench
+### Live Agents workbench
 
-The run toolbar, case boundary, live written status and sized React Flow canvas form one bordered workbench. Below it, the selected-role inspector and evidence gate share columns `minmax(0,1.15fr) minmax(0,1fr)` with a (28px) gap; the gate has a vertical divider. Trace and advisory context follow as separated document sections, rather than an additional field of cards. At (1050px), toolbar wrapping and stacked introduction/caption preserve density. At (680px), the toolbar gives the case its own row, the inspector/gate stack and the divider becomes horizontal.
+Live source selection, run intent and the primary start/cancel action share a toolbar above the connected target and stored execution identity. The case summary uses columns `1.2fr 1fr` with a (30px) gap. The observed-check list and agent execution inspector use columns `1.15fr 1fr` with a (30px) gap; a vertical divider introduces the inspector. Source evidence, bilingual review, owner tasks and the event trace follow as document sections. Execution logs and Stored runs share columns `1.5fr 1fr` below. At (1100px), the toolbar wraps and gaps narrow; at (680px), the toolbar, case summary, evidence and history become single columns and side dividers become horizontal.
+
+Live graph nodes are (250px) wide. Desktop positions are controller (410,0), Supply Chain (0,145), DevSec (410,145), Remediation (820,145), evidence gate (410,345) and human review (820,345). The wider agent gaps give `Affected inventory` and `Frozen baseline` clear routing space. Candidate replay returns above the agent row. The desktop canvas is (485px) high, fitting measured nodes with padding (0.08).
+
+The live mobile graph stacks controller, Supply Chain, DevSec, Remediation, gate and human review at x (0), with y increasing by (174px). Its canvas is (1080px) high. Candidate replay and checks/review use separate right-side return lanes with offsets (40px) and (72px). Six numbered edge keys map to a complete directional legend beneath the canvas. Initial and manual fit use explicit bounds `x:-8, y:-10, width:356, height:1000` and padding (0.05), reserving room for both return lanes. Fitting waits for measured nodes and nonzero canvas dimensions; zoom is bounded from (0.3) to (1.6). Preserve the route extents in default fit so labels and arrows remain discoverable without dragging.
+
+### Retained Simulation workbench
+
+The run toolbar, case boundary, written simulation status and sized React Flow canvas form one bordered workbench. Below it, the selected-role inspector and evidence gate share columns `minmax(0,1.15fr) minmax(0,1fr)` with a (28px) gap; the gate has a vertical divider. Trace and advisory context follow as separated document sections. At (1050px), toolbar wrapping and stacked introduction/caption preserve density. At (680px), the toolbar gives the case its own row, the inspector/gate stack and the divider becomes horizontal.
 
 Desktop graph positions are authored in diagram coordinates: intake (0,0), controller (350,0), Supply Chain (0,160), DevSec (350,160), Remediation (700,160), shared evidence (0,430), gate (350,430), and human review (700,430). Nodes are (250px) wide before viewport scaling. The mobile graph is a vertical adaptation with controller, Supply Chain, DevSec, Remediation, gate and review; intake/evidence infrastructure is condensed out of the visible mobile canvas, while the inspector and captions preserve its meaning. Preserve the baseline, candidate replay and failed-check return routes at both sizes.
 
@@ -299,7 +340,7 @@ The Agents canvas uses a quiet dotted field, flat bordered nodes and labelled or
 
 Panels have gently rounded corners; controls are tighter and severity chips tighter still. Use the frontmatter radius roles, thin olive boundaries and aligned edges. Circular pipeline nodes and check indicators distinguish sequence and result from rectangular evidence surfaces. The machine uses crisp isometric solids and fine non-scaling strokes; its chamfered industrial silhouette is distinct from UI container corners.
 
-Flow nodes use the dedicated `flow-node` radius; agent nodes have a larger minimum height (170px) than infrastructure nodes (88px). Small circular port handles (6px) and closed arrowheads distinguish connection points from status dots. Routes are smooth-step orthogonal paths; failed-check return uses a dashed stroke (`5 5`).
+Flow nodes use the dedicated `flow-node` radius. Live nodes have minimum height (128px), while live infrastructure nodes use (90px); retained Simulation agent nodes use (170px) and infrastructure (88px). Small circular port handles (6px) and closed arrowheads distinguish connection points from status dots. Routes are smooth-step orthogonal paths; Simulation's failed-check return uses a dashed stroke (`5 5`).
 
 ## Components
 
@@ -307,7 +348,7 @@ Flow nodes use the dedicated `flow-node` radius; agent nodes have a larger minim
 
 Primary buttons are compact lime actions with dark text; outline buttons use a dark olive fill, pale lime text and a visible stroke. Subtle buttons support export and secondary actions with a quiet surface. Main buttons use the frontmatter padding, an icon gap (9px) and a transparent one-pixel border. Hover transitions run (160ms). Disabled buttons use a not-allowed cursor and opacity (0.5).
 
-Keyboard focus uses a lime outline (2px) with offset (4px) on buttons, links, selects and focusable elements. The scenario chooser is a native select with a visible olive border. There is no text-entry field in this surface; do not infer one from the generic starter library.
+Keyboard focus uses a lime outline (2px) with offset (4px) on buttons, links, selects and focusable elements. The scenario chooser and live source chooser are native selects with visible olive borders. There is no text-entry field in this surface; do not infer one from the generic starter library.
 
 ### Navigation and filters
 
@@ -335,21 +376,31 @@ Movement uses transform transitions (740ms) with `cubic-bezier(.22,.7,.25,1)`; s
 
 The compact gauge uses the actual installed Bklit `Gauge` source, dynamically imported with `ssr:false` from `evidence-coverage.tsx`. It is client-only. Five uniform notches use solid chart lime and the inactive border color, without a gradient. Each satisfied check adds (20%) and one notch; blocked regression is visibly **four lime notches and one dark notch**, beside “4 / 5 satisfied.” The written count and accessible section label carry the result while the client chart mounts.
 
-### Simulation cues
+### Live execution, service state and results
 
-The shell says “Synthetic workspace,” the machine says “Synthetic model,” evidence identifies synthetic fixtures, and activity copy says “Simulation only.” Preserve this repetition at the points where evidence could otherwise imply execution. No scanner, live agent, repository mutation or GitHub PR is implemented. JSON exports declare `SIMULATED_DEMO`, synthetic identifiers and limitations. Merge authority remains human.
+The execution-mode switch defaults to **Live service**, describes actual Groq calls/checks/GitHub draft behavior, and offers the separate **Simulation** mode. Live service shows connecting, connected, reconnecting, offline and setup-required states with written feedback; missing service or credentials never substitute a fabricated result. Keys remain on the server. The source chooser distinguishes fetched Japanese/vendor sources from a recorded advisory snapshot; both choices still use real models, checks and draft publication.
+
+The controller uses a persisted SQLite queue and a separate worker. The frontend loads readiness and stored history, recovers the active or latest run after reload, consumes SSE snapshots/events and uses a bounded (10-second) polling fallback while active. Selecting a Stored run retrieves its evidence. The live trace uses JST timestamps. Export includes the stored run and event record; browser state is not the source of execution truth. Cancel requests stop later stages, while already in-flight external writes or CI can remain recorded.
+
+Supply Chain uses actual Groq model `openai/gpt-oss-20b`; Remediation and the DevSec senior reviewer use `openai/gpt-oss-120b` in separate contexts. The inspector exposes actual model IDs, call status, recorded summaries and token usage. Model review cannot override a failed deterministic check. These contexts do not establish independent-model assurance.
+
+Observed checks, the real GitHub Actions link, runtime/policy output, candidate identity and a returned draft PR appear only from recorded results. English/Japanese display controls switch advisory titles, available agent summaries and senior-review summaries; owner tasks remain visible. A passing gate automatically creates or reuses the matching draft PR, then presents its actual number and review link. Draft publication leaves merge readiness and finding closure false. The preserved final run created [draft PR #3](https://github.com/Harsh5840/arigato-php-demo/pull/3), with (35) observed passes and (15) business assertions, as recorded in `../../docs/IMPLEMENTATION-HANDOFF.md`.
+
+### Retained Simulation and Overview cues
+
+Simulation and Overview keep their synthetic fixture, machine and activity labels at the points where illustrative evidence could imply execution. They perform no external agent call, repository mutation or GitHub PR creation. Their JSON exports declare `SIMULATED_DEMO`, synthetic identifiers and limitations; their local draft previews remain labeled. These statements apply to the retained demonstrations, not the default Live service. Merge authority remains human across both modes.
 
 ### Agents and deterministic infrastructure
 
-Exactly three graph nodes are product agents: **Supply Chain Agent** reads inventory and approved sources, **Remediation Agent** prepares candidate repairs in a planned disposable branch, and **Development Security Agent** establishes baselines and verifies candidates in a planned bounded fixture. The controller, repository/advisory intake, evidence store, deterministic gate and developer review are infrastructure or a human role. Node headers explicitly distinguish “Agent” from “Control layer”; the inspector states each selected role's inputs, outputs, planned tools and permission boundary.
+Exactly three graph nodes are product agents. Live **Supply Chain Agent** matches Japanese alerts and vendor evidence to declared inventory; **Remediation Agent** proposes a repair within the allowed three-file scope; **Development Security Agent** denotes worker-controlled baseline/check execution and senior review in a separate model context. The controller, evidence gate and human reviewer are visibly distinct infrastructure or human roles. The Simulation inspector retains its planned inputs, outputs, tools and permission boundaries.
 
-The mobile-only summary is a semantic `dl` containing the same full agent names and responsibility verbs as the graph/inspector: “Discover upstream risk,” “Propose the repair,” and “Watch, test and verify.” It ends with “Supply Chain → DevSec baseline → Remediation → DevSec replay → human review.” This orientation remains legible before entering the longer interactive graph. Its `dt` rules explicitly reset inherited evidence-table width, padding and background; its `dd` rules reset inherited padding and margins so names/verbs read as stacked role descriptions rather than before/after cells.
+The live mobile-only semantic `dl` names all three roles with “Match Japanese alerts to inventory,” “Prepare a scoped repair,” and “Baseline, checks and senior review.” It ends with “Supply Chain → DevSec baseline → Remediation → DevSec checks → human review.” The summary precedes the longer interactive graph. Its definition terms and descriptions reset inherited evidence-table width, padding, backgrounds and margins. Simulation retains its original discover/propose/watch descriptions.
 
-Actual React Flow provides selection, dragging, zoom and fit controls. Nodes have target/source handles on all four sides; edges bind named `in-*`/`out-*` ports, use smooth-step routing, written handoff labels and closed arrows. Connections cannot be edited (`nodesConnectable:false`) and delete is disabled. Selected nodes use an outline (2px) offset (4px), matching the interface focus language. The graph is dynamically loaded client-side with a written loading state.
+Actual React Flow provides selection, dragging, zoom and fit controls. Live nodes expose named top/left/right target handles and bottom/right/top source handles; Simulation retains its four-sided ports. Smooth-step routes use closed arrows, with full desktop labels and the live mobile numbered legend. Connections cannot be edited (`nodesConnectable:false`) and delete is disabled. Selected nodes use an outline (2px) offset (4px), matching the interface focus language. The graph is loaded client-side with a written loading state.
 
-**The Baseline Before Candidate Rule.** Supply Chain sends its risk brief to DevSec; DevSec records an affected baseline and freezes checks before Remediation writes. Remediation returns the candidate to DevSec. Local-change jobs enter through DevSec and request repair directly. Gate failure routes the failed evidence back to Remediation for another candidate; passing security checks never erase failed legitimate-use controls.
+**The Baseline Before Candidate Rule.** Supply Chain sends its risk brief to DevSec; the worker records the declared affected baseline and freezes the verifier before Remediation writes. The affected runtime is never executed in the live PHP pilot. The candidate returns to DevSec for actual checks and separate senior review. Simulation retains local-change intake and illustrative failed-check repair loops. Passing security checks never erase failed legitimate-use controls.
 
-### Run controls, gate and trace
+### Retained Simulation controls, gate and trace
 
 Native case and candidate-outcome selects reset the prior run when changed and are disabled while running. “Simulate handoff” becomes “Stop simulation” during a run and “Run again” after it. Each step advances on a deterministic timer (850ms); no model executes. Written statuses cover idle, running, blocked, ready for human review, follow-up required and stopped. Reset clears the run and restores diagram positions; shell reset also remounts the Agents surface. Leaving Agents unmounts it and clears its run, while the existing per-finding demo stages retain local persistence.
 
@@ -367,12 +418,14 @@ Only edges incident to the currently running node animate. The reduced-motion ru
 - **Do** show a written status next to every meaningful color or gauge result.
 - **Do** preserve all five gate conditions and the blocked middle finger when regression fails.
 - **Do** retain visible status and a reachable action in every mobile finding row.
-- **Do** preserve synthetic labels, human review authority, visible focus and reduced motion.
-- **Do** treat `workspace.css` and the current feature components as the built visual source.
+- **Do** preserve synthetic labels in Simulation and Overview, human review authority, visible focus and reduced motion.
+- **Do** treat `workspace.css`, `orchestration.css`, `live-orchestration.css` and the current feature components as the built visual source.
 - **Do** preserve exactly three product agents and identify controller, evidence, gate and human review separately.
 - **Do** keep DevSec baseline/frozen checks before repair, candidate replay and failed-check return visible at both graph sizes.
-- **Do** keep advisory snapshots, fictional inventory and simulated test results explicitly distinguishable.
-- **Do** retain owner follow-up as a hold even when all five represented checks pass.
+- **Do** distinguish Live service results from the fictional inventory and test outcomes in Simulation and Overview.
+- **Do** retain owner follow-up after live draft publication; Simulation follow-up cases remain held even when all five represented checks pass.
+- **Do** preserve the compact live mobile role summary, six directional legend entries and return-lane fit bounds.
+- **Do** expose actual model IDs, observed checks and the CI/PR identity without implying merge approval.
 
 ### Don't:
 
@@ -384,4 +437,4 @@ Only edges incident to the currently running node animate. The reduced-motion ru
 - **Don't** present the deterministic controller as a fourth agent or grant an agent merge authority.
 - **Don't** turn a ready graph state into an automatic merge or a guarantee of complete security.
 
-Documentation basis: current source, the original desktop/mobile/blocked captures and the refreshed `orchestration-desktop.png`, `orchestration-mobile.png`, `orchestration-mobile-flow.png`, `orchestration-mobile-first-viewport.png` and `orchestration-blocked.png` in `.impeccable/review`. `REVIEW.md` and `VERDICT.md` record the original resolved material fixes. The Agents documentation update is recorded in `ORCHESTRATION-DOCUMENTATION.md`; separate review records own the disposition of the orchestration repairs. This document records built design truth rather than extending either review's scope.
+Documentation basis: current source, the direction contract in `src/app/layout.tsx`, the final live run in `../../docs/IMPLEMENTATION-HANDOFF.md`, and the seven final captures in `.impeccable/review/live`. Its `VERDICT.md` records **ship**, scoped to two resolved material fixes: graph handoff readability and mobile role orientation. `DOCUMENTATION.md` records this refresh. Earlier review and Simulation records remain historical evidence. This document records built design truth without extending the verdict's scope or rerunning review/detection.
