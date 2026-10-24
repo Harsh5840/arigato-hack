@@ -24,7 +24,7 @@ afterEach(() => {
 function response(value: unknown, status = 200): Response { return new Response(JSON.stringify(value), { status, headers: { 'content-type': 'application/json' } }); }
 const catalog = { data: [{ id: 'openai/gpt-oss-20b' }, { id: 'openai/gpt-oss-120b' }] };
 function completion(data: unknown, model = 'openai/gpt-oss-20b') {
-  return { model, choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(data) } }], usage: { prompt_tokens: 120, completion_tokens: 80, total_tokens: 200 } };
+  return { model, choices: [{ finish_reason: 'stop', message: { role: 'assistant', content: JSON.stringify(data) } }], usage: { prompt_tokens: 120, completion_tokens: 80, total_tokens: 200 } };
 }
 
 test('missing Groq credentials fail explicitly without a network call or simulated result', async () => {

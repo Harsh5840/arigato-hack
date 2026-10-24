@@ -126,10 +126,10 @@ export function tokenBreakdown(run: Run): TokenBucket[] {
 
 /** Business assertion counts stay separate from their aggregate suite gate. */
 export function checkGroups(checks: readonly Check[]): CheckGroup[] {
-  const labels: Record<CheckGroup['id'], string> = { source: 'Source + inventory', policy: 'Policy gates', runtime: 'PHP runtime', business: 'Business assertions', workflow: 'CI provenance' };
+  const labels: Record<CheckGroup['id'], string> = { source: 'Source + inventory', policy: 'Policy gates', runtime: 'Runtime checks', business: 'Business checks', workflow: 'CI provenance' };
   const groups = new Map<CheckGroup['id'], CheckGroup>();
   for (const check of checks) {
-    const id: CheckGroup['id'] = /^business_\d+$/.test(check.id) ? 'business' : check.id.startsWith('runtime_') || check.id === 'built_image' ? 'runtime' : check.id.startsWith('ci_') || check.id.startsWith('workflow_') || check.id === 'trusted_workflow' ? 'workflow' : ['source_evidence', 'affected_inventory'].includes(check.id) ? 'source' : 'policy';
+    const id: CheckGroup['id'] = /^business_\d+$/.test(check.id) || check.id === 'runner_business_suite' ? 'business' : check.id.startsWith('runtime_') || ['built_image','runner_package_version'].includes(check.id) ? 'runtime' : check.id.startsWith('ci_') || check.id.startsWith('workflow_') || ['trusted_workflow','evidence_identity','evidence_schema'].includes(check.id) ? 'workflow' : ['source_evidence', 'affected_inventory'].includes(check.id) ? 'source' : 'policy';
     const group = groups.get(id) ?? { id, label: labels[id], checks: [], passed: 0, failed: 0, pending: 0, notRun: 0 };
     group.checks.push(check);
     if (check.status === 'not-run') group.notRun++;

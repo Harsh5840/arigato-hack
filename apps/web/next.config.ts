@@ -1,8 +1,8 @@
 import type { NextConfig } from 'next';
+import { resolve } from 'node:path';
 const config: NextConfig = {
   devIndicators: false,
-  async rewrites() {
-    return [{source: '/api/proofpatch/:path*', destination: 'http://127.0.0.1:8787/api/:path*'}];
-  },
+  output: process.env.PROOFPATCH_STANDALONE === '1' ? 'standalone' : undefined,
+  outputFileTracingRoot: resolve(__dirname, '../..'),
 };
 export default config;

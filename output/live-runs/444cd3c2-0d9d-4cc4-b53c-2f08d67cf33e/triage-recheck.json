@@ -1,0 +1,96 @@
+{
+  "kind": "Actual read-only triage recheck; separate from original repair-run metrics",
+  "at": "2026-10-24T19:41:37.857Z",
+  "finding": {
+    "id": "finding-2eacc31dc34af4c56635c6e2",
+    "repositoryId": "3dc4b2be848b7eaafd78",
+    "advisoryId": "GHSA-9hjg-9r4m-mvj7",
+    "aliases": [
+      "CVE-2024-47081",
+      "PYSEC-2026-1872"
+    ],
+    "ecosystem": "PyPI",
+    "packageName": "requests",
+    "installedVersion": "2.31.0",
+    "fixedVersion": "2.34.2",
+    "manifestPath": "requirements.txt",
+    "affectedRanges": [
+      {
+        "type": "ECOSYSTEM",
+        "events": [
+          {
+            "introduced": "0"
+          },
+          {
+            "fixed": "2.32.4"
+          }
+        ]
+      }
+    ],
+    "summary": "Requests vulnerable to .netrc credentials leak via malicious URLs",
+    "references": [
+      {
+        "title": "OSV corroborated exact package version",
+        "url": "https://osv.dev/vulnerability/GHSA-9hjg-9r4m-mvj7"
+      },
+      {
+        "title": "WEB",
+        "url": "https://github.com/psf/requests/security/advisories/GHSA-9hjg-9r4m-mvj7"
+      },
+      {
+        "title": "ADVISORY",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-47081"
+      },
+      {
+        "title": "WEB",
+        "url": "https://github.com/psf/requests/pull/6965"
+      },
+      {
+        "title": "WEB",
+        "url": "https://github.com/psf/requests/commit/96ba401c1296ab1dda74a2365ef36d88f7d144ef"
+      },
+      {
+        "title": "ADVISORY",
+        "url": "https://github.com/advisories/GHSA-9hjg-9r4m-mvj7"
+      },
+      {
+        "title": "PACKAGE",
+        "url": "https://github.com/psf/requests"
+      },
+      {
+        "title": "WEB",
+        "url": "https://github.com/psf/requests/releases/tag/v2.32.4"
+      },
+      {
+        "title": "WEB",
+        "url": "https://github.com/pypa/advisory-database/tree/main/vulns/requests/PYSEC-2026-1872.yaml"
+      },
+      {
+        "title": "WEB",
+        "url": "https://pypi.org/project/requests"
+      },
+      {
+        "title": "WEB",
+        "url": "https://requests.readthedocs.io/en/latest/api/#requests.Session.trust_env"
+      },
+      {
+        "title": "WEB",
+        "url": "https://seclists.org/fulldisclosure/2025/Jun/2"
+      }
+    ],
+    "detectedAt": "2026-10-24T19:41:36.707Z",
+    "status": "detected"
+  },
+  "analysis": {
+    "summaryEn": "The installed requests 2.31.0 is within the vulnerable range (0 ≤ v < 2.32.4) and is therefore affected. The advisory specifies a fixed version of 2.34.2, which is a safe upgrade target. Confidence is high.",
+    "summaryJa": "インストール済みの requests 2.31.0 は、0 ≦ v < 2.32.4 の脆弱性範囲に該当し、影響を受けます。アドバイザリでは 2.34.2 が安全なアップグレード対象として示されています。信頼度は高いです。",
+    "affected": true,
+    "confidence": "high",
+    "usage": {
+      "promptTokens": 967,
+      "completionTokens": 228,
+      "totalTokens": 1195
+    },
+    "model": "openai/gpt-oss-20b"
+  }
+}

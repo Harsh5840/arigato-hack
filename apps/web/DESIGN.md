@@ -1,6 +1,6 @@
 ---
 name: ProofPatch
-description: One dark developer console for live orchestration, measured runs and reviewed repairs.
+description: One dark repository security console for watching advisories and reviewing bounded repairs.
 colors:
   primary: "#c7ef79"
   primary-hover: "#d6f99d"
@@ -262,18 +262,19 @@ components:
 
 A patch moves only when its proof aligns. The user-selected dark engineering workspace gives the evidence workflow the character of a precise instrument: charcoal surfaces, warm white type, restrained lime and precise diagram geometry.
 
-The current product is one compact developer console. Live orchestration, adjacent events, grouped verification, the actual candidate diff and review handoff share one operational surface. Public Sans, thin borders and small tonal shifts retain the established identity. Measured run counts and proportional charts describe stored execution; they never imply a vulnerability score.
+The current product is one compact repository security console. A six-step journey leads from a connected repository through source watching, affected inventory, a supported fix, checks and senior review to a draft awaiting a human. Repository and source controls, corroborated findings, expandable technical orchestration, grouped verification, the actual candidate diff and review handoff share one operational surface. Public Sans, thin borders and small tonal shifts retain the established identity. Measured run counts and proportional charts describe stored execution for the selected repository; they never imply a vulnerability score.
 
 **Key Characteristics:**
 
 - Charcoal surfaces with a muted olive cast and warm white text.
 - Restrained lime for primary action, selection and satisfied evidence gates.
+- Plain-language sequence first, with detailed technical evidence in native disclosures.
 - Compact evidence surfaces with explicit status and human review authority.
 - Functional agent geometry and measured bars tied to recorded run state.
 
-This is the built frontend in `src/styles/workspace.css`, imported after the general stylesheet by `src/app/layout.tsx`. Its tokens override the starter dark theme. Implementation uses Next.js (16.4.3), React (19.3.1), Tailwind (4), locally loaded Public Sans, the installed Bklit gauge source and generated Anatomy geometry. `PRODUCT.md` and the layout direction contract constrain this document; the earlier root `design/DESIGN-SPEC.md` describes a rejected concept and is not visual authority.
+This is the built frontend in `src/styles/workspace.css`, extended by `operations.css` and `monitoring.css` after the orchestration styles in `src/app/layout.tsx`. Its tokens override the starter dark theme. Implementation uses Next.js, React, Tailwind, locally loaded Public Sans and the installed Bklit gauge source. Generated Anatomy geometry remains in historical off-route components. `PRODUCT.md` and the layout direction contract constrain this document; the earlier root `design/DESIGN-SPEC.md` describes a rejected concept and is not visual authority.
 
-`src/app/page.tsx` now routes only `OperationsDashboard`; `workspace.tsx` is a thin compatibility export. `operations.css` is imported last after the incumbent workspace and orchestration styles. There is no routed sidebar, Agents/Simulation switch, Overview, Findings, Evidence or Roadmap page. Their source and Anatomy assets remain historical, off-route material. The layout contract now commits the sticky repository/execution header, four measured metrics, three-agent flow with adjacent events, actual evidence and bilingual human handoff. This current-console contract takes precedence over the historical surface descriptions retained below.
+`src/app/page.tsx` routes only `OperationsDashboard`; `workspace.tsx` is a thin compatibility export. `monitoring.css` is imported last after `operations.css`. There is no routed sidebar, Agents/Simulation switch, Overview, Findings, Evidence or Roadmap page. Their source and Anatomy assets remain historical, off-route material. The layout contract commits the sticky repository/action header, measured metrics and six connected steps before inventory, source health and findings. The actual three-agent graph and event rail sit inside technical details. This current-console contract takes precedence over the historical surface descriptions retained below.
 
 ## Colors
 
@@ -295,7 +296,7 @@ The palette combines olive charcoal neutrals with a clear lime signal and warm s
 
 ### Neutral
 
-- **Workspace Charcoal** (`background`) and **Navigation Charcoal** (`sidebar`): page and fixed navigation.
+- **Workspace Charcoal** (`background`) and **Navigation Charcoal** (`sidebar`): page and sticky console header; the latter also belongs to historical fixed navigation.
 - **Evidence Charcoal** (`panel`, `card`): grouped findings and evidence.
 - **Instrument Charcoal** (`machine-panel`): the slightly raised machine field.
 - **Warm White** (`ink`): headings and main text.
@@ -311,19 +312,20 @@ The Live extension normalizes its status, controls, source rows and evidence sur
 
 **The State Has Words Rule.** Color reinforces a written verification state. A lime cartridge alone never asserts that a patch is verified.
 
-The console reuses the saved palette without adding colors: lime for completed runs and reported token bars, sage for phase durations, amber for held outcomes and owner tasks, coral for failed outcomes, and grey for cancelled outcomes. Each chart pairs color with a label and measured count. The repository control and popover reuse the card/panel roles; actual diff additions and deletions reuse outline and critical roles.
+The console reuses the saved palette without adding colors: lime for completed journey steps, enabled watch controls, completed runs and reported token bars; sage for phase durations; amber for unconfirmed leads, source failures, held outcomes and owner tasks; coral for failed outcomes; and grey for cancelled outcomes. Each chart pairs color with a label and measured count. The repository control, inventory and monitoring disclosures reuse the card/panel roles; actual diff additions and deletions reuse outline and critical roles.
 
 ## Typography
 
 **Display and Body Font:** Public Sans, loaded locally from `src/assets/fonts/PublicSans-Variable.ttf` through `next/font/local`, with sans-serif fallback.
 
-**Code Font:** Consolas, monospace fallback, for the illustrative patch diff.
+**Code Font:** Consolas, monospace fallback, for actual patch text, model IDs, package versions and immutable identities; historical illustrative diffs use the same code voice.
 
 The type is close-set and functional. Large case titles contrast with small, regular-weight metadata; metrics use tabular numerals. Font synthesis is disabled.
 
 ### Hierarchy
 
 - **Current console:** `console-heading` is the desktop title, adapting to (20px) below (740px). `measured-metric` uses tabular numerals and adapts to (25px). Panel headings use (15px), compact labels (10–11px), actual diff text (11px) and the mobile diff (10px). Compact flow agent titles use `console-flow-title`; system titles are (14px), with agent descriptions (12px) and system descriptions (11px). The following earlier hierarchy remains specific to historical surfaces.
+- **Journey and monitoring:** the journey heading uses (16px), step titles (12px), and supporting descriptions (11px). Mobile uses (15px), (11px) and (10px) respectively. Repository names and package versions wrap within their rows. These observed component sizes describe this implementation; they do not establish additional global type steps.
 
 - **Headline:** page heading; desktop role is in frontmatter, adapting to (26px) on mobile.
 - **Case title:** selected finding; (35px) above the large-screen breakpoint, (26px) at the intermediate width, (31px) in the stacked tablet layout and the frontmatter size on mobile.
@@ -341,9 +343,11 @@ The type is close-set and functional. Large case titles contrast with small, reg
 
 ### Current single console
 
-The sticky header and content share a maximum width (1540px), desktop gutters (28px) and mobile gutters (18px). There is no left navigation. Header controls include the repository popover, written service status, Run options and Run/Cancel/Follow active run. Four measured metrics form equal columns. Below the current advisory, a bordered orchestration stage uses `minmax(0,1fr) 300px` for graph and latest-first event rail; the rail narrows to (260px) below (1150px). The developer workbench and review use `minmax(0,1.6fr) minmax(0,1fr)` with a (28px) gap. Outcomes, phase durations and tokens use columns `.85fr 1.2fr 1fr`; history follows in the same document.
+The sticky header and content share a maximum width (1540px), desktop gutters (28px) and mobile gutters (18px). There is no left navigation. Header controls include a repository selector popover, written service status, Run options and the selected repository's action, Cancel or Follow active run. Four measured metrics form equal columns. The six-step journey follows, then repository inventory and source health in equal columns with a (25px) gap, followed by corroborated findings. These monitoring sections use (24px) separation and the established bordered panel surface.
 
-At (960px), events move below the graph, workbench/review stack, and analytics become two columns with token usage beneath. At (740px), the header becomes two rows with a full-width repository control; metrics become two-by-two and observations stack. The mobile role summary remains above an initially collapsed **Interactive agent flow** disclosure; expanding it reveals the full vertical graph and six-entry numbered legend. The graph switches to vertical coordinates at (680px). Desktop graph height is (410px), (440px) on large screens and (430px) at the intermediate width; vertical mobile height is (1070px). Compact desktop nodes use x (0,340,680), padding (0.05), numbered edges and a three-column legend; mobile preserves the reserved return-lane bounds described below. The event rail and runner output scroll inside bounded regions. Mobile run history intentionally scrolls horizontally at a (640px) table minimum; the selected run identity and outcome remain visible at its start.
+Below the selected repair strip, the initially collapsed **How the three agents work** disclosure contains a bordered orchestration stage using `minmax(0,1fr) 300px` for graph and latest-first event rail; the rail narrows to (260px) below (1150px). The developer workbench and review use `minmax(0,1.6fr) minmax(0,1fr)` with a (28px) gap. Outcomes, phase durations and tokens use columns `.85fr 1.2fr 1fr`; history follows in the same document.
+
+At (1100px), the journey becomes two rows of three steps. At (960px), events move below the graph, workbench/review stack, and analytics become two columns with token usage beneath. At (740px), the header becomes two rows with a full-width repository control; metrics become two-by-two and observations stack. All six journey steps remain visible in two columns, monitoring panels stack, the repository URL form becomes vertical, and each finding becomes a single column with status and action together. No journey connector is needed on mobile. Inside technical details, the mobile role summary remains above an initially collapsed **Interactive agent flow** disclosure; expanding it reveals the full vertical graph and six-entry numbered legend. The graph switches to vertical coordinates at (680px). Desktop graph height is (410px), (440px) on large screens and (430px) at the intermediate width; vertical mobile height is (1070px). Compact desktop nodes use x (0,340,680), padding (0.05), numbered edges and a three-column legend; mobile preserves the reserved return-lane bounds described below. The event rail and runner output scroll inside bounded regions. Mobile run history intentionally scrolls horizontally at a (640px) table minimum; the selected run identity and outcome remain visible at its start.
 
 ### Historical off-route workspace
 
@@ -357,7 +361,7 @@ All views share five destinations in order: Agents, Overview, Findings, Evidence
 
 On Agents at (680px) and below, Live service places a compact semantic role summary immediately after the hero and before service status and the workbench. Three definition-list rows pair full agent names with live responsibilities in two equal columns, separated by a (13px) gap and (9px) row gap. A written handoff follows with top margin (13px), line-height (1.8) and maximum width (48ch). Bottom padding (16px), an olive divider and bottom margin (20px) separate the summary from service controls. It is hidden on desktop. The final (390 × 844) mobile first-viewport evidence exposes all three roles and the handoff before the detailed graph. Simulation retains its stacked name/verb summary with bottom padding (18px) and bottom margin (23px).
 
-### Live Agents workbench
+### Historical standalone Live Agents workbench
 
 Live source selection, run intent and the primary start/cancel action share a toolbar above the connected target and stored execution identity. The case summary uses columns `1.2fr 1fr` with a (30px) gap. The observed-check list and agent execution inspector use columns `1.15fr 1fr` with a (30px) gap; a vertical divider introduces the inspector. Source evidence, bilingual review, owner tasks and the event trace follow as document sections. Execution logs and Stored runs share columns `1.5fr 1fr` below. At (1100px), the toolbar wraps and gaps narrow; at (680px), the toolbar, case summary, evidence and history become single columns and side dividers become horizontal.
 
@@ -381,13 +385,13 @@ The dialog is bounded to (860px), scrolls internally and stays within the viewpo
 
 ## Elevation & Depth
 
-The current console keeps the flat panel-and-divider vocabulary. Its native repository and Run options popovers use the functional shadow `0 12px 32px #11130f`; the header remains sticky above the document. Grouped disclosures replace additional floating cards. The older modal and machine treatments below belong to retained, off-route components.
+The current console keeps the flat panel-and-divider vocabulary. Its native repository and Run options popovers use the functional shadow `0 12px 32px #11130f`; the header remains sticky above the document. Journey, repository and watch panels use tonal separation, one-pixel borders and inset rows. Inventory, scout, unconfirmed leads and technical orchestration use native disclosures rather than additional floating cards. The older modal and machine treatments below belong to retained, off-route components.
 
 Resting surfaces use tonal layering and one-pixel borders. The isometric machine supplies literal depth through faces, edges, rails, feet and occlusion. Avoid adding shadow to each evidence panel; the implemented shadow belongs to the modal (`0 24px 90px #0008`), separated from the page by its dark translucent backdrop.
 
 The Agents canvas uses a quiet dotted field, flat bordered nodes and labelled orthogonal routes. React Flow controls explicitly have no box shadow. Active and selected nodes gain a lime border or outline; held gates gain a peach border. These are state treatments rather than elevation.
 
-**The Evidence Before Ornament Rule.** Geometry must explain the selected finding's progression. Keep the machine's five gate fingers and cartridge movement tied to evidence state.
+**The Evidence Before Ornament Rule.** Geometry must explain the selected finding's progression. Journey steps and graph routes follow recorded state; the historical machine's five gate fingers and cartridge movement remain tied to its represented evidence state.
 
 ## Shapes
 
@@ -399,35 +403,47 @@ Flow nodes use the dedicated `flow-node` radius. Live nodes have minimum height 
 
 ### Current console composition
 
-`OperationsDashboard` composes `DashboardHeader`, `RunMetrics`, `OrchestrationPanel`, `VerificationWorkbench`, `ReviewPanel` and `RunAnalytics`. The header starts the real bounded workflow, cancels the active run, or follows it while another history entry is selected. Native popovers explain the fixed demo connection and disclose that selected-repository GitHub App onboarding is planned. Run options contain source mode, reconnect and export. The queued event rail says **Run queued** and explains that it is waiting for the worker; it does not prompt another start.
+`OperationsDashboard` composes `DashboardHeader`, `RunMetrics`, `SecurityJourney`, `RepositoryPanel`, `SecurityWatchPanel`, `FindingsPanel`, the disclosed `OrchestrationPanel`, `VerificationWorkbench`, `ReviewPanel` and `RunAnalytics`. The header offers **Prepare draft fix** for an eligible Python finding, **Run PHP demo** for the retained runtime profile, or **Watch now** for monitoring. It cancels the active run or follows it while another history entry is selected. The repository popover selects real persisted registry entries, displays verified access and links to the connection panel. Production GitHub App installation remains planned. Run options contain the retained advisory source mode, reconnect and selected-run export. The queued event rail says **Run queued** and explains that it is waiting for the worker; it does not prompt another start.
 
-The four metrics are deduplicated stored runs, unique recorded draft URLs, median valid completed duration with its sample count, and API-reported tokens with metered-call count. Outcome bars disclose `n`; phase bars derive from transition intervals and aggregate repeated visits; token bars group reported usage by role/model. Missing timing or usage remains absent or a dash. These are observations of repeated runs of one PHP case, not unique vulnerabilities, savings or population performance.
+The four metrics are deduplicated stored runs, unique recorded draft URLs, median valid completed duration with its sample count, and API-reported tokens with metered-call count. Repository selection filters the run evidence, history, metrics and analytics. Outcome bars disclose `n`; phase bars derive from transition intervals and aggregate repeated visits; token bars group reported usage by role/model. Missing timing or usage remains absent or a dash. These are observations of stored runs for the selected repository, not unique vulnerabilities, savings or population performance. The separate read-only forum scout's usage appears in Security watch and is excluded from repair-run metrics.
 
-The workbench has keyboard-operable **Checks**, **Candidate diff** and **Runner output** tabs. Check disclosures group source/inventory, policy, runtime, individual business assertions and CI provenance. A client-only installed Bklit `Gauge` uses the actual check total, uniform notches and solid lime; its adjacent written count remains authoritative and the gauge is hidden on mobile. The diff comes from the API's immutable base/candidate GitHub comparison, with per-file disclosures, addition/deletion colors, actual patch text, error/retry states and a complete-comparison link when bounded. Runner output exposes recorded logs and identities.
+The workbench has keyboard-operable **Checks**, **Candidate diff** and **Runner output** tabs. Check disclosures group **Source + inventory**, **Policy gates**, generic **Runtime checks**, **Business checks** and **CI provenance**. Business suite assertions remain distinct from the suite's aggregate gate; the actual Python run records (11) controller/runner gates and a frozen suite of (12) Japanese business assertions. A client-only installed Bklit `Gauge` uses the recorded check total, uniform notches and solid lime; its adjacent written count remains authoritative and the gauge is hidden on mobile. The diff comes from the API's immutable base/candidate GitHub comparison, with per-file disclosures, addition/deletion colors, actual patch text, error/retry states and a complete-comparison link when bounded. Runner output exposes recorded logs and identities.
 
 Review shows the actual draft PR action, publication-gate state, English/Japanese senior summary and advisory evidence, plus owner-task and concern disclosures. Model role controls expose actual IDs, recorded call state and usage. The compact mobile role summary and expandable full graph retain the three-agent/control-layer distinction. Legacy controls and specimens described below are historical unless explicitly reused here.
+
+### Repository connection and security watch
+
+The connection form accepts a clean GitHub HTTPS URL. The server verifies credential access, reads immutable supported manifests and persists the registry entry. Repository rows use `aria-pressed` for selection, written Enabled/Paused states and a wrapping owner/name. Native checkboxes control **Watch this repository** and **Automatically prepare a draft fix**. The latter is available only for the reviewed Python Requests profile with verified inventory and branch-write access. New connections begin in monitor-only mode; arbitrary repositories remain monitor-only until a reviewed verification policy exists. The PHP runtime profile is a separate manual demo.
+
+Security watch displays the separate worker's heartbeat, next check and configured cadence, defaulting to (300 seconds), beside an immediate **Check sources now** action. Each source carries written health, timestamp and error text. Amber unconfirmed forum leads and recorded scout output remain in separate disclosures. The scout's model, summary and reported token count do not confirm a vulnerability or authorize repair. Source failure remains visible and never becomes a clean result. The reviewed capture records (4,556) scout tokens separately from the selected repair's (6,230).
+
+### Six-step journey and affected findings
+
+The ordered journey reads **Connect repository → Watch security news → Find affected package → Prepare a fix → Test & senior review → Draft PR → human**. Drawn icons, numerals and words explain each step; completed icons and active olive fill reinforce the recorded state. A compact status rail gives the latest stored event and JST timestamp. The sequence is the primary beginner explanation; the interactive agent graph is available under technical details.
+
+Affected findings pair the installed and selected safe version, manifest, advisory aliases, source link and written status with a reachable action. The reviewed Python Requests finding permits **Prepare draft fix**; other findings require owner action or link to their existing run. Forum discovery leads do not appear as confirmed repair findings without corroborated advisory and installed-version evidence.
 
 ### Buttons and controls
 
 Primary buttons are compact lime actions with dark text; outline buttons use a dark olive fill, pale lime text and a visible stroke. Subtle buttons support export and secondary actions with a quiet surface. Main buttons use the frontmatter padding, an icon gap (9px) and a transparent one-pixel border. Hover transitions run (160ms). Disabled buttons use a not-allowed cursor and opacity (0.5).
 
-Keyboard focus uses a lime outline (2px) with offset (4px) on buttons, links, selects and focusable elements. The scenario chooser and live source chooser are native selects with visible olive borders. There is no text-entry field in this surface; do not infer one from the generic starter library.
+Keyboard focus uses a lime outline (2px) with offset (4px) on buttons, links, selects and focusable elements. The repository URL field has a dark inset surface, olive border, restrained rounding (5px) and visible label. Repository/watch settings use native checkboxes with the existing lime accent. The repository and live source choosers are native selects with visible olive borders; the historical scenario chooser retains its select treatment.
 
-### Navigation and filters
+### Historical navigation and filters
 
 Navigation rows pair line icons with clear text. Active rows use an olive surface and pale lime text; hover brightens text and surface. Mobile navigation remains labeled. Queue filters use a dark segmented container with a filled selected segment. Preserve their distinct treatment from severity badges.
 
 The saved navigation specimen contains all five destinations and the mobile icon-over-label grid. The Agents inspector's three role selectors use `aria-pressed`, a selected border and fill; selecting a system node changes the inspector to that infrastructure role without inventing another agent.
 
-### Evidence panels and finding rows
+### Historical evidence panels and finding rows
 
 Panels contain a heading, concise evidence and one clear review action. Before/after rows have their own inset surface and divider. Severity badges use a small radius, tinted background, outline and text. The selected queue row uses an olive fill; status includes both a dot and words. Evidence records open the same review workflow. Preserve the mobile row grid described in Layout.
 
-### Review dialog
+### Historical review dialog
 
-The dialog contains explicit synthetic notice, four-step progress, evidence/diff/review tabs, before/after comparison, check results, scenario control and action footer. A passing security replay alongside a failed benign regression remains blocked. Successful retry unlocks local draft preparation; the result is a local preview and is labeled accordingly. The current surface uses dialog semantics, keyboard handling and visible focus styling.
+The off-route dialog contains explicit synthetic notice, four-step progress, evidence/diff/review tabs, before/after comparison, check results, scenario control and action footer. A passing security replay alongside a failed benign regression remains blocked. Successful retry unlocks local draft preparation; the result is a local preview and is labeled accordingly. This retained surface uses dialog semantics, keyboard handling and visible focus styling.
 
-### Verification interlock
+### Historical verification interlock
 
 The Anatomy-generated SVG is composed of (63) parts in an (800 × 480) viewBox. Five physical check fingers represent baseline failure, candidate pass, benign controls, test identity and commit identity, in that order. The same five booleans feed the evidence gate count and the draft predicate.
 
@@ -435,19 +451,21 @@ At stage (0), no fingers are raised. At stages (1–2), baseline failure is esta
 
 Movement uses transform transitions (740ms) with `cubic-bezier(.22,.7,.25,1)`; successful cartridge movement waits (220ms) for the gates. SVG title/description expose the state and check mapping. Reduced motion disables this transition.
 
-### Evidence gate
+### Historical five-condition evidence gate
 
 The compact gauge uses the actual installed Bklit `Gauge` source, dynamically imported with `ssr:false` from `evidence-coverage.tsx`. It is client-only. Five uniform notches use solid chart lime and the inactive border color, without a gradient. Each satisfied check adds (20%) and one notch; blocked regression is visibly **four lime notches and one dark notch**, beside “4 / 5 satisfied.” The written count and accessible section label carry the result while the client chart mounts.
 
 ### Live execution, service state and results
 
-The execution-mode switch defaults to **Live service**, describes actual Groq calls/checks/GitHub draft behavior, and offers the separate **Simulation** mode. Live service shows connecting, connected, reconnecting, offline and setup-required states with written feedback; missing service or credentials never substitute a fabricated result. Keys remain on the server. The source chooser distinguishes fetched Japanese/vendor sources from a recorded advisory snapshot; both choices still use real models, checks and draft publication.
+The routed console uses the live service. It shows connecting, connected, reconnecting, offline and setup-required states with written feedback; missing service or credentials never substitute a fabricated result. Keys remain on the server. The retained manual PHP source chooser distinguishes fetched Japanese/vendor sources from a recorded advisory snapshot; both choices still use real models, checks and draft publication. The old Live service/Simulation switch exists only in historical off-route source.
 
-The controller uses a persisted SQLite queue and a separate worker. The frontend loads readiness and stored history, recovers the active or latest run after reload, consumes SSE snapshots/events and uses a bounded (10-second) polling fallback while active. Selecting a Stored run retrieves its evidence. The live trace uses JST timestamps. Export includes the stored run and event record; browser state is not the source of execution truth. Cancel requests stop later stages, while already in-flight external writes or CI can remain recorded.
+The controller uses a persisted SQLite queue and a separate worker. The current repair pipeline traverses the shared LangGraph source, inventory, triage, baseline, repair, verify, review, gate and publish nodes, with an explicit blocked path. The frontend loads readiness and stored history, recovers the active or latest selected-repository run after reload, consumes SSE snapshots/events and uses a bounded (10-second) polling fallback while active. Selecting a Stored run retrieves its evidence. The live trace uses JST timestamps. Export includes the stored run and event record; browser state is not the source of execution truth. Cancel requests stop later stages, while already in-flight external writes or CI can remain recorded. Earlier PHP records retain their original execution provenance and must not be relabeled as LangGraph runs.
 
 Supply Chain uses actual Groq model `openai/gpt-oss-20b`; Remediation and the DevSec senior reviewer use `openai/gpt-oss-120b` in separate contexts. The inspector exposes actual model IDs, call status, recorded summaries and token usage. Model review cannot override a failed deterministic check. These contexts do not establish independent-model assurance.
 
-Observed checks, the real GitHub Actions link, runtime/policy output, candidate identity and a returned draft PR appear only from recorded results. English/Japanese display controls switch advisory titles, available agent summaries and senior-review summaries; owner tasks remain visible. A passing gate automatically creates or reuses the matching draft PR, then presents its actual number and review link. Draft publication leaves merge readiness and finding closure false. The preserved final run created [draft PR #3](https://github.com/Harsh5840/arigato-php-demo/pull/3), with (35) observed passes and (15) business assertions, as recorded in `../../docs/IMPLEMENTATION-HANDOFF.md`.
+Observed checks, the real GitHub Actions link, runtime/policy output, candidate identity and a returned draft PR appear only from recorded results. English/Japanese display controls switch available senior-review and advisory text; owner tasks remain visible. A passing gate creates or reuses the matching draft PR at the verified candidate head, then presents its actual number and review link. Draft publication leaves merge readiness and finding closure false; a human reviews, merges, deploys and verifies the running service.
+
+The current Python demonstration is run `444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e` and [draft PR #1](https://github.com/Harsh5840/arigato-python-demo/pull/1): Requests (2.31.0 → 2.34.2), (11) controller/runner gates, a frozen suite of (12) Japanese business assertions, (3) role calls and (6,230) reported tokens. This is recorded evidence, not a permanent metric target. The preserved PHP [draft PR #3](https://github.com/Harsh5840/arigato-php-demo/pull/3), with (35) observed passes and (15) business assertions, and dashboard PR #4 remain historical runs recorded in `../../docs/IMPLEMENTATION-HANDOFF.md`.
 
 ### Retained Simulation and Overview cues
 
@@ -455,13 +473,13 @@ Simulation and Overview keep their synthetic fixture, machine and activity label
 
 ### Agents and deterministic infrastructure
 
-Exactly three graph nodes are product agents. Live **Supply Chain Agent** matches Japanese alerts and vendor evidence to declared inventory; **Remediation Agent** proposes a repair within the allowed three-file scope; **Development Security Agent** denotes worker-controlled baseline/check execution and senior review in a separate model context. The controller, evidence gate and human reviewer are visibly distinct infrastructure or human roles. The Simulation inspector retains its planned inputs, outputs, tools and permission boundaries.
+Exactly three graph nodes are product agents. Live **Supply Chain Agent** matches corroborated advisories to declared inventory; **Remediation Agent** proposes a repair within the selected reviewed profile; **Development Security Agent** denotes worker-controlled baseline/check execution and senior review in a separate model context. The Python profile changes the Requests pin in `requirements.txt` while preserving source. The retained manual PHP runtime profile permits its three exact runtime/configuration changes. The controller, hosted verifier, publication gate and human reviewer are visibly distinct infrastructure or human roles. The Simulation inspector retains its planned inputs, outputs, tools and permission boundaries.
 
-The live mobile-only semantic `dl` names all three roles with “Match Japanese alerts to inventory,” “Prepare a scoped repair,” and “Baseline, checks and senior review.” It ends with “Supply Chain → DevSec baseline → Remediation → DevSec checks → human review.” The summary precedes the longer interactive graph. Its definition terms and descriptions reset inherited evidence-table width, padding, backgrounds and margins. Simulation retains its original discover/propose/watch descriptions.
+Inside the current console's technical details, the mobile-only semantic `dl` names all three roles with “Advisory → inventory,” “Scoped candidate repair,” and “Baseline, checks, senior review.” It ends with “Supply Chain → DevSec baseline → Remediation → DevSec checks → human review.” The summary precedes the longer interactive graph. Its definition terms and descriptions reset inherited evidence-table width, padding, backgrounds and margins. Historical standalone Live source retains its earlier matching/repair descriptions, and Simulation retains its original discover/propose/watch descriptions.
 
 Actual React Flow provides selection, dragging, zoom and fit controls. Live nodes expose named top/left/right target handles and bottom/right/top source handles; Simulation retains its four-sided ports. Smooth-step routes use closed arrows, with full desktop labels and the live mobile numbered legend. Connections cannot be edited (`nodesConnectable:false`) and delete is disabled. Selected nodes use an outline (2px) offset (4px), matching the interface focus language. The graph is loaded client-side with a written loading state.
 
-**The Baseline Before Candidate Rule.** Supply Chain sends its risk brief to DevSec; the worker records the declared affected baseline and freezes the verifier before Remediation writes. The affected runtime is never executed in the live PHP pilot. The candidate returns to DevSec for actual checks and separate senior review. Simulation retains local-change intake and illustrative failed-check repair loops. Passing security checks never erase failed legitimate-use controls.
+**The Baseline Before Candidate Rule.** Supply Chain sends its risk brief to DevSec; the worker records the declared affected baseline and freezes trusted tests before Remediation writes. The affected baseline is never executed. The candidate returns to DevSec for actual checks and separate senior review. Historical Simulation retains local-change intake and illustrative failed-check repair loops. Passing security checks never erase failed legitimate-use controls.
 
 ### Retained Simulation controls, gate and trace
 
@@ -482,7 +500,7 @@ Only edges incident to the currently running node animate. The reduced-motion ru
 - **Do** preserve all five gate conditions and the blocked middle finger when regression fails.
 - **Do** retain visible status and a reachable action in every mobile finding row.
 - **Do** preserve synthetic labels in Simulation and Overview, human review authority, visible focus and reduced motion.
-- **Do** treat `workspace.css`, `orchestration.css`, `live-orchestration.css` and the current feature components as the built visual source.
+- **Do** treat `workspace.css`, `orchestration.css`, `live-orchestration.css`, `operations.css`, `monitoring.css` and the current feature components as the built visual source.
 - **Do** preserve exactly three product agents and identify controller, evidence, gate and human review separately.
 - **Do** keep DevSec baseline/frozen checks before repair, candidate replay and failed-check return visible at both graph sizes.
 - **Do** distinguish Live service results from the fictional inventory and test outcomes in Simulation and Overview.
@@ -490,7 +508,10 @@ Only edges incident to the currently running node animate. The reduced-motion ru
 - **Do** preserve the compact live mobile role summary, six directional legend entries and return-lane fit bounds.
 - **Do** expose actual model IDs, observed checks and the CI/PR identity without implying merge approval.
 - **Do** compose the current product through the operations components on one route; keep legacy prototype surfaces off-route.
+- **Do** lead with all six plain-language steps and use disclosures for inventory, unconfirmed leads, scout output and technical orchestration.
+- **Do** make verified access and supported repair capability visible beside repository controls.
 - **Do** label observed chart samples and timing/token sources; count unique runs and draft URLs rather than implying distinct vulnerabilities.
+- **Do** keep read-only scout usage separate from the selected repository's repair-run metrics.
 
 ### Don't:
 
@@ -501,5 +522,8 @@ Only edges incident to the currently running node animate. The reduced-motion ru
 - **Don't** restore the earlier rejected concept from the root design specification.
 - **Don't** present the deterministic controller as a fourth agent or grant an agent merge authority.
 - **Don't** turn a ready graph state into an automatic merge or a guarantee of complete security.
+- **Don't** treat an unconfirmed lead, unavailable source or monitor-only connection as authority to repair.
 
-Documentation basis: current operations components/styles, the direction contract in `src/app/layout.tsx`, the actual dashboard run/PR #4 in `../../docs/IMPLEMENTATION-HANDOFF.md`, and eight provenance-bearing captures in `.impeccable/review/dashboard`. Its `VERDICT.md` records **ship**, scoped to the resolved queued-event copy fix. `DOCUMENTATION.md` records the current console refresh. Earlier live and Simulation records remain historical evidence. This document records built design truth without extending the verdict's scope or rerunning review/detection.
+Documentation basis: current `PRODUCT.md`, operations/monitoring components and styles, the direction contract in `src/app/layout.tsx`, current Python run evidence under `../../output/live-runs`, and nine provenance-bearing captures in `.impeccable/review/generic-service`. Its `REVIEW.md` records **ship**. `.impeccable/review/generic-service/DOCUMENTATION.md` records this authorized merge. Earlier dashboard, live and Simulation records remain historical evidence. This document records built design truth without extending the verdict's scope or rerunning browser review, detection, build or tests.
+
+Not canonized: the three reported font-step advisories and incidental repair-strip kicker copy are not new type or component rules; the finish review found no material hierarchy or legibility failure, and one-off copy does not define this system.

@@ -3,6 +3,7 @@ import { streamSSE } from 'hono/streaming';
 import { terminalStatuses } from '../../../../packages/contracts/src/live.js';
 import { getProviderStatus, readCandidateDiff } from '../adapters/index.js';
 import type { RunStore } from '../db/client.js';
+import { readRepositoryCandidateDiff } from '../adapters/repository.js';
 
 export function runHandlers(store: RunStore) {
   const missing = (c: Context) => c.json({ error: { code: 'NOT_FOUND', message: 'Run not found.' } }, 404);
@@ -22,7 +23,7 @@ export function runHandlers(store: RunStore) {
     diff: async (c: Context) => {
       const run = store.get(c.req.param('id')!); if (!run) return missing(c);
       if (!run.repo.baseSha || !run.repo.candidateSha) return c.json({ error: { code: 'CANDIDATE_PENDING', message: 'The selected run has not published a candidate commit yet.' } }, 409);
-      return c.json(await readCandidateDiff(run.repo.baseSha, run.repo.candidateSha, c.req.raw.signal));
+      return c.json(await (run.target ? readRepositoryCandidateDiff(run.repo, run.repo.baseSha, run.repo.candidateSha, c.req.raw.signal) : readCandidateDiff(run.repo.baseSha, run.repo.candidateSha, c.req.raw.signal)));
     },
     cancel: (c: Context) => {
       const run = store.get(c.req.param('id')!); if (!run) return missing(c);

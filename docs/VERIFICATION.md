@@ -1,3 +1,23 @@
+# Verification record
+
+## Generic LangGraph service — 25 October 2026 (Asia/Calcutta)
+
+Actual scheduled monitoring inventoried Requests 2.31.0, corroborated three OSV advisory groups and coalesced them into one LangGraph repair. [Python draft PR #1](https://github.com/Harsh5840/arigato-python-demo/pull/1) was created automatically after [Actions40126005250 passed](https://github.com/Harsh5840/arigato-python-demo/actions/runs/40126005250). Run444cd3c2 preserves 11 passing controller/runner gates, 12 executed frozen Japanese business assertions, actual Python3.12.15/Requests2.34.2 and 6,230 reported role tokens. A separate read-only forum scout recorded4,556tokens. Eleven durable graph checkpoints were read back from SQLite after the worker stopped; external-write crash replay is deliberately unsupported.
+
+Root `npm test`, API/web type checks and optimized Next production build passed. Tests include real LangGraph branching, bounded retries, durable checkpoint reopen, strict ChatGroq transport, generic inventory/OSV matching, repository/profile/write guards, advisory coalescing, changed-target reopening, pin-only repair policy, server-token/Host/origin protection and server-only fixed-destination proxy behavior. Mocked tests are distinct from actual hosted run evidence.
+
+Browser QA verified repository selection and settings, live worker/graph progress, real findings, exact loaded GitHub diff, actual draft handoff, grouped generic runtime/business/provenance checks, observed analytics and no document overflow at1440px or390px. The nine actual captures in `apps/web/.impeccable/review/generic-service` carry embedded origin metadata. Two premature workbench captures were replaced with loaded unobscured diffs. The independent full finish review returned **ship**; its record is REVIEW.md. The frontend source remains one route, with beginner six-step flow and expandable React Flow details.
+
+The GitHub advisory Atom source returned HTTP406 and is visibly unavailable; no success was substituted. Python forum leads remained unconfirmed, and actual Groq triage selected none as establishing this vulnerability. OSV established the exact inventory findings independently. A source failure does not establish a clean result.
+
+Model summaries are interpretations, not version-range authority. The first run's analyst overgeneralized an advisory range from the selected upgrade. The controller already used exact OSV matching and a rechecked published safe target. The adapter now provides actual advisory range events and separates selectedSafeUpgradeVersion from the individual advisory's first fixed release in model input. Historical model output is retained rather than silently edited; a separate actual read-only triage recheck is saved beside the run. Never present free-text model claims as independently verified source facts.
+
+Compose configuration was validated with dummy values; API/proxy security tests passed. Docker engine was unavailable, so container images, startup/volume permissions and remote hosting remain unverified. Arbitrary connected repos support bounded inventory/advisory monitoring; automatic fixes require an approved policy. Current Python policy preserves source; the PHP advisory demo retains its three-file runtime policy. No end-user SaaS login, tenant isolation, GitHub App install, X connector, universal pentesting, automatic merge or deployment is claimed.
+
+## Historical verification records
+
+The sections below describe earlier product revisions and retain their original scope and dates.
+
 # Redesign verification — 24 October 2026
 
 ## One-page dashboard — 25 October 2026 (Asia/Calcutta)

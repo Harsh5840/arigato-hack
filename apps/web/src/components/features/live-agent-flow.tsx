@@ -10,7 +10,7 @@ type FlowNode = Node<FlowData, 'liveAgent'>;
 const icons = {controller: Network, 'supply-chain': Radar, remediation: Wrench, devsec: ShieldCheck, gate: LockKeyhole, review: UserCheck};
 const definitions: {id: LiveNode; title: string; subtitle: string; agent: boolean}[] = [
   {id: 'controller', title: 'Orchestration controller', subtitle: 'Scope, persistence and routing', agent: false},
-  {id: 'supply-chain', title: 'Supply Chain Agent', subtitle: 'Japanese advisory → affected inventory', agent: true},
+  {id: 'supply-chain', title: 'Supply Chain Agent', subtitle: 'Corroborated alert → affected inventory', agent: true},
   {id: 'devsec', title: 'Development Security Agent', subtitle: 'Baseline, real checks and senior review', agent: true},
   {id: 'remediation', title: 'Remediation Agent', subtitle: 'Scoped update on a candidate branch', agent: true},
   {id: 'gate', title: 'Deterministic evidence gate', subtitle: 'Actual checks + reviewer decision', agent: false},

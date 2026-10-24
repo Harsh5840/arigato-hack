@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-24T19:13:32.9273820Z",
+  "generatedAt": "2026-10-24T19:43:52.936266Z",
   "title": "Design System: ProofPatch",
   "extensions": {
     "colorMeta": {
@@ -737,6 +737,10 @@
       {
         "name": "console-mobile",
         "value": "740px"
+      },
+      {
+        "name": "monitoring-journey-wrap",
+        "value": "1100px"
       }
     ]
   },
@@ -745,8 +749,8 @@
       "name": "Primary action",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Sticky header action starts the actual bounded pipeline.",
-      "html": "<button class=\"ds-primary\"><svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"m6 3 14 9-14 9z\" fill=\"currentColor\"/></svg>Run live demo</button>",
+      "description": "Prepare a bounded draft fix for an eligible Python finding; the header action changes with repository capability.",
+      "html": "<button class=\"ds-primary\"><svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"m6 3 14 9-14 9z\" fill=\"currentColor\"/></svg>Prepare draft fix</button>",
       "css": ".ds-primary{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:1px solid transparent;border-radius:7px;padding:10px 15px;font:600 11px/1.3 var(--font-public,'Public Sans'),sans-serif;white-space:nowrap;cursor:pointer;transition:background .16s,color .16s;background:var(--blue,#c7ef79);color:#18220e}.ds-primary:hover{background:#d6f99d}.ds-primary:focus-visible{outline:2px solid var(--blue,#c7ef79);outline-offset:4px}.ds-primary:disabled{cursor:not-allowed;opacity:.5}@media(prefers-reduced-motion:reduce){.ds-primary{transition:none}}"
     },
     {
@@ -761,7 +765,7 @@
       "name": "Advisory source chooser",
       "kind": "input",
       "refersTo": "live-source-select",
-      "description": "Native source input inside Run options; recorded input still uses actual execution.",
+      "description": "Retained manual PHP profile source option inside Run options; recorded advisory input still uses actual execution.",
       "html": "<label class=\"ds-source\">Advisory intake<select aria-label=\"Advisory intake\"><option>Fetch official sources</option><option>Recorded source snapshot</option></select></label>",
       "css": ".ds-source{display:flex;flex-direction:column;gap:8px;max-width:260px;font:10px var(--font-public,'Public Sans'),sans-serif;color:#c5cdbb}.ds-source select{width:100%;min-width:0;font:11px var(--font-public,'Public Sans'),sans-serif;padding:10px 8px;border:1px solid #505c43;border-radius:6px;background:#252c1e;color:#d6e5c6}.ds-source select:hover{border-color:#69795b}.ds-source select:focus-visible{outline:2px solid var(--blue,#c7ef79);outline-offset:4px}.ds-source select:disabled{cursor:not-allowed;opacity:.5}"
     },
@@ -769,62 +773,63 @@
       "name": "Repository connection popover",
       "kind": "custom",
       "refersTo": "repository-popover",
-      "description": "Open-state specimen of the native connection popover; GitHub App onboarding is explicitly planned.",
-      "html": "<section class=\"ds-connection\"><h2>Repository connection</h2><p class=\"ds-repo\">Harsh5840/arigato-php-demo</p><p>This pilot is scoped to the owned SakuraShop PHP repository.</p><dl><div><dt>Access</dt><dd>Candidate branch, hosted checks, draft PR</dd></div><div><dt>Authority</dt><dd>No automatic merge or deployment</dd></div></dl><p>App installation and other repository connections are planned.</p></section>",
-      "css": ".ds-connection{width:300px;max-width:calc(100vw - 76px);padding:20px;border:1px solid #505c43;border-radius:10px;background:#1a1d17;color:#f1f1eb;box-shadow:0 12px 32px #11130f;font-family:var(--font-public,'Public Sans'),sans-serif}.ds-connection h2{font-size:16px;margin:0 0 13px}.ds-connection p{font-size:11px;line-height:1.7;color:#bac7ac;margin:10px 0 0}.ds-connection .ds-repo{font-size:12px;color:#d6e5c6;overflow-wrap:anywhere}.ds-connection dl{margin:17px 0;display:grid;gap:12px}.ds-connection dl>div{display:grid;grid-template-columns:62px 1fr;gap:10px}.ds-connection dt{font-size:11px;color:#bac7ac}.ds-connection dd{font-size:11px;line-height:1.6;margin:0}"
+      "description": "Native repository selector and verified access summary; actual registry connections are managed in the panel below.",
+      "html": "<section class=\"ds-connection\"><h2>Connected repositories</h2><label>Repository<select aria-label=\"Repository\"><option>Harsh5840/arigato-python-demo</option></select></label><p>Connect repositories from the panel below. The server validates GitHub access and reads dependency manifests.</p><dl><div><dt>Access</dt><dd>Branch writes permitted; repair profile still required</dd></div><div><dt>Authority</dt><dd>No automatic merge or deployment</dd></div></dl><a href=\"#repositories\">Manage repository connections</a><p>A production GitHub App installation flow remains planned.</p></section>",
+      "css": ".ds-connection{width:300px;max-width:calc(100vw - 76px);padding:20px;border:1px solid #505c43;border-radius:10px;background:var(--panel,#1a1d17);color:var(--ink,#f1f1eb);box-shadow:0 12px 32px #11130f;font-family:var(--font-public,\"Public Sans\"),sans-serif}.ds-connection h2{font-size:16px;margin:0 0 13px}.ds-connection p{font-size:11px;line-height:1.7;color:#bac7ac;margin:10px 0 0}.ds-connection label{display:flex;flex-direction:column;gap:8px;font-size:11px;color:#d6e5c6}.ds-connection select{background:#252c1e;color:#d6e5c6;border:1px solid #505c43;border-radius:5px;padding:10px;font:11px var(--font-public,\"Public Sans\"),sans-serif;width:100%}.ds-connection select:hover{border-color:#69795b}.ds-connection select:focus-visible,.ds-connection a:focus-visible{outline:2px solid #c7ef79;outline-offset:4px}.ds-connection dl{margin:17px 0;display:grid;gap:12px}.ds-connection dl>div{display:grid;grid-template-columns:62px 1fr;gap:10px}.ds-connection dt{font-size:11px;color:#bac7ac}.ds-connection dd{font-size:11px;line-height:1.6;margin:0}.ds-connection a{font-size:11px;color:#d3efb0}.ds-connection a:hover{color:#f1f1eb}"
     },
     {
       "name": "Grouped observed checks",
       "kind": "card",
       "refersTo": "console-panel",
-      "description": "Native disclosure groups actual check evidence; this specimen uses the preserved 15 business assertions.",
-      "html": "<section class=\"ds-checks\"><h2>Developer workbench</h2><details><summary><strong>Business assertions</strong><span>15 / 15 passed</span></summary><p>Observed PHP business checks are recorded by hosted verification. Missing evidence never counts as a pass.</p></details></section>",
+      "description": "Generic runtime and business disclosures preserve the distinction between recorded gates and suite assertions.",
+      "html": "<section class=\"ds-checks\"><h2>Developer workbench</h2><details><summary><strong>Runtime checks</strong><span>Passed</span></summary><p>Observed candidate runtime matches the approved package target.</p></details><details><summary><strong>Business checks</strong><span>Passed</span></summary><p>The frozen Python suite records 12 Japanese business assertions. Its aggregate gate is distinct from the assertion count; missing evidence never counts as a pass.</p></details></section>",
       "css": ".ds-checks{max-width:540px;border:1px solid var(--line,#32352f);border-radius:12px;background:#1a1d17;color:#d6e5c6;font-family:var(--font-public,'Public Sans'),sans-serif}.ds-checks h2{font-size:15px;margin:0;padding:17px 20px;border-bottom:1px solid var(--line,#32352f)}.ds-checks details{margin:0 20px;border-bottom:1px solid var(--line,#32352f)}.ds-checks summary{display:flex;align-items:center;gap:9px;cursor:pointer;padding:15px 0;font-size:12px}.ds-checks summary span{margin-left:auto;font-size:10px;color:#d3efb0}.ds-checks summary:hover{color:#f1f1eb}.ds-checks summary:focus-visible{outline:2px solid #c7ef79;outline-offset:4px}.ds-checks p{font-size:11px;line-height:1.7;color:#bac7ac;margin:0 0 15px}"
     },
     {
-      "name": "Actual check coverage",
-      "kind": "custom",
-      "description": "Static written-count specimen. Production uses the actual installed client-only Bklit Gauge with one notch per recorded check; the gauge hides on mobile.",
-      "html": "<div class=\"ds-coverage\"><svg width=\"58\" height=\"39\" viewBox=\"0 0 58 39\" aria-hidden=\"true\"><path d=\"M5 34a24 24 0 0 1 48 0\" fill=\"none\" stroke=\"#c7ef79\" stroke-width=\"7\" stroke-dasharray=\"1 1\"/></svg><span>35 / 35 checks passed</span></div>",
-      "css": ".ds-coverage{display:flex;align-items:center;gap:8px;font:10px var(--font-public,'Public Sans'),sans-serif;color:#bac7ac}.ds-coverage svg{overflow:visible}@media(max-width:740px){.ds-coverage svg{display:none}}"
+      "name": "Repository URL field",
+      "kind": "input",
+      "description": "Labeled GitHub HTTPS URL entry; server access verification precedes a monitor-only registry connection.",
+      "html": "<form class=\"ds-repository-url\"><label for=\"ds-repository-url\">GitHub repository URL</label><div><input id=\"ds-repository-url\" type=\"url\" placeholder=\"https://github.com/owner/project\" required><button type=\"submit\">Connect</button></div><p>The server verifies access and reads dependency manifests. New repositories start in monitor-only mode.</p></form>",
+      "css": ".ds-repository-url{max-width:540px;padding:17px 20px 19px;background:#181c16;color:#d6e5c6;font-family:var(--font-public,\"Public Sans\"),sans-serif}.ds-repository-url>label{display:block;font-size:11px;margin-bottom:9px}.ds-repository-url>div{display:flex;gap:8px}.ds-repository-url input{min-width:0;flex:1;background:#11130f;color:#f1f1eb;border:1px solid #505c43;border-radius:5px;padding:10px;font:11px var(--font-public,\"Public Sans\"),sans-serif}.ds-repository-url input::placeholder{color:#9daf8d}.ds-repository-url input:hover{border-color:#69795b}.ds-repository-url button{border:1px solid transparent;border-radius:7px;padding:10px 15px;background:#c7ef79;color:#18220e;font:600 11px/1.3 var(--font-public,\"Public Sans\"),sans-serif;cursor:pointer;transition:background .16s}.ds-repository-url button:hover{background:#d6f99d}.ds-repository-url input:focus-visible,.ds-repository-url button:focus-visible{outline:2px solid #c7ef79;outline-offset:4px}.ds-repository-url input:disabled,.ds-repository-url button:disabled{cursor:not-allowed;opacity:.5}.ds-repository-url p{font-size:10px;line-height:1.7;color:#9daf8d;margin-top:11px;max-width:70ch}@media(max-width:740px){.ds-repository-url{padding:16px 15px}.ds-repository-url>div{flex-direction:column;gap:9px}}@media(prefers-reduced-motion:reduce){.ds-repository-url button{transition:none}}"
     },
     {
       "name": "Live agent node",
       "kind": "custom",
       "refersTo": "live-flow-agent",
-      "description": "Current compact orchestration card; numbered routes and the full legend explain handoffs.",
+      "description": "Compact orchestration card inside technical details; numbered routes and the full legend explain handoffs.",
       "html": "<div class=\"ds-agent\" tabindex=\"0\"><div class=\"ds-agent-heading\"><svg width=\"17\" height=\"17\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11\"/><path d=\"m9 12 2 2 4-4\"/></svg><span>Agent</span><span>Recorded</span></div><strong>Development Security Agent</strong><p>Baseline, real checks and senior review</p><b class=\"ds-port ds-port-left\"></b><b class=\"ds-port ds-port-right\"></b></div>",
-      "css": ".ds-agent{width:214px;min-height:94px;padding:17px;background:#22291d;border:1px solid #536144;border-radius:10px;position:relative;color:var(--ink,#f1f1eb);font-family:var(--font-public,'Public Sans'),sans-serif}.ds-agent-heading{display:flex;align-items:center;gap:7px;color:#d3efb0;margin-bottom:12px}.ds-agent-heading span{font-size:10px}.ds-agent-heading span:last-child{margin-left:auto;color:#c5cdbb}.ds-agent>strong{display:block;font-size:17px;letter-spacing:-.025em;line-height:1.3;font-weight:600}.ds-agent>p{font-size:12px;color:#bac7ac;margin:7px 0 0;line-height:1.4}.ds-port{position:absolute;width:6px;height:6px;border:1px solid #181c16;background:#9daf8d;border-radius:50%;top:50%}.ds-port-left{left:-4px}.ds-port-right{right:-4px}.ds-agent:focus-visible{outline:2px solid #c7ef79;outline-offset:4px}"
+      "css": ".ds-agent{width:250px;min-height:128px;padding:17px;background:#22291d;border:1px solid #536144;border-radius:10px;position:relative;color:var(--ink,#f1f1eb);font-family:var(--font-public,'Public Sans'),sans-serif}.ds-agent-heading{display:flex;align-items:center;gap:7px;color:#d3efb0;margin-bottom:12px}.ds-agent-heading span{font-size:10px}.ds-agent-heading span:last-child{margin-left:auto;color:#c5cdbb}.ds-agent>strong{display:block;font-size:17px;letter-spacing:-.025em;line-height:1.3;font-weight:600}.ds-agent>p{font-size:12px;color:#bac7ac;margin:7px 0 0;line-height:1.4}.ds-port{position:absolute;width:6px;height:6px;border:1px solid #181c16;background:#9daf8d;border-radius:50%;top:50%}.ds-port-left{left:-4px}.ds-port-right{right:-4px}.ds-agent:focus-visible{outline:2px solid #c7ef79;outline-offset:4px}"
     },
     {
       "name": "Live mobile role orientation",
       "kind": "custom",
       "refersTo": "console-mobile-roles",
-      "description": "Mobile role summary remains visible before the initially collapsed full interactive graph.",
+      "description": "Inside technical details, mobile role orientation precedes the initially collapsed full interactive graph.",
       "html": "<section class=\"ds-mobile-roles\"><dl><div><dt>Supply Chain</dt><dd>Advisory → inventory</dd></div><div><dt>Remediation</dt><dd>Scoped candidate repair</dd></div><div><dt>Development Security</dt><dd>Baseline, checks, senior review</dd></div></dl><p>Supply Chain → DevSec baseline → Remediation → DevSec checks → human review</p><details><summary>Interactive agent flow</summary><p>The full vertical graph and six-entry legend open here in the application.</p></details></section>",
       "css": ".ds-mobile-roles{display:none;font-family:var(--font-public,'Public Sans'),sans-serif}@media(max-width:740px){.ds-mobile-roles{display:block;padding:17px 15px;border-bottom:1px solid var(--line,#32352f);background:#1a1d17}.ds-mobile-roles dl{display:grid;gap:9px;margin:0}.ds-mobile-roles dl>div{display:grid;grid-template-columns:1fr 1.15fr;gap:12px}.ds-mobile-roles dt{font-size:11px;font-weight:500;line-height:1.6;color:#d6e5c6}.ds-mobile-roles dd{margin:0;font-size:10px;line-height:1.7;color:#bac7ac}.ds-mobile-roles>p{color:#d3efb0;font-size:10px;line-height:1.8;margin:12px 0 0;max-width:48ch}.ds-mobile-roles details{margin-top:16px}.ds-mobile-roles summary{cursor:pointer;padding:13px 0;color:#d6e5c6;font-size:11px}.ds-mobile-roles summary:hover{color:#f1f1eb}.ds-mobile-roles summary:focus-visible{outline:2px solid #c7ef79;outline-offset:4px}.ds-mobile-roles details p{font-size:11px;line-height:1.7;color:#bac7ac}}"
     },
     {
       "name": "Actual candidate diff",
       "kind": "custom",
-      "description": "File-disclosure specimen for the three-file candidate; the application retrieves immutable GitHub patch text and has error/retry and comparison-link states.",
-      "html": "<section class=\"ds-diff\"><p>3 changed files · immutable base → candidate</p><details><summary><strong>composer.json</strong><span>Inspect patch</span></summary><p>Actual GitHub patch text is loaded by the candidate-diff component.</p></details><details><summary><strong>Dockerfile</strong><span>Inspect patch</span></summary></details><details><summary><strong>config/security.ini</strong><span>Inspect patch</span></summary></details></section>",
-      "css": ".ds-diff{max-width:540px;font-family:var(--font-public,'Public Sans'),sans-serif;color:#d6e5c6}.ds-diff>p{font-size:10px;color:#bac7ac;margin:0;padding:15px 0}.ds-diff details{border-top:1px solid var(--line,#32352f)}.ds-diff summary{display:flex;align-items:center;gap:8px;cursor:pointer;padding:13px 0;font-size:11px}.ds-diff summary strong{font-weight:500;flex:1}.ds-diff summary span{color:#9daf8d;font-size:10px}.ds-diff summary:hover{color:#f1f1eb}.ds-diff summary:focus-visible{outline:2px solid #c7ef79;outline-offset:4px}.ds-diff details p{background:#11130f;color:#c5cdbb;font:11px/1.8 Consolas,monospace;padding:13px;border-radius:6px;margin:0 0 16px}"
+      "description": "Current Python candidate specimen; production retrieves the immutable GitHub patch with error/retry and complete-comparison states.",
+      "html": "<section class=\"ds-diff\"><p>1 changed file · immutable base → candidate</p><details open><summary><strong>requirements.txt</strong><span>Inspect patch</span></summary><pre><span class=\"ds-deleted\">-requests==2.31.0</span><span class=\"ds-added\">+requests==2.34.2</span></pre></details></section>",
+      "css": ".ds-diff{max-width:540px;font-family:var(--font-public,\"Public Sans\"),sans-serif;color:#d6e5c6}.ds-diff>p{font-size:10px;color:#bac7ac;margin:0;padding:15px 0}.ds-diff details{border-top:1px solid var(--line,#32352f)}.ds-diff summary{display:flex;align-items:center;gap:8px;cursor:pointer;padding:13px 0;font-size:11px}.ds-diff summary strong{font-weight:500;flex:1}.ds-diff summary span{color:#9daf8d;font-size:10px}.ds-diff summary:hover{color:#f1f1eb}.ds-diff summary:focus-visible{outline:2px solid #c7ef79;outline-offset:4px}.ds-diff pre{background:#11130f;color:#c5cdbb;font:11px/1.8 Consolas,monospace;padding:10px 0;border-radius:6px;margin:0 0 16px;overflow:auto}.ds-diff pre>span{display:block;padding:0 13px;white-space:pre}.ds-diff .ds-deleted{background:#39231f;color:#ffb2a8}.ds-diff .ds-added{background:#252c1e;color:#d3efb0}"
     },
     {
-      "name": "Observed outcome chart",
+      "name": "Six-step repair journey",
       "kind": "custom",
-      "description": "Capture-time specimen after the queued/cancel experiment: four stored runs, three completed and one cancelled; these are workflow observations of one PHP case.",
-      "html": "<section class=\"ds-outcomes\"><h3>Recorded outcomes<span>n = 4</span></h3><div role=\"img\" aria-label=\"Completed: 3; cancelled: 1\" class=\"ds-outcome-bar\"><span></span><span></span></div><dl><div><dt>Completed</dt><dd>3</dd></div><div><dt>Cancelled</dt><dd>1</dd></div></dl><p>Stored runs of this PHP case. These are workflow observations, not unique vulnerabilities.</p></section>",
-      "css": ".ds-outcomes{max-width:330px;font-family:var(--font-public,'Public Sans'),sans-serif;color:#d6e5c6}.ds-outcomes h3{display:flex;justify-content:space-between;gap:12px;font-size:12px;margin:0 0 20px}.ds-outcomes h3 span{font-size:10px;font-weight:400;color:#9daf8d}.ds-outcome-bar{display:flex;gap:3px;height:10px;overflow:hidden;border-radius:3px;margin-bottom:19px;background:#32352f}.ds-outcome-bar>span:first-child{flex:3;background:#c7ef79}.ds-outcome-bar>span:last-child{flex:1;background:#a0a29c}.ds-outcomes dl{display:grid;gap:10px;margin:0}.ds-outcomes dl>div{display:flex;justify-content:space-between;gap:15px}.ds-outcomes dt{font-size:11px;color:#bac7ac}.ds-outcomes dd{font-size:11px;margin:0;font-variant-numeric:tabular-nums}.ds-outcomes p{font-size:10px;color:#9daf8d;line-height:1.7;margin:16px 0 0}"
+      "description": "Primary beginner explanation; all six steps reflow from one row to three columns, then two columns.",
+      "html": "<section class=\"ds-journey\"><h2>From alert to a fix you can review</h2><ol><li><span>1</span><strong>Connect repository</strong><p>Add a GitHub URL you can access</p></li><li><span>2</span><strong>Watch security news</strong><p>A server worker checks the sources</p></li><li><span>3</span><strong>Find affected package</strong><p>Compare the alert with your inventory</p></li><li><span>4</span><strong>Prepare a fix</strong><p>Fix Agent proposes a bounded change</p></li><li><span>5</span><strong>Test &amp; senior review</strong><p>Run checks; a separate context reviews</p></li><li><span>6</span><strong>Draft PR → human</strong><p>You inspect and decide whether to merge</p></li></ol><details><summary>How the three agents work</summary><p>Technical details contain the interactive graph and recorded events.</p></details></section>",
+      "css": ".ds-journey{border:1px solid var(--line,#32352f);border-radius:12px;background:#1a1d17;overflow:hidden;color:#d6e5c6;font-family:var(--font-public,\"Public Sans\"),sans-serif}.ds-journey h2{font-size:16px;padding:17px 20px;margin:0;border-bottom:1px solid var(--line,#32352f)}.ds-journey>ol{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));list-style:none;padding:0;margin:0}.ds-journey li{padding:20px 17px 19px;min-width:0;border-right:1px solid var(--line,#32352f)}.ds-journey li:last-child{border-right:0}.ds-journey li>span{display:block;font-size:10px;color:#bac7ac;margin-bottom:13px;font-variant-numeric:tabular-nums}.ds-journey strong{display:block;font-size:12px;line-height:1.5}.ds-journey p{font-size:11px;line-height:1.6;color:#bac7ac;margin:7px 0 0;overflow-wrap:anywhere}.ds-journey details{padding:0 20px;border-top:1px solid var(--line,#32352f)}.ds-journey summary{padding:15px 0;font-size:12px;cursor:pointer}.ds-journey summary:hover{color:#f1f1eb}.ds-journey summary:focus-visible{outline:2px solid #c7ef79;outline-offset:4px}.ds-journey details p{margin:0 0 15px}@media(max-width:1100px){.ds-journey>ol{grid-template-columns:repeat(3,minmax(0,1fr))}.ds-journey li:nth-child(3){border-right:0}.ds-journey li:nth-child(-n+3){border-bottom:1px solid var(--line,#32352f)}}@media(max-width:740px){.ds-journey h2{font-size:15px;padding:15px}.ds-journey>ol{grid-template-columns:repeat(2,minmax(0,1fr))}.ds-journey li{padding:16px 13px;border-bottom:1px solid var(--line,#32352f)}.ds-journey li:nth-child(3){border-right:1px solid var(--line,#32352f)}.ds-journey li:nth-child(even){border-right:0}.ds-journey li:nth-child(n+5){border-bottom:0}.ds-journey strong{font-size:11px}.ds-journey p{font-size:10px;line-height:1.7}}"
     }
   ],
   "narrative": {
     "northStar": "Verification Interlock",
-    "overview": "A patch moves only when its proof aligns. The user-selected dark engineering workspace gives the evidence workflow the character of a precise instrument: charcoal surfaces, warm white type, restrained lime and precise diagram geometry.\n\nThe current product is one compact developer console. Live orchestration, adjacent events, grouped verification, the actual candidate diff and review handoff share one operational surface. Public Sans, thin borders and small tonal shifts retain the established identity. Measured run counts and proportional charts describe stored execution; they never imply a vulnerability score.",
+    "overview": "A patch moves only when its proof aligns. The user-selected dark engineering workspace gives the evidence workflow the character of a precise instrument: charcoal surfaces, warm white type, restrained lime and precise diagram geometry.\n\nThe current product is one compact repository security console. A six-step journey leads from a connected repository through source watching, affected inventory, a supported fix, checks and senior review to a draft awaiting a human. Repository and source controls, corroborated findings, expandable technical orchestration, grouped verification, the actual candidate diff and review handoff share one operational surface. Public Sans, thin borders and small tonal shifts retain the established identity. Measured run counts and proportional charts describe stored execution for the selected repository; they never imply a vulnerability score.",
     "keyCharacteristics": [
       "Charcoal surfaces with a muted olive cast and warm white text.",
       "Restrained lime for primary action, selection and satisfied evidence gates.",
+      "Plain-language sequence first, with detailed technical evidence in native disclosures.",
       "Compact evidence surfaces with explicit status and human review authority.",
       "Functional agent geometry and measured bars tied to recorded run state."
     ],
@@ -836,12 +841,12 @@
       },
       {
         "name": "The Evidence Before Ornament Rule",
-        "body": "Geometry must explain the selected finding's progression. Keep the machine's five gate fingers and cartridge movement tied to evidence state.",
+        "body": "Geometry must explain the selected finding's progression. Journey steps and graph routes follow recorded state; the historical machine's five gate fingers and cartridge movement remain tied to its represented evidence state.",
         "section": "elevation"
       },
       {
         "name": "The Baseline Before Candidate Rule",
-        "body": "Supply Chain sends its risk brief to DevSec; the worker records the declared affected baseline and freezes the verifier before Remediation writes. The affected runtime is never executed in the live PHP pilot. The candidate returns to DevSec for actual checks and separate senior review. Simulation retains local-change intake and illustrative failed-check repair loops. Passing security checks never erase failed legitimate-use controls.",
+        "body": "Supply Chain sends its risk brief to DevSec; the worker records the declared affected baseline and freezes trusted tests before Remediation writes. The affected baseline is never executed. The candidate returns to DevSec for actual checks and separate senior review. Historical Simulation retains local-change intake and illustrative failed-check repair loops. Passing security checks never erase failed legitimate-use controls.",
         "section": "components"
       }
     ],
@@ -851,7 +856,7 @@
       "Do preserve all five gate conditions and the blocked middle finger when regression fails.",
       "Do retain visible status and a reachable action in every mobile finding row.",
       "Do preserve synthetic labels in Simulation and Overview, human review authority, visible focus and reduced motion.",
-      "Do treat `workspace.css`, `orchestration.css`, `live-orchestration.css` and the current feature components as the built visual source.",
+      "Do treat `workspace.css`, `orchestration.css`, `live-orchestration.css`, `operations.css`, `monitoring.css` and the current feature components as the built visual source.",
       "Do preserve exactly three product agents and identify controller, evidence, gate and human review separately.",
       "Do keep DevSec baseline/frozen checks before repair, candidate replay and failed-check return visible at both graph sizes.",
       "Do distinguish Live service results from the fictional inventory and test outcomes in Simulation and Overview.",
@@ -859,7 +864,10 @@
       "Do preserve the compact live mobile role summary, six directional legend entries and return-lane fit bounds.",
       "Do expose actual model IDs, observed checks and the CI/PR identity without implying merge approval.",
       "Do compose the current product through the operations components on one route; keep legacy prototype surfaces off-route.",
-      "Do label observed chart samples and timing/token sources; count unique runs and draft URLs rather than implying distinct vulnerabilities."
+      "Do lead with all six plain-language steps and use disclosures for inventory, unconfirmed leads, scout output and technical orchestration.",
+      "Do make verified access and supported repair capability visible beside repository controls.",
+      "Do label observed chart samples and timing/token sources; count unique runs and draft URLs rather than implying distinct vulnerabilities.",
+      "Do keep read-only scout usage separate from the selected repository's repair-run metrics."
     ],
     "donts": [
       "Don't describe simulated evidence, placeholder identifiers or local draft previews as live execution or a sent pull request.",
@@ -868,7 +876,8 @@
       "Don't turn every panel into a floating shadow card or add decorative animation to verification states.",
       "Don't restore the earlier rejected concept from the root design specification.",
       "Don't present the deterministic controller as a fourth agent or grant an agent merge authority.",
-      "Don't turn a ready graph state into an automatic merge or a guarantee of complete security."
+      "Don't turn a ready graph state into an automatic merge or a guarantee of complete security.",
+      "Don't treat an unconfirmed lead, unavailable source or monitor-only connection as authority to repair."
     ]
   }
 }

@@ -1,68 +1,73 @@
-# Live implementation handoff
+# Implementation handoff
 
-Updated 25 October 2026 (Asia/Calcutta). The owned Japanese PHP advisory-to-PR integration executes from one developer dashboard with actual Groq responses, GitHub Actions PHP checks, and automatic draft publication. It is scoped to one repository and one advisory case.
+Updated **25 October 2026 (Asia/Calcutta)**. Current implementation: a repository registry and scheduled supply-chain watcher, actual LangGraph orchestration and LangChain ChatGroq roles, frozen hosted checks, and automatic draft publication in the owned Python and PHP demonstrations. One dashboard presents repository controls, source health, confirmed findings, the simple six-step journey, technical graph, live events, actual results and observed analytics.
 
-## Latest dashboard demonstration
+## Executed LangGraph Python demonstration
 
-The new dashboard replaces the routed synthetic prototype views. Its sticky run controls, visual agent/event workspace, grouped check components, real GitHub diff, bilingual PR review and observed analytics share one screen. The main button was exercised in a real browser to create [draft PR #4](https://github.com/Harsh5840/arigato-php-demo/pull/4).
+The separate watcher inventoried the registered Python repository, corroborated three distinct Requests 2.31.0 advisory groups, selected published same-major Requests 2.34.2 and coalesced related findings into one automatic repair run. The complete graph used real Groq responses and real hosted Python execution to create [draft PR #1](https://github.com/Harsh5840/arigato-python-demo/pull/1).
 
-- Run: `bc7050bc-a41e-4f47-a903-fe00c22e3734`; source mode: live.
-- Candidate: `ce79f0ccb3d424c49bd5ed2af9c8da6b83a9e632`; unchanged baseline/verifier policy below.
-- [Hosted verification](https://github.com/Harsh5840/arigato-php-demo/actions/runs/40123778532): passed; 35 recorded checks including 15 actual PHP business assertions.
-- Three real Groq calls reported 8,080 tokens. End-to-end elapsed time was 64.543 seconds for this run; runner times vary.
-- [Preserved run and raw outputs](../output/live-runs/bc7050bc-a41e-4f47-a903-fe00c22e3734/run.json).
-- After the completed button demo, metrics observed three completed runs, three unique draft URLs and 24,179 reported tokens. A separate actual queued-cancellation test subsequently added one cancelled record with zero model calls, candidate writes or PRs ([record](../output/live-runs/9fb9413a-b952-4c64-a85b-48af437bc9fc/run.json)). These are repeated workflow experiments for this PHP case, not distinct vulnerabilities.
-- 31 backend tests and 15 frontend tests pass; the production build passes. New tests cover immutable comparison scope and analytics with missing data, retries and duplicate records.
-
-Company repository onboarding would use a selected-repository GitHub App. That registration and multi-tenant backend are planned; the current connection is the owned demo target. [Onboarding and judging plan](REPOSITORY-ONBOARDING.md).
-
-## Earlier hardened live record
-
-- [Product source](https://github.com/Harsh5840/arigato-hack): Next.js frontend, Hono API, separate worker, SQLite records, shared contracts, tests, PRD and pitch artifacts.
-- [Owned SakuraShop fixture](https://github.com/Harsh5840/arigato-php-demo): fictional Japanese merchant. Main deliberately declares affected PHP 8.3.35; do not deploy it.
-- [Earlier hardened draft PR #3](https://github.com/Harsh5840/arigato-php-demo/pull/3): automatically created after live Japanese/vendor intake, three actual Groq role calls, frozen hosted checks and a separate senior-review context.
-- [Exact pre-publication verification](https://github.com/Harsh5840/arigato-php-demo/actions/runs/40120547241): passed. Observed PHP 8.3.36, upload progress disabled and serializer `php`; all 15 business regressions passed.
-- [Preserved live evidence](../output/live-runs/3ea42f72-8ed5-40f3-9a46-0579fbea3a68/run.json): actual model IDs/usage, sources/digests, checks, events, CI and PR identity. Raw outputs are retained beside it.
-
-| Identity | Earlier live run |
+| Identity | Actual record |
 |---|---|
-| Run | `3ea42f72-8ed5-40f3-9a46-0579fbea3a68` |
-| Baseline | `07ab564e46c0775b42b28a981101c9c510db3cc3` |
-| Candidate | `d1d7341d7ecf64179203c742c12aca8aef70ae5a` |
-| Frozen verifier SHA256 | `e1f9c9bbc040965549fc09b755359aeec4a1dac5c05256b7ce19602b0926f069` |
-| Built image ID | `sha256:212eab9f90590fba2a60c2c46622a7f170ba32e8d825f6f26cdb6aaa07c1a010` |
-| Recorded checks | 35 passed, including 15 PHP business assertions |
-| Actual Groq usage | 8,129 tokens across three calls |
-| Final authority | Draft allowed; merge ready false; finding closed false |
+| Repository | [Harsh5840/arigato-python-demo](https://github.com/Harsh5840/arigato-python-demo) |
+| Registered repository ID | `3dc4b2be848b7eaafd78` |
+| LangGraph thread/run | `444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e` |
+| Created → completed | 25 October 2026, 01:05:24 → 01:06:23 IST; elapsed 58.883 seconds for this run, not a guaranteed latency |
+| Baseline/workflow SHA | `c0625047e22ec73c55db4d048c26823af412664d` |
+| Candidate SHA | `32bfc05eaddc485acef19ab2714d5ae11d8e39ad` |
+| Candidate branch | `proofpatch/package-444cd3c2-a1` |
+| Frozen oracle SHA256 | `03905c2485c9c301b7cb0ac0de7af293483ba43f777d847ad5edb98d423da367` |
+| Actual candidate CI | [Actions run 40126005250 — success](https://github.com/Harsh5840/arigato-python-demo/actions/runs/40126005250) |
+| Evidence artifact | `proofpatch-444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e-a1` |
+| Artifact SHA256 | `b61fb432560948d18cf28f41cfb0abf1ee8b0003a6818e4a8f62a37417235574` |
+| Runtime observations | Python 3.12.15; Requests 2.34.2 |
+| Verification | 11 recorded controller/evidence checks passed; includes five frozen runner gates and 12 actual business assertions inside the business-suite gate |
+| Actual repair model usage | Supply 1,134 + fixer 1,286 + reviewer 3,810 = 6,230 reported tokens across three role calls |
+| Final authority | Draft created; human merge/deployment remain required; finding not declared closed |
+
+[Persisted run/events and raw verification output](../output/live-runs/444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e/run.json) include the successful nodes `source`, `inventory`, `triage`, `baseline`, `repair`, `verify`, `review`, `gate`, `publish`. The tenth graph node is the alternative `blocked` path and is not expected on a successful run.
+
+The actual installed application inventory checked against OSV was Requests 2.34.2, certifi 2026.10.23, charset-normalizer 3.5.2, idna 3.20 and urllib3 2.8.0. “No OSV matches” describes that query at execution time; it does not guarantee the packages contain no undiscovered vulnerability.
+
+The main baseline remains deliberately affected and was not installed/executed. [Its initial static classification CI](https://github.com/Harsh5840/arigato-python-demo/actions/runs/40125768335) passed fixture setup checks, not application security. The automatic candidate changes only the Requests pin; application source is preserved.
+
+## Current implementation and coverage
+
+- Shared ten-node `StateGraph` with conditional repair/review routes, SQLite checkpoints and persisted events. Strategies provide work for the same edges. Worker loss fails expired leases closed; automatic crash replay is not implemented.
+- Actual `ChatGroq` calls with authenticated model discovery, strict structured output, usage recording and bounded inputs/time. Supply Chain uses `openai/gpt-oss-20b`; fixer/reviewer use separate contexts of `openai/gpt-oss-120b`. These are not Sonnet/Opus and do not constitute independent-model assurance.
+- Separate API and watcher/queue worker. Scheduled monitoring defaults to 300 seconds; manual repository/source requests are queued for the worker. New lead IDs receive read-only Groq triage and are cached after triage.
+- Up to 20 registered accessible GitHub repositories. Exact Python requirements, npm lockfile and Composer lockfile inventory adapters support bounded nested manifests, up to 100 exact dependencies. Unsupported constraints and source outages stay visible.
+- OSV exact-version corroboration plus published same-major candidate selection/rechecking. GHSA/PYSEC aliases are deduplicated. Same package/version/target findings share one repair run.
+- Newly connected arbitrary repositories remain monitor-only. Automatic package repair currently requires the owned Python Requests profile and preserves code. Broader migrations need approved policy/compatibility checks. The owned PHP runtime advisory profile remains available as a separate manual demonstration.
+- One dashboard: working add/select/watch/automatic-fix toggles, source health and timestamps, findings, six-step journey, technical React Flow, run history, real diff, grouped checks, raw evidence, bilingual draft handoff and metrics calculated from stored runs.
+
+One public forum source currently returns HTTP 406: the GitHub advisory Atom endpoint. The Python Packaging feed and OSV have worked. The source-health panel reports the unavailable feed; no cached success is silently substituted. The scout's actual recorded summary found no lead directly establishing the Requests finding; OSV inventory corroboration established it independently. There is no X connector.
+
+## Verification boundaries
+
+Frozen Python paths are `verification/verify.mjs` and `verification/business.py`; their ordered path/content hashes bind the oracle identity. Candidate CI checks a direct-child commit, allowed changed paths and unchanged verifier, then validates the exact published pin. Only the candidate is built. Python executes without network, with read-only filesystem, non-root user, dropped capabilities, no forwarded model/GitHub credentials and resource bounds. The actual installed package inventory is queried against OSV by the trusted host verifier after container execution.
+
+The five runner IDs are `scope`, `verifier`, `package_version`, `business_suite`, `no_known_advisories`. Evidence also binds controller run, Actions ID, workflow/base/candidate SHAs and oracle digest. Missing/failed/malformed/stale results block promotion regardless of model approval. A changed main blocks publication. Candidate/PR heads must equal the verified SHA, and existing branches are never force-pushed.
+
+Twelve business assertions cover Japanese UTF-8, integer JPY totals, query parameters, TLS, timeouts, environment trust, fractional-yen rejection, URL quoting and unauthorized responses using a fake service transport. This exercises actual installed Python/Requests and application behavior, not an exploit against a deployed service. The product does not claim universal pentest coverage or fault-proof security.
 
 ## Runbook and ownership
 
-Follow [LIVE-DEMO.md](LIVE-DEMO.md). Run `npm run setup`, configure the ignored `.env`, and run `npm run dev` from the root. The command starts API, worker and frontend. Open `http://127.0.0.1:3000` and click **Run live demo**. Stored runs survive reload. Historical synthetic source/assets remain available in Git; they are no longer routed into the developer dashboard.
+Follow [LIVE-DEMO.md](LIVE-DEMO.md): `npm run setup`, configure ignored credentials, then `npm run dev`. The frontend, API and worker must stay running. Select the Python repository and use its confirmed finding/automatic-fix control; the PHP action remains a separate advisory demo. Use [repository onboarding](REPOSITORY-ONBOARDING.md) for exact working API routes and company onboarding boundaries. [SEPARATE-SERVER-DEPLOYMENT.md](SEPARATE-SERVER-DEPLOYMENT.md) documents separate server configuration; no remote host deployment is claimed.
 
-A owns frontend/events; B owns source intake/inventory; C owns candidate repair; D owns controller/checks/GitHub integration. All four rehearse source → diff → actual results → owner follow-up.
+A owns frontend/demo; B source intake/inventory; C repair policy; D graph/checks/GitHub integration. Rehearse repository → corroborated finding → actual candidate → observed results → draft PR → human follow-up. Preserve a dated completed run if a new provider/runner is still busy.
 
-## Verified boundaries
+## Validation and release evidence
 
-The target and source URLs are fixed by server policy. Supply Chain uses `openai/gpt-oss-20b`; fixer/reviewer use separate contexts of `openai/gpt-oss-120b`. Authenticated discovery and strict JSON are required. These are actual Groq models, not Sonnet/Opus. Separate contexts are not independent-model assurance. The cap is five role calls, two candidates and 16 minutes per run.
+The focused generic adapter suite passed 15 tests covering bounded inventories, host restrictions, source outages, authoritative candidate selection, advisory deduplication, frozen evidence identity, protected paths and stale PR heads. TypeScript passed during adapter integration. The Python fixture's static tests, AST parsing without importing the affected dependency, workflow YAML parsing and initial hosted baseline job passed. Actual candidate CI linked above independently passed with the 12 runtime business assertions.
 
-Only the reviewed Docker image reference, Composer PHP floor and upload-progress setting may change. Extra files, executable Docker instructions, parser directives, Composer scripts and other INI changes are rejected. The trusted workflow checks base/head/frozen-verifier identity before building only the fixed candidate. Actual PHP tests run without network, with a read-only filesystem, non-root user, dropped capabilities and resource bounds. Artifacts bind the workflow/run/base/head/verifier. Branch and PR heads are checked against the verified SHA; a changed main blocks promotion.
+Root release checks are `npm run typecheck`, `npm test`, `npm run build`. Mocked unit-test success is distinct from actual run evidence. Earlier documents' test totals are not totals for the expanded LangGraph release; use its final CI report for aggregate results.
 
-Independent review found parser-directive injection, cancellation timing, stale-worker and PR-head issues during implementation. Focused regressions cover the fixes: parser guards in API/CI, cancellation checks at every external write, terminal-state fences and PR-head equality. An external write already in flight cannot be atomically cancelled; any returned PR remains recorded without a successful promotion.
+## Historical PHP evidence retained
 
-Declaration matching is not exploit reproduction. The affected baseline is never executed. Passing CLI behavior does not verify a deployed web environment or prove absence of compromise. Review, deployment/restarts, actual web configuration and incident assessment remain open tasks in the bilingual draft.
+The earlier single-dashboard PHP execution created [draft PR #4](https://github.com/Harsh5840/arigato-php-demo/pull/4) with [passing CI](https://github.com/Harsh5840/arigato-php-demo/actions/runs/40123778532). Its run `bc7050bc-a41e-4f47-a903-fe00c22e3734` recorded 35 checks including 15 actual PHP business assertions, 8,080 reported tokens and 64.543 seconds. [Historical run bundle](../output/live-runs/bc7050bc-a41e-4f47-a903-fe00c22e3734/run.json). It predates LangGraph migration and is not evidence of the new graph executing.
 
-## Validation and release
+[PHP PR #3](https://github.com/Harsh5840/arigato-php-demo/pull/3) is the preceding hardened live run; [PR #2](https://github.com/Harsh5840/arigato-php-demo/pull/2) is an earlier actual Groq run before later hardening; [PR #1](https://github.com/Harsh5840/arigato-php-demo/pull/1) is a prepared repair, not model-generated. These records remain historical and unmerged. Their policies and identities should not be relabeled as Python or current-run evidence.
 
-29 backend tests, seven retained frontend tests, TypeScript and Next production build pass. Dummy-repo tests pass (11), and actionlint passes. Hosted PHP execution linked above is separate evidence from mocked adapter tests. Product CI repeats install/typecheck/tests/build without provider credentials.
+## Remaining work
 
-[Product CI passed](https://github.com/Harsh5840/arigato-hack/actions/runs/40121067871) on implementation commit `4bd682587b1a7aa827234fc6da2c3a7e1f9a5a38`. The final live draft's own [post-publication candidate CI](https://github.com/Harsh5840/arigato-php-demo/actions/runs/40120596310) also passed. The independent UI reviewer scored both listed fixes resolved; that ship verdict covers those fixes.
-
-The API is loopback-only with origin/JSON checks and one fixed target; it is not a production tenant/authentication boundary. No hosting, merge or deployment occurred. Hosted CI supplies PHP execution, so the laptop needs no PHP or running Docker engine. Credentials and SQLite files are ignored; exports contain no credentials.
-
-Restart all three processes after interruption. Expired leases fail closed. Inspect retained runs, branches and CI before retrying. Matching Git writes reconcile without force pushes. New completed runs remain separate experiments. Pricing, demand and defensibility remain hypotheses.
-
-## Historical artifacts and next phases
-
-[PR #1](https://github.com/Harsh5840/arigato-php-demo/pull/1) is the prepared repair ([old evidence](../output/php-demo/manifest.json)); it was not model-generated. [PR #2](https://github.com/Harsh5840/arigato-php-demo/pull/2) is the first actual Groq run before parser hardening. Its own record is preserved. PR #3 is the final hardened demonstration. These drafts remain unmerged.
-
-The PHP 8.3.36 pin preserves this historical case, not a permanent production upgrade rule. New guidance needs a separately reviewed policy pack. JVN expansion, forum/X leads, general repairs, continuous local watch, arbitrary code testing, onboarding, tenant authentication, billing, production operations and single-agent comparison evaluations remain future phases.
+GitHub App registration/installation, customer authentication/tenancy, webhook handling, provider data/retention controls, billing, distributed queue/workers, automatic crash replay, arbitrary framework migration, local-file pentesting and deployment verification remain future work. Existing source/baseline pins preserve a demonstration, not a forever-safe production version policy. No automatic merge or deployment occurred. Pricing, demand, comparative superiority and defensibility remain hypotheses.

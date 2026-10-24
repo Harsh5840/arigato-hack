@@ -1,0 +1,79 @@
+name: proofpatch
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    image: proofpatch-api:local
+    restart: unless-stopped
+    init: true
+    environment: &api-environment
+      API_HOST: 0.0.0.0
+      API_PORT: 8787
+      API_TOKEN: ${API_TOKEN:?Set a random API_TOKEN of at least 32 URL-safe characters}
+      API_TRUSTED_HOSTS: api,127.0.0.1,localhost
+      WEB_ORIGIN: ${WEB_ORIGIN:-http://127.0.0.1:3000}
+      PROOFPATCH_ROOT: /app
+      PROOFPATCH_DB: /app/.data/proofpatch.sqlite
+      ALLOW_GIT_CREDENTIAL_MANAGER: "false"
+      GROQ_API_KEY: ${GROQ_API_KEY:?Set GROQ_API_KEY on the server}
+      GITHUB_TOKEN: ${GITHUB_TOKEN:?Set a repository-scoped GitHub token on the server}
+      SUPPLY_MODEL: ${SUPPLY_MODEL:-openai/gpt-oss-20b}
+      FIXER_MODEL: ${FIXER_MODEL:-openai/gpt-oss-120b}
+      REVIEWER_MODEL: ${REVIEWER_MODEL:-openai/gpt-oss-120b}
+    expose:
+      - "8787"
+    volumes:
+      - state:/app/.data
+      - evidence:/app/output/live-runs
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8787/api/runs',{headers:{authorization:'Bearer '+process.env.API_TOKEN}}).then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+  worker:
+    image: proofpatch-api:local
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    command: ["node", "--experimental-sqlite", "--import", "tsx", "src/worker.ts"]
+    restart: unless-stopped
+    init: true
+    environment: *api-environment
+    volumes:
+      - state:/app/.data
+      - evidence:/app/output/live-runs
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    depends_on:
+      api:
+        condition: service_healthy
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    image: proofpatch-web:local
+    restart: unless-stopped
+    init: true
+    environment:
+      PROOFPATCH_API_ORIGIN: http://api:8787
+      API_TOKEN: ${API_TOKEN:?Set API_TOKEN}
+      PROOFPATCH_WEB_ORIGIN: ${WEB_ORIGIN:-http://127.0.0.1:3000}
+    ports:
+      - "127.0.0.1:3000:3000"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    depends_on:
+      api:
+        condition: service_healthy
+volumes:
+  state:
+  evidence:

@@ -3,6 +3,7 @@ import { mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { terminalStatuses, type Run, type RunEvent, type RunStatus } from '../../../../packages/contracts/src/live.js';
+import type { MonitoredRepository, SupplyFinding } from '../../../../packages/contracts/src/monitoring.js';
 
 export class RunStore {
   private db: DatabaseSync;
@@ -24,7 +25,7 @@ export class RunStore {
   create(sourceMode: Run['sourceMode']): { run: Run; reused: boolean } {
     this.db.exec('BEGIN IMMEDIATE');
     try {
-      const active = this.active();
+      const active = this.list().find(run => !terminalStatuses.has(run.status) && run.repo.owner === 'Harsh5840' && run.repo.name === 'arigato-php-demo');
       if (active) { this.db.exec('COMMIT'); return { run: active, reused: true }; }
       const now = new Date().toISOString();
       const run: Run = { id: randomUUID(), status: 'queued', createdAt: now, updatedAt: now, sourceMode, mode: 'live-groq', repo: { owner: 'Harsh5840', name: 'arigato-php-demo' }, agentCalls: [], checks: [], mergeReady: false, findingClosed: false };
@@ -32,6 +33,18 @@ export class RunStore {
       this.event(run.id, 'controller', 'queued', 'Run persisted. Waiting for the local worker.');
       this.db.exec('COMMIT');
       return { run, reused: false };
+    } catch (error) { this.db.exec('ROLLBACK'); throw error; }
+  }
+  createForFinding(repository: MonitoredRepository, finding: SupplyFinding): { run: Run; reused: boolean } {
+    this.db.exec('BEGIN IMMEDIATE');
+    try {
+      const prior = this.db.prepare("SELECT data FROM runs WHERE json_extract(data,'$.target.repositoryId')=? AND json_extract(data,'$.target.ecosystem')=? AND json_extract(data,'$.target.packageName')=? AND json_extract(data,'$.target.installedVersion')=? AND json_extract(data,'$.target.fixedVersion')=? AND json_extract(data,'$.target.manifestPath')=? AND status NOT IN ('failed','blocked','cancelled') ORDER BY created_at DESC LIMIT 1").get(repository.id, finding.ecosystem, finding.packageName, finding.installedVersion, finding.fixedVersion, finding.manifestPath) as { data: string } | undefined;
+      if (prior) { const run: Run = JSON.parse(prior.data); if (!['failed','blocked','cancelled'].includes(run.status)) { this.db.exec('COMMIT'); return { run, reused: true }; } }
+      const now = new Date().toISOString();
+      const run: Run = { id: randomUUID(), status: 'queued', createdAt: now, updatedAt: now, sourceMode: 'live', mode: 'live-groq', repositoryId: repository.id, orchestrationEngine: 'langgraph', repo: { owner: repository.owner, name: repository.name }, target: { repositoryId: repository.id, findingId: finding.id, advisoryId: finding.advisoryId, ecosystem: finding.ecosystem, packageName: finding.packageName, installedVersion: finding.installedVersion, fixedVersion: finding.fixedVersion, manifestPath: finding.manifestPath }, agentCalls: [], checks: [], mergeReady: false, findingClosed: false };
+      this.db.prepare('INSERT INTO runs(id,status,data,created_at) VALUES(?,?,?,?)').run(run.id, run.status, JSON.stringify(run), now);
+      this.event(run.id, 'controller', 'queued', `Confirmed ${finding.ecosystem} advisory ${finding.advisoryId} queued for ${repository.owner}/${repository.name}.`);
+      this.db.exec('COMMIT'); return { run, reused: false };
     } catch (error) { this.db.exec('ROLLBACK'); throw error; }
   }
   update(id: string, patch: Partial<Run>): Run {

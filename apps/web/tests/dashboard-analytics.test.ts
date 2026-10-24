@@ -82,3 +82,11 @@ test('check groups separate business assertions from suite gate and never count 
   assert.equal(groups.find((group) => group.id === 'workflow')?.passed, 0);
   assert.equal(groups.find((group) => group.id === 'workflow')?.pending, 1);
 });
+
+test('generic runner evidence separates observed runtime, business suite and provenance without inventing assertion rows', () => {
+  const groups = checkGroups([{ id:'runner_package_version',label:'Python and Requests observed',status:'passed' },{id:'runner_business_suite',label:'12 business assertions passed',status:'passed'},{id:'evidence_identity',label:'Exact candidate',status:'passed'},{id:'runner_no_known_advisories',label:'Installed dependencies',status:'passed'}]);
+  assert.equal(groups.find(group=>group.id==='business')?.checks.length,1);
+  assert.equal(groups.find(group=>group.id==='runtime')?.checks[0].id,'runner_package_version');
+  assert.equal(groups.find(group=>group.id==='workflow')?.checks[0].id,'evidence_identity');
+  assert.equal(groups.find(group=>group.id==='policy')?.checks[0].id,'runner_no_known_advisories');
+});

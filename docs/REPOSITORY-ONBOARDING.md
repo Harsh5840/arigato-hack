@@ -1,80 +1,70 @@
-# How a company would use ProofPatch
+# How a company uses ProofPatch
 
-The proposed SaaS connects to a company's GitHub organization through a GitHub App. A developer selects repositories once, approves a verification policy, and reviews the resulting draft pull requests in GitHub. The ProofPatch dashboard becomes the shared place to follow advisory impact, agent execution, checks and unresolved owner tasks.
+Updated **25 October 2026 (Asia/Calcutta)**. The working hackathon service accepts accessible GitHub repository URLs, stores inventory/watch settings, checks approved sources from a separate worker, and proposes verified draft PRs where a reviewed repair policy exists. A customer GitHub App installation flow and multi-tenant SaaS identity remain planned.
 
-**Current implementation:** the local hackathon service is connected to the team's owned `Harsh5840/arigato-php-demo` repository. It performs real Japanese advisory intake, actual Groq calls, hosted PHP verification and draft PR creation. GitHub App installation, arbitrary customer repositories, continuous monitoring, tenant authentication and billing are proposed work. A repository URL field alone would not provide those capabilities.
+## Working journey today
 
-## Proposed customer journey
+1. Start the API, worker and dashboard with a server-side GitHub identity and Groq key. The frontend never receives these credentials.
+2. Click **Add repository**, paste a clean HTTPS `github.com/owner/repository` URL and select **Connect**. The server verifies access and reads the default-branch commit, push capability and supported dependency manifests. Adding a URL does not grant GitHub access that the server identity lacks.
+3. Select the repository and inspect **Dependency inventory**. Enable **Watch this repository**, use **Watch now** for a queued refresh, or let the worker's default 300-second schedule run. Source status, retrieval times and heartbeat reveal whether the watcher is functioning.
+4. Review **Confirmed findings** separately from unconfirmed forum leads. The scout triages new leads using Groq, while OSV exact package/version corroboration establishes actionable findings. A model's reading of a post cannot authorize a repair.
+5. For the supported Python Requests profile, enable **Automatically prepare a draft fix** or request a fix from a finding. Multiple advisories for the same package/version/target are coalesced. Other repositories remain monitor-only until a reviewed verification policy is installed.
+6. Follow the six-step journey or technical graph, inspect the candidate/checks/runner logs, and open the actual draft PR. Your developer reviews and merges in GitHub; your team deploys and verifies the running service.
 
-1. **Connect GitHub.** An authorized administrator installs the ProofPatch GitHub App on the company's organization and chooses **Only select repositories**. GitHub shows the requested permissions and applies the organization's installation policy. Installation grants repository access; signing in to the dashboard is a separate identity concern. [GitHub installation guide](https://docs.github.com/en/apps/using-github-apps/installing-a-github-app-from-a-third-party)
-2. **Select scope and checks.** ProofPatch imports approved runtime declarations and lockfiles, records the base commit, and asks the maintainer to approve allowed edit paths, test commands, runner, branch policy and evidence retention. Initial supported policy packs should remain explicit, such as the bounded PHP case, rather than promising repairs for every framework.
-3. **Watch advisories and changes.** Scheduled source ingestion matches verified advisories against inventory. Signed repository events refresh the inventory after relevant pushes. Display last successful sync, source provenance and unsupported components. Until scheduling exists, label a scan **Run now**, not continuous protection.
-4. **Propose and verify.** The read-only Supply Chain role explains impact; Remediation proposes a scoped candidate; deterministic checks and the DevSec review evaluate the exact candidate commit. The controller owns budgets, permission boundaries and publication eligibility.
-5. **Review in GitHub.** A draft PR contains the diff, Japanese/English rationale, real check links, rollback notes and remaining owner tasks. Branch rules and human review remain in force. A passing draft is not deployment or finding closure.
-6. **Manage access.** The customer can remove repositories or uninstall the App. ProofPatch must stop new work, invalidate access and apply a disclosed retention/deletion policy. These lifecycle controls need implementation before onboarding private customer code.
+## Exact current coverage
 
-GitHub installation tokens can be narrowed to the repositories and permissions granted to that installation, and expire after one hour. The service should mint them on demand and keep them server-side. [Installation token documentation](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-an-installation-access-token-for-a-github-app)
-
-## Proposed permissions and trust boundary
-
-| Permission | Purpose | Product rule |
-|---|---|---|
-| Metadata: read | Identify installed repositories | Resolve access from the installation and repository IDs, not a browser-supplied owner name. |
-| Contents: read/write | Read the pinned baseline and create candidate branches/commits | Permit writes only through the controller's scoped candidate path. GitHub's permission is broader than that application-level rule. |
-| Pull requests: read/write | Reconcile existing drafts and create an evidence packet | No automatic merge. Check returned PR head against the verified candidate. |
-| Actions: read/write | Dispatch the maintainer-approved verification workflow and read execution state/artifacts | Request write only when ProofPatch actually dispatches customer workflows. Read-only observation can use a narrower permission. |
-| Workflows | Access/edit Actions workflow files when that operation requires it | Do not include this in routine repair. Let a maintainer review and install the verification workflow separately; the fixer cannot edit it. |
-
-The precise permissions depend on each API operation and the selected verification architecture. GitHub recommends the minimum necessary permissions and documents endpoint requirements. Contents access and the separate Workflows permission are not interchangeable. [GitHub App permissions](https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/choosing-permissions-for-a-github-app)
-
-Dispatching an existing `workflow_dispatch` workflow requires Actions write; it is different from editing its YAML. The workflow must already declare that trigger. Keep the trusted workflow on the approved default branch, pass commit identities as validated data, and reject changes to the frozen verifier. [Workflow dispatch API](https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event)
-
-Verify webhook HMAC-SHA256 against the raw request body before processing it, using constant-time comparison. Deduplicate delivery IDs, check installation/repository membership again when claiming a job, and handle removed access. The signature proves delivery integrity; it does not make repository content or candidate code trusted. [Webhook validation](https://docs.github.com/en/webhooks/using-webhooks/validating-webhook-deliveries)
-
-Private-repository isolation is a ProofPatch responsibility; installing a GitHub App does not implement tenancy. Every run, event, artifact and repository record must bind to a tenant and installation. Enforce authorization at API and worker boundaries, isolate runner workspaces, keep credentials out of candidate execution, and disclose which code leaves the runner for the model provider. Encryption, retention, deletion and provider data terms must be settled before claiming production readiness. These are design requirements, not implemented assurances.
-
-```mermaid
-flowchart LR
-  A[Company installs App<br/>Selected repositories] --> B[Inventory at pinned commit]
-  J[Japanese + vendor advisory] --> C[Supply Chain]
-  B --> C
-  C --> D[Controller and policy]
-  D --> E[Remediation candidate]
-  E --> F[Approved checks + DevSec review]
-  F --> G{Evidence gate}
-  G -->|Pass| H[Draft PR in customer repo]
-  G -->|Fail| I[Visible blocker or bounded retry]
-  H --> K[Human review and deployment]
-```
-
-## One dashboard for developers
-
-The default screen should show one connected demo repository, one prominent **Run advisory check** action, a source-to-PR orchestration graph, live progress, the selected candidate's real checks, and a draft PR handoff. Selecting a graph stage should reveal its actual input/output or evidence in place. Keep source URLs, commit identities and logs available as drill-down details. Remove synthetic posture scores, marketing copy, historical roadmap cards and invented repository counts from the operational screen.
-
-Useful analytics can be calculated from persisted runs without inventing organizational risk:
-
-| Component | Calculation and caveat |
+| Area | Implemented boundary |
 |---|---|
-| Run outcomes | Counts of stored completed, failed, blocked and cancelled runs. A failed experiment remains visible. |
-| Time to draft | Actual elapsed time for completed runs with a recorded PR; show the sample size. An active run shows elapsed time separately. |
-| Checks | Passed/failed/pending/not-run for the selected candidate, with a link to CI. Never count missing evidence as passed. |
-| Role usage | Actual input/output/total tokens reported by Groq. Cost needs configured pricing; tokens alone are not a dollar estimate. |
-| Drafts awaiting review | Unique recorded draft PR URLs. Several runs that reuse one PR count as one draft. |
-| Run history | Real timestamps and outcome bars. With one run, show one run; do not manufacture a trend. |
+| GitHub connection | Up to 20 HTTPS github.com repositories accessible to the server's token/Git Credential Manager identity; no customer OAuth/App installation, SSH clone URL or arbitrary host. |
+| Python inventory | Root/nested `requirements.txt` and `requirements-*.txt` stable exact pins. Ranges, markers, include directives, URLs and unsupported resolution are reported rather than represented as known installed versions. |
+| JavaScript inventory | npm `package-lock.json` resolved packages, including supported legacy lockfile trees and nested manifests. |
+| PHP package inventory | Packagist packages in `composer.lock`; Docker PHP runtime declarations use the separate reviewed runtime policy. |
+| Boundaries | At most 100 exact dependencies and bounded tree/manifest reads. Truncation or unavailable authoritative sources cannot be called a complete clean scan. |
+| Package repair | Owned Sakura Python Requests profile: verified package pin only, unchanged application source, trusted hosted checks. Automatic repairs are not enabled for every registered repository. |
+| PHP runtime demo | Retained manual Japanese advisory-to-PR workflow with three reviewed runtime/configuration changes. |
 
-The dashboard's connection panel should say **Demo repository connected** and identify the owned target. A small **Company setup** drawer can explain the proposed GitHub App journey with a clear **Planned** label. Do not show a working install button without an actual App registration and authenticated onboarding backend.
+The selection policy checks published, stable, same-major releases and asks OSV again before proposing a target. That is not universal runtime compatibility verification. A new ecosystem or code migration needs an explicit policy, relevant frozen regressions and a suitable runner. A target with no supported known fix requires owner review.
 
-## A credible judging demo
+## API for a service operator
 
-Start one live run before the presentation and retain the previous completed run as an explicitly dated fallback. GitHub queue time and Groq latency vary; a 90-second pitch cannot guarantee a new runner finishes within that slot.
+These routes are relative to `/api` on the Hono server; the dashboard uses the Next `/api/proofpatch` proxy.
 
-| Time | Show and say |
+| Method and route | Effect |
 |---|---|
-| 0–15 seconds | Point to the connected SakuraShop repo and the Japanese/vendor source. “This is an owned PHP demo repository. A company would install our GitHub App on selected repositories.” |
-| 15–40 seconds | Start a run, or open the already-running live job. Follow Supply Chain → Remediation → DevSec on the same dashboard. Show actual model IDs and a source/commit drill-down. |
-| 40–65 seconds | Open actual verification progress or the clearly dated completed run. Show runtime/config checks and the Japanese storefront's UTF-8, JPY and authorization tests. |
-| 65–90 seconds | Follow the real draft PR link. Show the three-file diff, exact candidate SHA, CI evidence and remaining owner tasks. “The service prepares evidence for a human reviewer; it does not merge or deploy.” |
+| `GET /repositories` | List registered repositories and their current inventory/watch capability. |
+| `POST /repositories` with `{ "url": "https://github.com/owner/repository" }` | Verify access, inventory and register a repository. |
+| `PATCH /repositories/:id` | Change `enabled` and/or `autoRemediate`; unsupported automatic repair is rejected. |
+| `POST /repositories/:id/scan` | Queue a repository refresh; the worker performs it. |
+| `GET /monitoring` | Inspect source health, heartbeat, cadence, leads and scout summary/usage. |
+| `PATCH /monitoring` | Set `enabled` and/or `intervalSeconds` (60–86,400). |
+| `POST /monitoring/poll` | Request a source/registered-repository cycle. |
+| `GET /findings` | List recorded corroborated findings. |
+| `POST /findings/:id/remediate` | Queue a supported finding's repair or reuse its grouped run. |
+| `GET /runs/:id/events` | Read persisted progress through SSE. |
+| `GET /runs/:id/diff` / `evidence` | Read the actual pinned comparison or exported evidence. |
 
-Keep a second browser tab on the real GitHub Actions run and another on the resulting draft. If a provider or runner fails, show the failure state and explain the gate rather than substituting a simulated success. The full operator setup and actual execution limits remain in [LIVE-DEMO.md](LIVE-DEMO.md).
+Monitoring actions queue server work; an HTTP acknowledgement is not a completed scan. A stopped/stale worker should remain visible. The service uses one SQLite-backed worker; process separation does not yet implement distributed workers or tenant isolation. See [deployment configuration](SEPARATE-SERVER-DEPLOYMENT.md) before hosting it.
 
-Research checked against the five linked official GitHub documentation pages on 25 October 2026 (Asia/Calcutta). The customer journey and dashboard recommendations are proposed ProofPatch design.
+## Planned GitHub App onboarding
+
+A company administrator would install the ProofPatch App on **Only select repositories**, and ProofPatch would resolve the granted repository IDs/installation server-side. GitHub installation is separate from signing into a customer dashboard. The App journey is future work; there is no functioning install button in this release. [GitHub installation guide](https://docs.github.com/en/apps/using-github-apps/installing-a-github-app-from-a-third-party)
+
+Installation tokens should be minted on demand, restricted to the repositories/permissions granted by that installation and kept server-side. They expire after one hour. [Installation token documentation](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-an-installation-access-token-for-a-github-app)
+
+| Permission | Proposed purpose |
+|---|---|
+| Metadata: read | Resolve installed repository identity. |
+| Contents: read/write | Read pinned inventory and create scoped candidate branches. Application policy must narrow this broad API permission. |
+| Pull requests: read/write | Reconcile/create a draft at the verified candidate SHA; never merge automatically. |
+| Actions: read/write | Dispatch an already installed trusted workflow and inspect its state/artifacts. |
+| Workflows | Only for separately approved workflow installation/editing where required; routine fixer work cannot alter verification YAML. |
+
+Minimum permissions depend on the actual API operations. Dispatching a declared `workflow_dispatch` workflow is different from editing its source. [GitHub App permissions](https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/choosing-permissions-for-a-github-app), [workflow dispatch API](https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event)
+
+Before private customer onboarding, add tenant-bound authorization across repositories/runs/events/artifacts, installation access removal, retention/deletion controls, provider data disclosure, encrypted secret handling and isolated customer execution. Signed webhooks require raw-body HMAC verification, delivery deduplication and installation/repository membership checks. An App does not itself implement these application controls. [Webhook validation](https://docs.github.com/en/webhooks/using-webhooks/validating-webhook-deliveries)
+
+## Plain-language judging explanation
+
+“A company connects repositories of its services. Our separate worker keeps checking supported sources and exact dependency versions. If an advisory matches, the first agent explains it, the second prepares a permitted fix, and tests plus a senior-review agent inspect it. The system opens a draft PR. The company's developer is still the person who merges.”
+
+Show the actual Python example and one repository's unsupported-policy state. This demonstrates both the functioning flow and the boundary a real customer would need to configure. For the full walkthrough and dated fallback evidence, use [LIVE-DEMO.md](LIVE-DEMO.md).

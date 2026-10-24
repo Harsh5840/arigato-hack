@@ -1,47 +1,75 @@
-# Japanese PHP advisory → Groq → draft PR
+# Live supply-chain watch → LangGraph → human-reviewed PR
 
-This is a working, bounded integration for the Open Innovation hackathon. It targets only the team's owned `Harsh5840/arigato-php-demo` repository. The single operations dashboard uses actual service state; seeded prototype screens are no longer routed into it.
+Updated **25 October 2026 (Asia/Calcutta)**. This is a working hackathon integration with a separate API/worker and one developer dashboard. It includes generic repository inventory monitoring, a reviewed Python Requests repair policy, and the retained Japanese PHP advisory demonstration. Coverage and live execution records are distinct from the earlier synthetic pitch assets.
 
-## Start from a fresh clone
+## Start the service
 
-Use Node 22.12+ and npm. The SQLite flag is included in the supplied commands because Node 22.12 still requires it. From the repository root:
+Use Node 22.12+ and npm. From the product repository root:
 
 ```sh
 npm run setup
-```
-
-Copy `.env.example` to `.env`, configure `GROQ_API_KEY`, and either set `GITHUB_TOKEN` or sign in with Git Credential Manager. A repository-scoped token needs Contents read/write, Actions read/write and Pull requests read/write on the dummy repository. Existing Git Credential Manager authentication is used non-interactively when no token is configured. Populated environment files are ignored by Git.
-
-```sh
+# Copy .env.example to .env and configure credentials locally.
 npm run dev
 ```
 
-This starts Next.js on `http://127.0.0.1:3000`, Hono on `127.0.0.1:8787`, and the separate queue worker. All three must stay running. Next rewrites `/api/proofpatch/*` to the API. Run records and events persist in `.data/proofpatch.sqlite`; completed evidence exports are written to `output/live-runs/<run-id>/`.
+Set `GROQ_API_KEY`. For GitHub, configure `GITHUB_TOKEN` or use non-interactive Git Credential Manager locally. The server identity must be able to read each registered repository. Candidate branches, workflow dispatch and draft publication additionally require Contents read/write, Actions read/write and Pull requests read/write on the repair target. Keep populated environment files out of Git and the browser.
 
-The API intentionally binds to loopback and accepts only the local frontend origin. This is a local hackathon integration, not an authenticated multi-tenant deployment. Do not expose its process directly to the Internet. No Docker installation is needed on the demo laptop: isolated PHP execution runs in GitHub Actions.
+The command starts Next.js at `http://127.0.0.1:3000`, Hono at `127.0.0.1:8787`, and the separate watcher/queue worker. All three must remain running. No local Python/PHP/Docker runtime is required for the judging laptop: candidate containers execute on GitHub Actions. [Deployment configuration](SEPARATE-SERVER-DEPLOYMENT.md) documents separate server processes and access configuration; a remote host has not been deployed.
 
-## What judges can do
+Run/event data persists in `.data/proofpatch.sqlite`. LangGraph checkpoints persist in `.data/graph-checkpoints.sqlite`; complete run exports are under `output/live-runs/<run-id>/`. A checkpoint does not currently trigger automatic side-effect replay after a worker crash. Lost worker leases fail closed; inspect the recorded branch/CI state before retrying.
 
-1. Open the dashboard. Confirm the service status and owned repository in the sticky header. The repository menu explains the current connection and the planned company GitHub App flow.
-2. Click **Run live demo**. The default performs real JPCERT feed/notice and PHP vendor requests. A missing corroboration stops the run. **Run options** can explicitly select a recorded source; Groq, GitHub and runner execution remain real.
-3. Follow the interactive agent graph and newest-first event rail on the same page. Select a role and expand its actual model call. On mobile, the role summary precedes the expandable detailed graph.
-4. Inspect **Developer workbench**: expand grouped checks, switch to **Candidate diff** for the actual immutable GitHub comparison, or **Runner output** for runtime/business logs and verifier identities. The linked CI shows work in progress.
-5. Open the automatically created **draft PR** beside the workbench. Inspect the three-file diff, bilingual review, evidence, rollback notes and remaining owner actions. A human owns review, merge and deployment.
-6. Inspect **Run observations** for recorded outcomes, actual phase timings/tokens and sample counts. Select a dated record from history. Reload to recover it; **Run options** contains JSON export. Cancel stops later stages; in-flight external writes or CI may remain recorded. Lost worker leases fail closed.
+## The 90-second judging story
 
-For a short judging slot, start one live run before the talk and keep a dated completed run available. Provider and hosted-runner queues vary. Use the previous actual record transparently if the new runner is still busy; do not label historical results as the new run. The [90-second judging path and company onboarding design](REPOSITORY-ONBOARDING.md) give the exact story.
+“We connect service repositories once. A worker watches security sources, confirms whether an exact installed dependency is affected, proposes a supported fix, runs the maintainer's frozen checks, and asks a senior-review context to inspect the result. We open a draft PR. A human decides whether to merge.”
 
-## Execution and boundaries
+| Time | Show |
+|---|---|
+| 0–15 s | **Repositories**: select the owned Sakura Python repository and expand its real Requests inventory. Explain that accessible repositories can be monitored, while automatic repair requires a reviewed policy. |
+| 15–30 s | **Security watch**: worker heartbeat, scheduled cadence, source health and unconfirmed forum leads. Click **Watch now** for the selected repository if a fresh scan is useful. |
+| 30–50 s | **Confirmed findings**: show the OSV match for Requests 2.31.0 and the published target. Enable **Automatically prepare a draft fix** on the supported profile, or use the finding's repair action. |
+| 50–70 s | Follow the six-step visual journey; expand the technical graph to see actual LangGraph nodes and Groq role calls. Open the selected run's checks, immutable GitHub diff or runner output. |
+| 70–90 s | Open the real draft PR. Show evidence, Japanese/English rationale, candidate identity and remaining human actions. No automatic merge or deployment occurs. |
 
-The Supply Chain role uses `openai/gpt-oss-20b`; Remediation and the DevSec senior-review role use separate contexts of `openai/gpt-oss-120b` through Groq. These are actual Groq model IDs, not Sonnet/Opus. Authenticated model discovery and strict JSON responses are required. Fixer/reviewer separation is not independent-model assurance. The aggregate limit is five role calls, two candidate attempts and a 16-minute deadline; individual provider requests and runner polling have smaller bounds.
+A hosted runner may take longer than the pitch. Start the live run before presenting and retain an explicitly dated completed record as a fallback. Keep tabs on its actual Actions run and draft. If the new run is waiting or blocked, show that state; do not substitute historical evidence as its result.
 
-The controller corroborates the official Japanese notice with the PHP vendor archive, matches the declared PHP 8.3.35 baseline, freezes five verifier files, and accepts exactly three changes: reviewed PHP 8.3.36 image/digest, matching Composer PHP floor, and disabled upload progress at startup. Docker parser directives, extra executable instructions, Composer scripts and unrelated INI changes are rejected. Models cannot edit verification code, workflows or application code through this path.
+## What actually runs
 
-A trusted workflow on dummy-repo main checks exact base/head identities and the frozen verifier before building only the fixed candidate. The PHP container has no network, a read-only filesystem, dropped capabilities, a non-root user and resource limits. Artifacts bind the workflow/run/base/head/verifier identities. Missing, failed, contradictory or stale evidence blocks publication. The branch and returned PR head are checked against the verified candidate. A changed main requires a new run.
+1. The worker reads approved forum feeds and exact manifests from registered GitHub repositories. Scheduled monitoring defaults to 300 seconds and can be paused. A manual source/repository check queues work for the worker.
+2. The read-only Supply Chain scout uses actual Groq through LangChain `ChatGroq` to triage newly observed forum leads. Previously triaged IDs are cached to avoid repeatedly paying for unchanged leads. Forum text is untrusted data and remains unconfirmed.
+3. OSV exact ecosystem/package/version queries establish corroborated findings. The adapter checks published registry releases, excludes unsupported/pre-release or yanked candidates, stays within the installed major and rechecks the selected candidate with OSV. Unsupported inventory and unavailable sources are reported.
+4. A supported repair uses the shared LangGraph workflow: source → inventory → triage → baseline → repair → verify → review → gate → publish. A tenth `blocked` node handles rejected paths. SQLite checkpoints and persisted events show real progress.
+5. The fixer creates a scoped candidate. Frozen hosted checks and the separate senior-review context must pass before the deterministic publication gate permits a draft PR. Advisory, base/candidate commit, verifier digest, workflow and run identities are bound together.
+6. The human reviews and merges in GitHub, then owns deployment and deployed-environment verification.
 
-The affected baseline is classified without running its image. Runtime version/configuration checks and Japanese UTF-8, JPY arithmetic and authorization regressions are real; they do not reproduce the PHP RCE or prove a deployed service secure. `mergeReady` and `findingClosed` remain false, even after a successful draft publication.
+Supply Chain uses `openai/gpt-oss-20b`; Remediation and Senior Review use separate contexts of `openai/gpt-oss-120b`. These are actual Groq model IDs, not Sonnet/Opus. The two large-model roles are not independent-model assurance. Repair runs allow at most five role calls, two candidates and 16 minutes; provider calls and hosted verification have smaller deadlines. Forum scouting is a separately recorded monitoring call.
 
-## Verification commands
+## Current coverage
+
+| Capability | Working scope |
+|---|---|
+| Register repositories | HTTPS `github.com/owner/repository` URLs accessible to the server's identity; up to 20 records. No arbitrary server clone URL or browser-provided shell commands. |
+| Inventory | Root/nested exact `requirements.txt` / `requirements-*.txt` pins, npm `package-lock.json` entries and `composer.lock` packages. At most 100 exact dependencies and bounded manifests. Unresolved constraints are explicitly skipped/reported. |
+| Forum discovery | Approved Python Packaging RSS and GitHub advisory Atom requests, with per-source failures. No X API connector. A feed outage is visible, not silently replaced. |
+| Automatic package fix | Owned `Harsh5840/arigato-python-demo`, Requests pin only; application source remains byte-for-byte unchanged. Other repository/package migrations require a new reviewed policy. |
+| PHP demonstration | Owned `Harsh5840/arigato-php-demo`: live Japanese/vendor advisory corroboration and three reviewed PHP runtime/configuration changes. This is a manual advisory demo rather than generic runtime discovery. |
+
+## Python evidence
+
+Completed current example: [draft PR #1](https://github.com/Harsh5840/arigato-python-demo/pull/1), [successful hosted run 40126005250](https://github.com/Harsh5840/arigato-python-demo/actions/runs/40126005250), and [saved LangGraph run](../output/live-runs/444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e/run.json). The automatic run took 58.883 seconds, used three real role calls and recorded 11 passing controller/evidence checks including the five runner gates and 12 business assertions. It is a dated demonstration, not a latency guarantee.
+
+[Sakura Python main](https://github.com/Harsh5840/arigato-python-demo) intentionally pins affected `requests==2.31.0`; never deploy or execute that baseline. At the current scan, OSV returned three distinct advisory groups after GHSA/PYSEC alias deduplication, and PyPI plus candidate OSV queries selected `2.34.2`. Multiple findings for the same package/version/target coalesce into one repair run rather than three duplicate PRs.
+
+Trusted verification runs from main, checks a direct-child candidate and frozen oracle, downloads binary wheels for the approved candidate, and builds a pinned Python container without build network access. Actual business execution uses a non-root user, no network, read-only filesystem, dropped capabilities and resource limits. Twelve frozen assertions cover Japanese text, JPY arithmetic, authorization failures, URL encoding, TLS and bounded timeouts. Actual installed Requests and four application dependencies are queried against OSV again. The five required gates are `scope`, `verifier`, `package_version`, `business_suite` and `no_known_advisories`.
+
+The artifact `proofpatch-<verification-run-id>` binds the controller run, Actions run, workflow SHA, base SHA, candidate SHA and verifier SHA256. Missing, stale or failing evidence blocks publication. Tests confirm the represented behavior; they do not reproduce every exploit or establish deployed security.
+
+## Retained completed PHP record
+
+[Draft PR #4](https://github.com/Harsh5840/arigato-php-demo/pull/4), [actual passing verification](https://github.com/Harsh5840/arigato-php-demo/actions/runs/40123778532) and [stored run evidence](../output/live-runs/bc7050bc-a41e-4f47-a903-fe00c22e3734/run.json) are an earlier completed demonstration. It recorded 35 checks including 15 executed PHP business assertions. Its historical run predates the LangGraph migration and must not be presented as proof of the new graph executing.
+
+## Operating limits
+
+This is one server identity, SQLite storage and one worker, without customer tenant isolation or a working GitHub App installation flow. Private-code/model data policy, production identity, billing, horizontal scaling, webhook ingestion and broader migration policies remain future work. Scheduled checks run while this worker is alive; they are not a guarantee that every new exploit is discovered. Local developer-file pentesting is not implemented. `mergeReady` and `findingClosed` remain false after draft publication.
 
 ```sh
 npm run typecheck
@@ -49,4 +77,4 @@ npm test
 npm run build
 ```
 
-Backend tests use isolated stores and mocked network adapters where appropriate; exported live runs are separate evidence of actual provider, GitHub and PHP execution. The dummy repository has its own baseline tests and candidate-verification workflow. Automated forum/X discovery, repository onboarding, continuous local watch, general repair tools, tenant authentication, billing and production deployment remain future phases.
+Product unit tests may use mocked networks and isolated stores. Only linked executed runs establish actual Groq/GitHub/container results. See [the implementation handoff](IMPLEMENTATION-HANDOFF.md) for the current run record and [repository onboarding](REPOSITORY-ONBOARDING.md) for the company journey.

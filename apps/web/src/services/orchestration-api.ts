@@ -1,4 +1,5 @@
 import type { CandidateDiff, LiveEvent, LiveRun, ServiceStatus } from '@/types/live-orchestration';
+import type {MonitoredRepository, MonitoringSnapshot, SupplyFinding} from '@/types/monitoring';
 
 export const orchestrationApi = '/api/proofpatch';
 export class OrchestrationError extends Error {
@@ -22,3 +23,12 @@ export const getRunEvidence = (id: string) => request<{run: LiveRun; events: Liv
 export const getCandidateDiff = (id: string) => request<CandidateDiff>(`/runs/${encodeURIComponent(id)}/diff`);
 export const startRun = (sourceMode: 'live' | 'cached') => request<{run: LiveRun}>('/runs', {method: 'POST', body: JSON.stringify({sourceMode})});
 export const cancelRun = (id: string) => request<{run: LiveRun}>(`/runs/${encodeURIComponent(id)}/cancel`, {method: 'POST', body: '{}'});
+export const getRepositories = () => request<{repositories: MonitoredRepository[]}>('/repositories');
+export const addRepository = (url: string) => request<{repository: MonitoredRepository}>('/repositories', {method: 'POST', body: JSON.stringify({url})});
+export const updateRepository = (id: string, changes: {enabled?: boolean; autoRemediate?: boolean}) => request<{repository: MonitoredRepository}>(`/repositories/${encodeURIComponent(id)}`, {method: 'PATCH', body: JSON.stringify(changes)});
+export const scanRepository = (id: string) => request<{repository: MonitoredRepository; findings: SupplyFinding[]}>(`/repositories/${encodeURIComponent(id)}/scan`, {method: 'POST', body: '{}'});
+export const getMonitoring = () => request<MonitoringSnapshot>('/monitoring');
+export const pollMonitoring = () => request<MonitoringSnapshot>('/monitoring/poll', {method: 'POST', body: '{}'});
+export const updateMonitoring = (changes: {enabled?: boolean; intervalSeconds?: number}) => request<MonitoringSnapshot>('/monitoring', {method: 'PATCH', body: JSON.stringify(changes)});
+export const getFindings = () => request<{findings: SupplyFinding[]}>('/findings');
+export const remediateFinding = (id: string) => request<{run: LiveRun}>(`/findings/${encodeURIComponent(id)}/remediate`, {method: 'POST', body: '{}'});

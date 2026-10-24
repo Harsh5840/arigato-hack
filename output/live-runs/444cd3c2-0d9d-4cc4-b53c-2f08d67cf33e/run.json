@@ -1,0 +1,701 @@
+{
+  "run": {
+    "id": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+    "status": "completed",
+    "createdAt": "2026-10-24T19:35:24.482Z",
+    "updatedAt": "2026-10-24T19:36:23.365Z",
+    "sourceMode": "live",
+    "mode": "live-groq",
+    "repositoryId": "3dc4b2be848b7eaafd78",
+    "orchestrationEngine": "langgraph",
+    "repo": {
+      "owner": "Harsh5840",
+      "name": "arigato-python-demo",
+      "baseSha": "c0625047e22ec73c55db4d048c26823af412664d",
+      "candidateSha": "32bfc05eaddc485acef19ab2714d5ae11d8e39ad",
+      "branch": "proofpatch/package-444cd3c2-a1"
+    },
+    "target": {
+      "repositoryId": "3dc4b2be848b7eaafd78",
+      "findingId": "finding-2eacc31dc34af4c56635c6e2",
+      "advisoryId": "GHSA-9hjg-9r4m-mvj7",
+      "ecosystem": "PyPI",
+      "packageName": "requests",
+      "installedVersion": "2.31.0",
+      "fixedVersion": "2.34.2",
+      "manifestPath": "requirements.txt"
+    },
+    "agentCalls": [
+      {
+        "role": "supply",
+        "model": "openai/gpt-oss-20b",
+        "status": "completed",
+        "startedAt": "2026-10-24T19:35:32.096Z",
+        "summary": "The installed requests package (v2.31.0) is affected by the GHSA-9hjg-9r4m-mvj7 vulnerability (CVE‑2024‑47081). The advisory specifies that versions up to 2.34.1 are vulnerable and that 2.34.2 is the fixed release. Therefore the inventory entry is vulnerable and should be upgraded.",
+        "summaryJa": "インストール済みの requests パッケージ（v2.31.0）は GHSA-9hjg-9r4m-mvj7（CVE‑2024‑47081）に該当し、2.34.2 が修正版です。したがって、インベントリは脆弱でアップグレードが必要です。",
+        "usage": {
+          "promptTokens": 903,
+          "completionTokens": 231,
+          "totalTokens": 1134
+        },
+        "completedAt": "2026-10-24T19:35:33.065Z"
+      },
+      {
+        "role": "fixer",
+        "model": "openai/gpt-oss-120b",
+        "status": "completed",
+        "startedAt": "2026-10-24T19:35:35.322Z",
+        "summary": "Upgraded the vulnerable 'requests' package from version 2.31.0 to the fixed version 2.34.2 in requirements.txt as per the advisory GHSA-9hjg-9r4m-mvj7 (CVE-2024-47081).",
+        "summaryJa": "脆弱性 GHSA-9hjg-9r4m-mvj7 (CVE-2024-47081) に対応し、requirements.txt の 'requests' パッケージを 2.31.0 から修正版の 2.34.2 にアップグレードしました。",
+        "usage": {
+          "promptTokens": 1014,
+          "completionTokens": 272,
+          "totalTokens": 1286
+        },
+        "completedAt": "2026-10-24T19:35:36.279Z"
+      },
+      {
+        "role": "reviewer",
+        "model": "openai/gpt-oss-120b",
+        "status": "completed",
+        "startedAt": "2026-10-24T19:36:15.966Z",
+        "summary": "The dependency upgrade to requests==2.34.2 matches the fixed version, all scoped policy checks and business assertions passed, and the CI evidence is verified. No concerns detected.",
+        "summaryJa": "requests==2.34.2 へのアップグレードは修正版に一致し、スコープポリシーとビジネス検証がすべて合格しています。証拠も確認済みで、懸念はありません。",
+        "usage": {
+          "promptTokens": 3638,
+          "completionTokens": 172,
+          "totalTokens": 3810
+        },
+        "completedAt": "2026-10-24T19:36:17.192Z"
+      }
+    ],
+    "checks": [
+      {
+        "id": "affected_inventory",
+        "label": "Exact package/version confirmed by OSV",
+        "status": "passed",
+        "detail": "PyPI:requests@2.31.0"
+      },
+      {
+        "id": "frozen_baseline",
+        "label": "Verification files frozen before repair",
+        "status": "passed",
+        "detail": "03905c2485c9c301b7cb0ac0de7af293483ba43f777d847ad5edb98d423da367"
+      },
+      {
+        "id": "candidate_scope",
+        "label": "Maintainer-approved edit scope",
+        "status": "passed",
+        "detail": "Verified package pin only. Application source, tests and workflow remain unchanged."
+      },
+      {
+        "id": "evidence_identity",
+        "label": "Verified candidate, frozen oracle and workflow run match",
+        "status": "passed",
+        "detail": "Expected candidate 32bfc05eaddc485acef19ab2714d5ae11d8e39ad; base c0625047e22ec73c55db4d048c26823af412664d; Actions 40126005250."
+      },
+      {
+        "id": "evidence_schema",
+        "label": "Complete required verification assertions",
+        "status": "passed",
+        "detail": "5 distinct frozen assertions recorded."
+      },
+      {
+        "id": "runner_scope",
+        "label": "Only approved manifest and application source changed",
+        "status": "passed",
+        "detail": "requirements.txt"
+      },
+      {
+        "id": "runner_verifier",
+        "label": "Frozen baseline business verifier is unchanged",
+        "status": "passed",
+        "detail": "03905c2485c9c301b7cb0ac0de7af293483ba43f777d847ad5edb98d423da367"
+      },
+      {
+        "id": "runner_no_known_advisories",
+        "label": "Actual installed application dependencies have no OSV matches",
+        "status": "passed",
+        "detail": "requests==2.34.2, certifi==2026.10.23, charset-normalizer==3.5.2, idna==3.20, urllib3==2.8.0"
+      },
+      {
+        "id": "runner_package_version",
+        "label": "Actual Python and Requests versions match the candidate",
+        "status": "passed",
+        "detail": "Python 3.12.15; Requests 2.34.2; expected 2.34.2."
+      },
+      {
+        "id": "runner_business_suite",
+        "label": "All 12 frozen Japanese business assertions passed",
+        "status": "passed",
+        "detail": "12 assertions observed; expected exactly 12."
+      },
+      {
+        "id": "trusted_workflow",
+        "label": "Trusted hosted workflow completed",
+        "status": "passed",
+        "detail": "Actions completed; conclusion success."
+      }
+    ],
+    "mergeReady": false,
+    "findingClosed": false,
+    "graph": {
+      "threadId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "currentNode": "publish",
+      "completedNodes": [
+        "source",
+        "inventory",
+        "triage",
+        "baseline",
+        "repair",
+        "verify",
+        "review",
+        "gate",
+        "publish"
+      ]
+    },
+    "advisory": {
+      "id": "GHSA-9hjg-9r4m-mvj7",
+      "titleEn": "requests 2.31.0: GHSA-9hjg-9r4m-mvj7",
+      "titleJa": "requests の依存関係の脆弱性",
+      "summary": "Requests vulnerable to .netrc credentials leak via malicious URLs",
+      "sources": [
+        {
+          "title": "OSV corroborated exact package version",
+          "url": "https://osv.dev/vulnerability/GHSA-9hjg-9r4m-mvj7",
+          "language": "en",
+          "retrievedAt": "2026-10-24T19:33:33.347Z"
+        },
+        {
+          "title": "WEB",
+          "url": "https://github.com/psf/requests/security/advisories/GHSA-9hjg-9r4m-mvj7",
+          "language": "en",
+          "retrievedAt": "2026-10-24T19:33:33.347Z"
+        },
+        {
+          "title": "ADVISORY",
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-47081",
+          "language": "en",
+          "retrievedAt": "2026-10-24T19:33:33.347Z"
+        },
+        {
+          "title": "WEB",
+          "url": "https://github.com/psf/requests/pull/6965",
+          "language": "en",
+          "retrievedAt": "2026-10-24T19:33:33.347Z"
+        },
+        {
+          "title": "WEB",
+          "url": "https://github.com/psf/requests/commit/96ba401c1296ab1dda74a2365ef36d88f7d144ef",
+          "language": "en",
+          "retrievedAt": "2026-10-24T19:33:33.347Z"
+        },
+        {
+          "title": "ADVISORY",
+          "url": "https://github.com/advisories/GHSA-9hjg-9r4m-mvj7",
+          "language": "en",
+          "retrievedAt": "2026-10-24T19:33:33.347Z"
+        },
+        {
+          "title": "PACKAGE",
+          "url": "https://github.com/psf/requests",
+          "language": "en",
+          "retrievedAt": "2026-10-24T19:33:33.347Z"
+        },
+        {
+          "title": "WEB",
+          "url": "https://github.com/psf/requests/releases/tag/v2.32.4",
+          "language": "en",
+          "retrievedAt": "2026-10-24T19:33:33.347Z"
+        },
+        {
+          "title": "WEB",
+          "url": "https://github.com/pypa/advisory-database/tree/main/vulns/requests/PYSEC-2026-1872.yaml",
+          "language": "en",
+          "retrievedAt": "2026-10-24T19:33:33.347Z"
+        },
+        {
+          "title": "WEB",
+          "url": "https://pypi.org/project/requests",
+          "language": "en",
+          "retrievedAt": "2026-10-24T19:33:33.347Z"
+        },
+        {
+          "title": "WEB",
+          "url": "https://requests.readthedocs.io/en/latest/api/#requests.Session.trust_env",
+          "language": "en",
+          "retrievedAt": "2026-10-24T19:33:33.347Z"
+        },
+        {
+          "title": "WEB",
+          "url": "https://seclists.org/fulldisclosure/2025/Jun/2",
+          "language": "en",
+          "retrievedAt": "2026-10-24T19:33:33.347Z"
+        }
+      ],
+      "cves": [
+        "CVE-2024-47081"
+      ],
+      "fixedVersion": "2.34.2",
+      "ownerTasks": [
+        "Review and merge the draft in GitHub.",
+        "Deploy the reviewed build and verify the running service."
+      ]
+    },
+    "evidence": {
+      "runtime": {
+        "python_version": "3.12.15",
+        "requests_version": "2.34.2",
+        "expected_version": "2.34.2",
+        "checks": [
+          "Japanese catalog text survives JSON decoding",
+          "Catalog reports integer JPY prices",
+          "Prefecture is passed as a query parameter",
+          "TLS verification remains enabled",
+          "Connect and read timeouts remain bounded",
+          "Environment credentials and proxies are not implicitly trusted",
+          "Integer yen totals retain order semantics",
+          "Fractional-yen input is rejected",
+          "Order keeps Japanese identifier and JPY total",
+          "Order identifiers cannot become URL path segments",
+          "Unauthorized order responses remain rejected",
+          "Plaintext service endpoints are rejected"
+        ],
+        "dependencies": [
+          {
+            "name": "requests",
+            "version": "2.34.2"
+          },
+          {
+            "name": "certifi",
+            "version": "2026.10.23"
+          },
+          {
+            "name": "charset-normalizer",
+            "version": "3.5.2"
+          },
+          {
+            "name": "idna",
+            "version": "3.20"
+          },
+          {
+            "name": "urllib3",
+            "version": "2.8.0"
+          }
+        ]
+      },
+      "businessLog": "PASS: Japanese catalog text survives JSON decoding\nPASS: Catalog reports integer JPY prices\nPASS: Prefecture is passed as a query parameter\nPASS: TLS verification remains enabled\nPASS: Connect and read timeouts remain bounded\nPASS: Environment credentials and proxies are not implicitly trusted\nPASS: Integer yen totals retain order semantics\nPASS: Fractional-yen input is rejected\nPASS: Order keeps Japanese identifier and JPY total\nPASS: Order identifiers cannot become URL path segments\nPASS: Unauthorized order responses remain rejected\nPASS: Plaintext service endpoints are rejected\n12 business checks passed.\n",
+      "policy": {
+        "run_id": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e-a1",
+        "base_sha": "c0625047e22ec73c55db4d048c26823af412664d",
+        "candidate_sha": "32bfc05eaddc485acef19ab2714d5ae11d8e39ad",
+        "verifier_sha256": "03905c2485c9c301b7cb0ac0de7af293483ba43f777d847ad5edb98d423da367",
+        "workflow_sha": "c0625047e22ec73c55db4d048c26823af412664d",
+        "github_run_id": "40126005250",
+        "checks": [
+          {
+            "id": "scope",
+            "label": "Only approved manifest and application source changed",
+            "pass": true,
+            "detail": "requirements.txt"
+          },
+          {
+            "id": "verifier",
+            "label": "Frozen baseline business verifier is unchanged",
+            "pass": true,
+            "detail": "03905c2485c9c301b7cb0ac0de7af293483ba43f777d847ad5edb98d423da367"
+          },
+          {
+            "id": "no_known_advisories",
+            "label": "Actual installed application dependencies have no OSV matches",
+            "pass": true,
+            "detail": "requests==2.34.2, certifi==2026.10.23, charset-normalizer==3.5.2, idna==3.20, urllib3==2.8.0"
+          },
+          {
+            "id": "package_version",
+            "label": "Actual Python and Requests versions match the candidate",
+            "pass": true,
+            "detail": "Python 3.12.15; Requests 2.34.2; expected 2.34.2."
+          },
+          {
+            "id": "business_suite",
+            "label": "All 12 frozen Japanese business assertions passed",
+            "pass": true,
+            "detail": "12 assertions observed; expected exactly 12."
+          }
+        ],
+        "runtime": {
+          "python_version": "3.12.15",
+          "requests_version": "2.34.2",
+          "expected_version": "2.34.2",
+          "checks": [
+            "Japanese catalog text survives JSON decoding",
+            "Catalog reports integer JPY prices",
+            "Prefecture is passed as a query parameter",
+            "TLS verification remains enabled",
+            "Connect and read timeouts remain bounded",
+            "Environment credentials and proxies are not implicitly trusted",
+            "Integer yen totals retain order semantics",
+            "Fractional-yen input is rejected",
+            "Order keeps Japanese identifier and JPY total",
+            "Order identifiers cannot become URL path segments",
+            "Unauthorized order responses remain rejected",
+            "Plaintext service endpoints are rejected"
+          ],
+          "dependencies": [
+            {
+              "name": "requests",
+              "version": "2.34.2"
+            },
+            {
+              "name": "certifi",
+              "version": "2026.10.23"
+            },
+            {
+              "name": "charset-normalizer",
+              "version": "3.5.2"
+            },
+            {
+              "name": "idna",
+              "version": "3.20"
+            },
+            {
+              "name": "urllib3",
+              "version": "2.8.0"
+            }
+          ]
+        },
+        "businessLog": "PASS: Japanese catalog text survives JSON decoding\nPASS: Catalog reports integer JPY prices\nPASS: Prefecture is passed as a query parameter\nPASS: TLS verification remains enabled\nPASS: Connect and read timeouts remain bounded\nPASS: Environment credentials and proxies are not implicitly trusted\nPASS: Integer yen totals retain order semantics\nPASS: Fractional-yen input is rejected\nPASS: Order keeps Japanese identifier and JPY total\nPASS: Order identifiers cannot become URL path segments\nPASS: Unauthorized order responses remain rejected\nPASS: Plaintext service endpoints are rejected\n12 business checks passed.\n"
+      },
+      "verifierSha256": "03905c2485c9c301b7cb0ac0de7af293483ba43f777d847ad5edb98d423da367",
+      "artifactSha256": "b61fb432560948d18cf28f41cfb0abf1ee8b0003a6818e4a8f62a37417235574",
+      "rawFiles": {
+        "verification.json": "{\n  \"run_id\": \"444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e-a1\",\n  \"base_sha\": \"c0625047e22ec73c55db4d048c26823af412664d\",\n  \"candidate_sha\": \"32bfc05eaddc485acef19ab2714d5ae11d8e39ad\",\n  \"verifier_sha256\": \"03905c2485c9c301b7cb0ac0de7af293483ba43f777d847ad5edb98d423da367\",\n  \"workflow_sha\": \"c0625047e22ec73c55db4d048c26823af412664d\",\n  \"github_run_id\": \"40126005250\",\n  \"checks\": [\n    {\n      \"id\": \"scope\",\n      \"label\": \"Only approved manifest and application source changed\",\n      \"pass\": true,\n      \"detail\": \"requirements.txt\"\n    },\n    {\n      \"id\": \"verifier\",\n      \"label\": \"Frozen baseline business verifier is unchanged\",\n      \"pass\": true,\n      \"detail\": \"03905c2485c9c301b7cb0ac0de7af293483ba43f777d847ad5edb98d423da367\"\n    },\n    {\n      \"id\": \"no_known_advisories\",\n      \"label\": \"Actual installed application dependencies have no OSV matches\",\n      \"pass\": true,\n      \"detail\": \"requests==2.34.2, certifi==2026.10.23, charset-normalizer==3.5.2, idna==3.20, urllib3==2.8.0\"\n    },\n    {\n      \"id\": \"package_version\",\n      \"label\": \"Actual Python and Requests versions match the candidate\",\n      \"pass\": true,\n      \"detail\": \"Python 3.12.15; Requests 2.34.2; expected 2.34.2.\"\n    },\n    {\n      \"id\": \"business_suite\",\n      \"label\": \"All 12 frozen Japanese business assertions passed\",\n      \"pass\": true,\n      \"detail\": \"12 assertions observed; expected exactly 12.\"\n    }\n  ],\n  \"runtime\": {\n    \"python_version\": \"3.12.15\",\n    \"requests_version\": \"2.34.2\",\n    \"expected_version\": \"2.34.2\",\n    \"checks\": [\n      \"Japanese catalog text survives JSON decoding\",\n      \"Catalog reports integer JPY prices\",\n      \"Prefecture is passed as a query parameter\",\n      \"TLS verification remains enabled\",\n      \"Connect and read timeouts remain bounded\",\n      \"Environment credentials and proxies are not implicitly trusted\",\n      \"Integer yen totals retain order semantics\",\n      \"Fractional-yen input is rejected\",\n      \"Order keeps Japanese identifier and JPY total\",\n      \"Order identifiers cannot become URL path segments\",\n      \"Unauthorized order responses remain rejected\",\n      \"Plaintext service endpoints are rejected\"\n    ],\n    \"dependencies\": [\n      {\n        \"name\": \"requests\",\n        \"version\": \"2.34.2\"\n      },\n      {\n        \"name\": \"certifi\",\n        \"version\": \"2026.10.23\"\n      },\n      {\n        \"name\": \"charset-normalizer\",\n        \"version\": \"3.5.2\"\n      },\n      {\n        \"name\": \"idna\",\n        \"version\": \"3.20\"\n      },\n      {\n        \"name\": \"urllib3\",\n        \"version\": \"2.8.0\"\n      }\n    ]\n  },\n  \"businessLog\": \"PASS: Japanese catalog text survives JSON decoding\\nPASS: Catalog reports integer JPY prices\\nPASS: Prefecture is passed as a query parameter\\nPASS: TLS verification remains enabled\\nPASS: Connect and read timeouts remain bounded\\nPASS: Environment credentials and proxies are not implicitly trusted\\nPASS: Integer yen totals retain order semantics\\nPASS: Fractional-yen input is rejected\\nPASS: Order keeps Japanese identifier and JPY total\\nPASS: Order identifiers cannot become URL path segments\\nPASS: Unauthorized order responses remain rejected\\nPASS: Plaintext service endpoints are rejected\\n12 business checks passed.\\n\"\n}\n"
+      }
+    },
+    "ci": {
+      "id": 40126005250,
+      "url": "https://github.com/Harsh5840/arigato-python-demo/actions/runs/40126005250",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "review": {
+      "decision": "approve",
+      "summaryEn": "The dependency upgrade to requests==2.34.2 matches the fixed version, all scoped policy checks and business assertions passed, and the CI evidence is verified. No concerns detected.",
+      "summaryJa": "requests==2.34.2 へのアップグレードは修正版に一致し、スコープポリシーとビジネス検証がすべて合格しています。証拠も確認済みで、懸念はありません。",
+      "concerns": [],
+      "ownerTasks": [],
+      "usage": {
+        "promptTokens": 3638,
+        "completionTokens": 172,
+        "totalTokens": 3810
+      },
+      "model": "openai/gpt-oss-120b"
+    },
+    "draftPRAllowed": true,
+    "pullRequest": {
+      "url": "https://github.com/Harsh5840/arigato-python-demo/pull/1",
+      "number": 1,
+      "draft": true,
+      "reused": false
+    }
+  },
+  "events": [
+    {
+      "id": 60,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:35:24.482Z",
+      "node": "controller",
+      "kind": "queued",
+      "message": "Confirmed PyPI advisory GHSA-9hjg-9r4m-mvj7 queued for Harsh5840/arigato-python-demo."
+    },
+    {
+      "id": 61,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:35:25.158Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered source."
+    },
+    {
+      "id": 62,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:35:25.161Z",
+      "node": "supply-chain",
+      "kind": "source-fetching",
+      "message": "Read the verified PyPI advisory GHSA-9hjg-9r4m-mvj7. Forum text alone cannot authorize repair."
+    },
+    {
+      "id": 63,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:35:25.164Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed source."
+    },
+    {
+      "id": 64,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:35:25.176Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered inventory."
+    },
+    {
+      "id": 65,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:35:25.179Z",
+      "node": "controller",
+      "kind": "matching",
+      "message": "Read Harsh5840/arigato-python-demo at an immutable commit and match the exact installed package."
+    },
+    {
+      "id": 66,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:35:32.084Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed inventory."
+    },
+    {
+      "id": 67,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:35:32.091Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered triage."
+    },
+    {
+      "id": 68,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:35:32.094Z",
+      "node": "supply-chain",
+      "kind": "triaging",
+      "message": "The Supply Chain Agent explains the confirmed match and selects the supported repair path."
+    },
+    {
+      "id": 69,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:35:33.066Z",
+      "node": "supply-chain",
+      "kind": "agent-completed",
+      "message": "supply: openai/gpt-oss-20b; 1134 reported tokens. The installed requests package (v2.31.0) is affected by the GHSA-9hjg-9r4m-mvj7 vulnerability (CVE‑2024‑47081). The advisory specifies that versions up to 2.34.1 are vulnerable and that 2.34.2 is the fixed release. Therefore the inventory entry is vulnerable and should be upgraded."
+    },
+    {
+      "id": 70,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:35:33.069Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed triage."
+    },
+    {
+      "id": 71,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:35:33.080Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered baseline."
+    },
+    {
+      "id": 72,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:35:33.084Z",
+      "node": "devsec",
+      "kind": "baseline",
+      "message": "Freeze the maintainer-owned tests before the fixer can edit application files."
+    },
+    {
+      "id": 73,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:35:35.313Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed baseline."
+    },
+    {
+      "id": 74,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:35:35.318Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered repair."
+    },
+    {
+      "id": 75,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:35:35.321Z",
+      "node": "remediation",
+      "kind": "patching",
+      "message": "The Remediation Agent prepares candidate 1/2 for requests 2.34.2."
+    },
+    {
+      "id": 76,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:35:36.280Z",
+      "node": "remediation",
+      "kind": "agent-completed",
+      "message": "fixer: openai/gpt-oss-120b; 1286 reported tokens. Upgraded the vulnerable 'requests' package from version 2.31.0 to the fixed version 2.34.2 in requirements.txt as per the advisory GHSA-9hjg-9r4m-mvj7 (CVE-2024-47081)."
+    },
+    {
+      "id": 77,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:35:38.836Z",
+      "node": "remediation",
+      "kind": "candidate-pushed",
+      "message": "Prepared 32bfc05eaddc485acef19ab2714d5ae11d8e39ad on proofpatch/package-444cd3c2-a1."
+    },
+    {
+      "id": 78,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:35:38.838Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed repair."
+    },
+    {
+      "id": 79,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:35:38.846Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered verify."
+    },
+    {
+      "id": 80,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:35:38.849Z",
+      "node": "devsec",
+      "kind": "verifying",
+      "message": "Run frozen tests against the candidate on the repository-owned isolated runner."
+    },
+    {
+      "id": 81,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:35:40.441Z",
+      "node": "devsec",
+      "kind": "ci-progress",
+      "message": "Waiting for the trusted repository verification workflow."
+    },
+    {
+      "id": 82,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:35:47.719Z",
+      "node": "devsec",
+      "kind": "ci-progress",
+      "message": "Hosted verification: in_progress"
+    },
+    {
+      "id": 83,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:35:56.305Z",
+      "node": "devsec",
+      "kind": "ci-progress",
+      "message": "Hosted verification: in_progress"
+    },
+    {
+      "id": 84,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:36:03.907Z",
+      "node": "devsec",
+      "kind": "ci-progress",
+      "message": "Hosted verification: in_progress"
+    },
+    {
+      "id": 85,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:36:11.920Z",
+      "node": "devsec",
+      "kind": "ci-progress",
+      "message": "Hosted verification: completed (success)"
+    },
+    {
+      "id": 86,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:36:15.952Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed verify."
+    },
+    {
+      "id": 87,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:36:15.960Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered review."
+    },
+    {
+      "id": 88,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:36:15.965Z",
+      "node": "devsec",
+      "kind": "reviewing",
+      "message": "A separate senior-review context inspects the real diff and observed tests."
+    },
+    {
+      "id": 89,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:36:17.193Z",
+      "node": "devsec",
+      "kind": "agent-completed",
+      "message": "reviewer: openai/gpt-oss-120b; 3810 reported tokens. The dependency upgrade to requests==2.34.2 matches the fixed version, all scoped policy checks and business assertions passed, and the CI evidence is verified. No concerns detected."
+    },
+    {
+      "id": 90,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:36:17.196Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed review."
+    },
+    {
+      "id": 91,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:36:17.205Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered gate."
+    },
+    {
+      "id": 92,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:36:20.168Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed gate."
+    },
+    {
+      "id": 93,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:36:20.178Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered publish."
+    },
+    {
+      "id": 94,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:36:20.181Z",
+      "node": "gate",
+      "kind": "publishing",
+      "message": "Checks and senior review passed. Create a draft PR for a human to review and merge."
+    },
+    {
+      "id": 95,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:36:23.364Z",
+      "node": "review",
+      "kind": "completed",
+      "message": "Draft PR #1 created: https://github.com/Harsh5840/arigato-python-demo/pull/1. A human owns merge and deployment."
+    },
+    {
+      "id": 96,
+      "runId": "444cd3c2-0d9d-4cc4-b53c-2f08d67cf33e",
+      "at": "2026-10-24T19:36:23.367Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed publish."
+    }
+  ]
+}

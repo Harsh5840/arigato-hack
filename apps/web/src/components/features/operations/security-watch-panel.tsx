@@ -1,0 +1,20 @@
+'use client';
+
+import {Radio, RefreshCw, Check, AlertTriangle, Minus, ArrowUpRight, ChevronDown} from 'lucide-react';
+import type {MonitoringSnapshot} from '@/types/monitoring';
+import {japanTime, numberLabel} from './format';
+
+export default function SecurityWatchPanel({snapshot, pending, onPoll, onToggle}: {snapshot: MonitoringSnapshot | null; pending: string | null; onPoll: () => void; onToggle: (enabled: boolean) => void}) {
+  const heartbeat = snapshot?.workerLastSeenAt ? Date.parse(snapshot.workerLastSeenAt) : NaN;
+  const age = Date.now() - heartbeat;
+  const fresh = Number.isFinite(heartbeat) && age >= 0 && age <= 45000;
+  const watcher = !snapshot ? 'Loading watch service' : !snapshot.enabled ? 'Scheduled watch paused' : fresh ? 'Watcher running' : snapshot.workerLastSeenAt ? 'Worker heartbeat is stale' : 'Waiting for worker heartbeat';
+  const unconfirmed = snapshot?.leads.filter(lead => lead.trust === 'unconfirmed') ?? [];
+  return <section className="ops-watch-panel"><div className="ops-panel-heading"><h2><Radio size={15}/>Security watch</h2><button className="button subtle" onClick={onPoll} disabled={!!pending || !snapshot}><RefreshCw size={13}/>{pending === 'poll' ? 'Checking…' : 'Check sources now'}</button></div><div className="ops-watch-status"><span className={fresh && snapshot?.enabled ? 'running' : 'paused'}><i/>{watcher}</span><label>Scheduled watch<input type="checkbox" checked={!!snapshot?.enabled} disabled={!snapshot || !!pending} onChange={event => onToggle(event.target.checked)}/></label></div><p className="ops-watch-schedule">{snapshot ? `The separate worker checks every ${snapshot.intervalSeconds} seconds.` : 'Watch scheduling is controlled by the server.'}{snapshot?.nextCycleAt && <span>Next check: {japanTime(snapshot.nextCycleAt, true)} JST</span>}{snapshot?.workerLastSeenAt && <span>Worker last seen: {japanTime(snapshot.workerLastSeenAt)} JST</span>}</p>
+    <ul className="ops-source-health">{snapshot?.sources.map(source => <li key={source.id}><span className={source.status}>{source.status === 'ok' ? <Check size={14}/> : source.status === 'error' ? <AlertTriangle size={14}/> : <Minus size={14}/>}</span><div><strong>{source.name}</strong><small>{source.kind === 'forum' ? 'Forum lead · requires corroboration' : 'Official advisory source'}{source.checkedAt ? ` · ${japanTime(source.checkedAt)} JST` : ''}</small>{source.error && <p>{source.error}</p>}</div><small>{source.status === 'ok' ? 'Checked' : source.status === 'error' ? 'Unavailable' : 'Not checked'}</small></li>)}</ul>
+    {snapshot?.lastError && <p className="ops-monitor-error" role="status">{snapshot.lastError}</p>}
+    {snapshot?.supplyTriage && <details className="ops-scout-triage"><summary>Recorded Supply Chain scout<span>{numberLabel(snapshot.supplyTriage.usage.totalTokens)} tokens</span><ChevronDown size={13}/></summary><p>{snapshot.supplyTriage.summary}</p><div><code>{snapshot.supplyTriage.model}</code><time dateTime={snapshot.supplyTriage.checkedAt}>{japanTime(snapshot.supplyTriage.checkedAt, true)} JST</time></div><p>{snapshot.supplyTriage.securityLeadIds.length} leads selected for investigation. Scout selection does not confirm a vulnerability or authorize a repair.</p></details>}
+    {snapshot?.scoutError && <p className="ops-monitor-error" role="status">Supply Chain scout: {snapshot.scoutError}</p>}
+    <details className="ops-forum-leads"><summary>{snapshot ? unconfirmed.length : '—'} unconfirmed forum leads<ChevronDown size={13}/></summary><p>Forum posts are discovery signals. Only a corroborated advisory and an affected installed version can become a repair finding.</p>{unconfirmed.length ? <ul>{unconfirmed.slice(0, 10).map(lead => <li key={lead.id}><a href={lead.url} target="_blank" rel="noreferrer">{lead.title}<ArrowUpRight size={12}/></a><span>{lead.source} · {japanTime(lead.retrievedAt, true)} JST</span><p>{lead.summary}</p></li>)}</ul> : <p>{snapshot ? 'No unconfirmed leads are recorded.' : 'No source snapshot has loaded.'}</p>}</details>
+  </section>;
+}

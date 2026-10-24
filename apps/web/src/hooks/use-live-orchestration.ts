@@ -65,6 +65,11 @@ export function useLiveOrchestration() {
     catch (cause) { report(cause); }
     finally { if (mounted.current) setBusy(false); }
   }
+  function adoptRun(nextRun: LiveRun) {
+    selectedRunId.current = nextRun.id; setRun(nextRun); setEvents([]);
+    setRuns(previous => [nextRun, ...previous.filter(item => item.id !== nextRun.id)]);
+  }
+  const clearSelection = useCallback(() => {selectedRunId.current = undefined; setRun(null); setEvents([]);}, []);
   async function cancel() {
     if (!run) return;
     setBusy(true); setError(null);
@@ -73,9 +78,10 @@ export function useLiveOrchestration() {
     finally { if (mounted.current) setBusy(false); }
   }
   async function selectRun(id: string) {
+    selectedRunId.current = id;
     setError(null);
-    try { const result = await getRunEvidence(id); selectedRunId.current = result.run.id; setRun(result.run); setEvents(result.events); }
+    try { const result = await getRunEvidence(id); if (selectedRunId.current !== id) return; setRun(result.run); setEvents(result.events); }
     catch (cause) { report(cause); }
   }
-  return {service, run, runs, events, connection, error, busy, refresh, start, cancel, selectRun};
+  return {service, run, runs, events, connection, error, busy, refresh, start, cancel, selectRun, adoptRun, clearSelection};
 }

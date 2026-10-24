@@ -4,6 +4,10 @@ export type AgentCall = { role: 'supply' | 'fixer' | 'reviewer'; model: string; 
 export interface Run {
   id: string; status: RunStatus; createdAt: string; updatedAt: string;
   sourceMode: 'live' | 'cached'; mode: 'live-groq';
+  repositoryId?: string;
+  target?: import('./monitoring.js').PackageTarget;
+  orchestrationEngine?: 'langgraph';
+  graph?: { threadId: string; currentNode: string; completedNodes: string[] };
   repo: { owner: string; name: string; baseSha?: string; candidateSha?: string; branch?: string };
   advisory?: { id: string; titleEn: string; titleJa: string; summary: string; sources: { url: string; title: string; language: 'ja' | 'en'; retrievedAt: string; publishedAt?: string; sha256?: string }[]; cves: string[]; fixedVersion: string; ownerTasks: string[] };
   agentCalls: AgentCall[]; checks: Check[];

@@ -1,0 +1,85 @@
+import { createHash } from 'node:crypto';
+import type { MonitoredRepository } from '../../../../packages/contracts/src/monitoring.js';
+import { readRepository } from '../adapters/repository.js';
+import { fetchForumLeads, forumFeeds, scanDependencies } from '../adapters/supply-sources.js';
+import type { MonitoringStore } from '../db/monitoring.js';
+import type { RunStore } from '../db/client.js';
+import { triageForumLeads } from '../adapters/package-groq.js';
+
+export async function registerRepository(monitor: MonitoringStore, url: string, signal?: AbortSignal) {
+  if (monitor.repositories().length >= 20 && !monitor.repositories().some(repo => repo.url === url.replace(/\.git$/, '').replace(/\/$/, ''))) throw new Error('This server supports at most 20 registered repositories.');
+  const snapshot = await readRepository(url, signal);
+  const previous = monitor.repositories().find(repo => `${repo.owner}/${repo.name}`.toLowerCase() === `${snapshot.owner}/${snapshot.name}`.toLowerCase());
+  const profile: MonitoredRepository['profile'] = snapshot.owner === 'Harsh5840' && snapshot.name === 'arigato-python-demo' ? 'python-requests-demo' : snapshot.owner === 'Harsh5840' && snapshot.name === 'arigato-php-demo' ? 'php-runtime-demo' : 'monitor-only';
+  const now = new Date().toISOString();
+  const repo: MonitoredRepository = { id: previous?.id || createHash('sha256').update(`${snapshot.owner}/${snapshot.name}`.toLowerCase()).digest('hex').slice(0, 20), owner: snapshot.owner, name: snapshot.name, url: snapshot.url, defaultBranch: snapshot.defaultBranch, enabled: previous?.enabled ?? true, autoRemediate: previous?.autoRemediate ?? false, profile, createdAt: previous?.createdAt || now, updatedAt: now, inventory: snapshot.inventory, inventorySha: snapshot.sha, canPush: snapshot.canPush, scanStatus: 'queued', scanRequestedAt: now };
+  monitor.saveRepository(repo); return repo;
+}
+
+export function queueRemediation(monitor: MonitoringStore, runs: RunStore, findingId: string) {
+  const finding = monitor.finding(findingId); if (!finding) throw new Error('Finding not found.');
+  const repo = monitor.repository(finding.repositoryId); if (!repo) throw new Error('Repository not found.');
+  if (!repo.canPush || repo.profile !== 'python-requests-demo') throw new Error('This repository is monitored, but automatic repair requires an enabled, maintainer-reviewed verification policy. The current generic repair pilot supports the Python requests fixture.');
+  if (finding.ecosystem !== 'PyPI' || finding.packageName.toLowerCase() !== 'requests' || finding.manifestPath !== 'requirements.txt') throw new Error('This maintainer-reviewed repair profile supports only PyPI requests in requirements.txt. Other packages remain monitor-only.');
+  if (!finding.fixedVersion || finding.status === 'needs-owner') throw new Error('No supported published safe version is known; owner review is required.');
+  const result = runs.createForFinding(repo, finding);
+  for (const related of monitor.findings(repo.id).filter(item => item.ecosystem === finding.ecosystem && item.packageName === finding.packageName && item.installedVersion === finding.installedVersion && item.fixedVersion === finding.fixedVersion && item.manifestPath === finding.manifestPath)) monitor.patchFinding(related.id, { status: result.run.pullRequest ? 'draft-created' : 'queued', runId: result.run.id });
+  return result;
+}
+
+let cycling = false;
+export async function monitorCycle(monitor: MonitoringStore, runs: RunStore) {
+  if (cycling) return;
+  const snapshot = monitor.snapshot();
+  const forced = monitor.state<boolean>('pollRequested') === true;
+  const requested = monitor.repositories().filter(repo => repo.scanStatus === 'queued');
+  const due = !snapshot.nextCycleAt || Date.parse(snapshot.nextCycleAt) <= Date.now();
+  if (!forced && !requested.length && (!snapshot.enabled || !due)) return;
+  cycling = true; monitor.setState('pollRequested', false);
+  const signal = AbortSignal.timeout(90_000);
+  const started = new Date().toISOString();
+  try {
+    const forum = await fetchForumLeads(signal);
+    monitor.saveLeads(forum.leads);
+    const health = forumFeeds.map(feed => {
+      const source = typeof feed === 'string' ? feed : (feed as { id?: string; url?: string; name?: string });
+      const id = typeof source === 'string' ? source : source.id || source.url || 'forum';
+      const error = forum.errors.find(error => error.source === id || (typeof source !== 'string' && error.source === source.url));
+      return { id, name: typeof source === 'string' ? source : source.name || id, kind: 'forum' as const, status: error ? 'error' as const : 'ok' as const, checkedAt: started, ...(error ? { error: error.message } : {}) };
+    });
+    monitor.configure({ sources: [{ id: 'osv', name: 'OSV verified package advisories', kind: 'advisory', status: 'idle' }, ...health] });
+    const targets = monitor.repositories().filter(repo => requested.some(item => item.id === repo.id) || ((forced || (snapshot.enabled && due)) && repo.enabled));
+    let osvError: string | undefined;
+    for (const repo of targets) {
+      try {
+        monitor.patchRepository(repo.id, { scanStatus: 'scanning', lastError: undefined });
+        const current = await readRepository({ owner: repo.owner, name: repo.name }, signal);
+        const findings = await scanDependencies(repo.id, current.inventory, signal);
+        const checkedAt = new Date().toISOString();
+        monitor.patchRepository(repo.id, { inventory: current.inventory, inventorySha: current.sha, canPush: current.canPush, defaultBranch: current.defaultBranch, lastCheckedAt: checkedAt, nextCheckAt: new Date(Date.now() + snapshot.intervalSeconds * 1000).toISOString(), scanStatus: 'idle', scanRequestedAt: undefined, lastError: current.warnings.length ? current.warnings.join(' ').slice(0, 1000) : undefined });
+        for (const finding of findings) {
+          monitor.saveFinding(finding);
+          const stored = monitor.finding(finding.id)!;
+          if (repo.autoRemediate && stored.status === 'detected' && repo.profile === 'python-requests-demo') queueRemediation(monitor, runs, stored.id);
+        }
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Repository scan failed.';
+        osvError = message;
+        monitor.patchRepository(repo.id, { scanStatus: 'error', scanRequestedAt: undefined, lastError: message.slice(0, 1000) });
+      }
+    }
+    const inventory = monitor.repositories().filter(repo => repo.enabled).flatMap(repo => repo.inventory).slice(0, 100);
+    const triaged = new Set(monitor.state<string[]>('triagedLeadIds') || []);
+    const newLeads = forum.leads.filter(lead => !triaged.has(lead.id)).slice(0, 20);
+    if (newLeads.length && inventory.length) {
+      try {
+        const triage = await triageForumLeads(newLeads, inventory, signal);
+        monitor.configure({ supplyTriage: { ...triage, checkedAt: new Date().toISOString() }, scoutError: undefined });
+        monitor.setState('triagedLeadIds', [...new Set([...triaged, ...newLeads.map(lead => lead.id)])].slice(-500));
+      } catch (error) { monitor.configure({ scoutError: error instanceof Error ? error.message : 'Groq forum scout failed.' }); }
+    }
+    const current = monitor.snapshot();
+    monitor.configure({ lastCycleAt: started, nextCycleAt: new Date(Date.now() + snapshot.intervalSeconds * 1000).toISOString(), lastError: osvError, sources: current.sources.map(source => source.id === 'osv' ? { ...source, status: osvError ? 'error' : targets.length ? 'ok' : 'idle', checkedAt: targets.length ? new Date().toISOString() : source.checkedAt, error: osvError } : source) });
+  } catch (error) { monitor.configure({ lastCycleAt: started, nextCycleAt: new Date(Date.now() + snapshot.intervalSeconds * 1000).toISOString(), lastError: error instanceof Error ? error.message : 'Monitoring cycle failed.' }); }
+  finally { cycling = false; }
+}

@@ -17,3 +17,5 @@ Downloaded project skills live in .agents/skills: frontend-design, pptx, anatomy
 “Peacock” did not identify an unambiguous frontend skill in GitHub search. It was not installed or represented as used.
 
 No Anatomy gallery publishing or other external publication was performed.
+
+The generic-service extension applied the installed AI Agent Runtime Architecture and AI LLM Integration skills for server/worker boundaries and real LangChain/LangGraph integration. Official LangGraph graph/persistence, ChatGroq and OSV documentation informed the implementation. Impeccable preserved the incumbent world, added the beginner journey and registry controls, ran one detector pass, and used an independent finish review followed by a documentation merge. Current review evidence is under `apps/web/.impeccable/review/generic-service`.
