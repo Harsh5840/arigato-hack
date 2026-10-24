@@ -14,7 +14,7 @@ export async function registerRepository(monitor: MonitoringStore, url: string, 
   const repairCapability=await getRepositoryRepairCapability(snapshot,signal);
   const profile: MonitoredRepository['profile'] = repairCapability.supported ? 'generic' : 'monitor-only';
   const now = new Date().toISOString();
-  const repo: MonitoredRepository = { id: previous?.id || createHash('sha256').update(`${snapshot.owner}/${snapshot.name}`.toLowerCase()).digest('hex').slice(0, 20), owner: snapshot.owner, name: snapshot.name, url: snapshot.url, defaultBranch: snapshot.defaultBranch, enabled: previous?.enabled ?? true, autoRemediate: repairCapability.supported && (previous?.autoRemediate ?? true), profile, repairCapability, createdAt: previous?.createdAt || now, updatedAt: now, inventory: snapshot.inventory, inventorySha: snapshot.sha, canPush: snapshot.canPush, scanStatus: 'queued', scanRequestedAt: now };
+  const repo: MonitoredRepository = { id: previous?.id || createHash('sha256').update(`${snapshot.owner}/${snapshot.name}`.toLowerCase()).digest('hex').slice(0, 20), owner: snapshot.owner, name: snapshot.name, url: snapshot.url, defaultBranch: snapshot.defaultBranch, enabled: previous?.enabled ?? true, autoRemediate: repairCapability.supported && (previous?.autoRemediate ?? false), profile, repairCapability, createdAt: previous?.createdAt || now, updatedAt: now, inventory: snapshot.inventory, inventorySha: snapshot.sha, canPush: snapshot.canPush, scanStatus: 'queued', scanRequestedAt: now };
   monitor.saveRepository(repo); return repo;
 }
 

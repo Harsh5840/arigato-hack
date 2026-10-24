@@ -149,7 +149,7 @@ test('queueing requires detected exact-target capability, push permission and a 
   assert.throws(() => queueRemediation(monitor, runs, 'missing'), /not found/);
 });
 
-test('a new customer repository and dependency gain automatic repair from detected tests rather than a demo name', async () => {
+test('a new customer repository gains repair capability from detected tests and starts in guided mode', async () => {
   const {monitor, runs} = memory();
   const files = {'services/orders/requirements.txt': 'urllib3==1.26.5\n', 'services/orders/tests/test_orders.py': 'import unittest\nclass OrderTest(unittest.TestCase):\n def test_yen(self): self.assertEqual(100 + 10, 110)\n'};
   const urls: string[] = [];
@@ -166,7 +166,7 @@ test('a new customer repository and dependency gain automatic repair from detect
     return json({type: 'file', encoding: 'base64', size: Buffer.byteLength(content), content: Buffer.from(content).toString('base64')});
   };
   const connected = await registerRepository(monitor, 'https://github.com/customer-one/order-service');
-  assert.equal(connected.profile, 'generic'); assert.equal(connected.autoRemediate, true);
+  assert.equal(connected.profile, 'generic'); assert.equal(connected.autoRemediate, false);
   assert.deepEqual(connected.repairCapability?.targets, [{ecosystem: 'PyPI', packageName: 'urllib3', manifestPath: 'services/orders/requirements.txt'}]);
   assert.match(connected.repairCapability!.testCommands[0], /^services\/orders: python -m unittest/);
   assert.ok(urls.some(url => url.includes('/contents/services/orders/tests/test_orders.py')));

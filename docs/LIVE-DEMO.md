@@ -48,16 +48,16 @@ PHP PR #6's [legacy target-repository Fixture evidence job is red](https://githu
 
 | Time | Show |
 |---|---|
-| 0–15 s | Select **arigato-container-demo** in **Connected repositories**. Show **Detected stack** and expand **How this repository will be tested**. The repo's name grants no special repair permission. |
-| 15–30 s | Show the watcher heartbeat and source health. Select **Scan now** if a fresh check is needed. Forum posts remain unconfirmed leads. Vendor or OSV evidence establishes findings. |
-| 30–45 s | Show the old image and selected update. Several advisory matches collapse into one repair row; expand the actual CVE evidence if asked. |
-| 45–65 s | Follow **Connect & inspect → Watch for alerts → Confirm the risk → Prepare the update → Test & review → You review the PR**. Open technical details for the real LangGraph/React Flow handoffs and Groq calls. |
-| 65–80 s | Open **Candidate diff**, checks and runner output. Show the YAML image change, actual CI link, scanner residuals and live HTTP test output. |
+| 0–15 s | In **Services**, check the container repo or use **Select all**. Expand **Inspect** to show the detected stack and tests. The repo's name grants no special repair permission. |
+| 15–30 s | Point to **Step by step** and **Complete pipeline**. The first scans and waits for a person to start a finding's repair; the second automatically moves new supported matches through fix, tests, senior review and a draft PR. **Scan selected** queues exactly the checked services. |
+| 30–45 s | Open **Findings**. Show the old nginx image and selected update. Several advisory matches collapse into one repair row; expand actual CVE evidence if asked. |
+| 45–65 s | Open **Pipeline**. Follow **Connect & inspect → Watch for alerts → Confirm the risk → Prepare the update → Test & review → You review the PR**, then show the actual LangGraph/React Flow handoffs. |
+| 65–80 s | Open **Results**. Show model times and reported tokens, checks, YAML candidate diff, CI link, scanner residuals and live HTTP test output for a recorded run. |
 | 80–90 s | Open the real draft PR. Show the exact candidate, source evidence, senior-review rationale and human follow-ups. You decide whether to merge. |
 
-Automatic draft preparation defaults on for newly connected supported public repositories. Existing settings are preserved on reconnect. The repository toggle can pause automatic fixes; individual supported findings also offer **Prepare draft fix**. A connection cannot grant permissions the server identity lacks.
+New connections begin in Step by step mode with automatic repair off. Existing settings are preserved on reconnect. Complete pipeline enables automatic fixes for checked supported repositories and turns on their individual continuous watch. Unsupported selections still scan. A connection cannot grant permissions the server identity lacks.
 
-Start the live run before presenting because hosted verification can take several minutes. Open its actual Actions run in another tab. If it is queued, running or blocked, show that state. A dated completed record is a fallback, not the result of the new attempt. Reloading the dashboard recovers persisted execution.
+Start a new live run before presenting because hosted verification can take several minutes. Open its actual Actions run in another tab. The current local run history was cleared on 25 October 2026; the published draft PRs and committed archived evidence above still exist. The existing advisory matches retain **Draft PR created** status, so scanning them again will not create duplicate PRs. To show a new end-to-end run, connect a fresh supported affected repository or introduce a new affected version in a demo repository. If a new run is queued, running or blocked, show that state. A dated completed record is a fallback, not the result of the new attempt.
 
 ## Explain what actually executes
 

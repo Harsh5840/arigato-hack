@@ -824,7 +824,7 @@
   ],
   "narrative": {
     "northStar": "Verification Interlock",
-    "overview": "A patch moves only when its proof aligns. The user-selected dark engineering workspace gives the evidence workflow the character of a precise instrument: charcoal surfaces, warm white type, restrained lime and precise diagram geometry.\n\nThe current product is one compact repository security console. A six-step journey leads from repository connection and stack/test detection through source watching, confirmed risk, a supported package or image update, tests and senior review to a draft awaiting a human. Repository and source controls, grouped corroborated findings, expandable technical orchestration, grouped verification, the actual candidate diff and review handoff share one operational surface. Public Sans, thin borders and small tonal shifts retain the established identity. Measured run counts and proportional charts describe stored execution for the selected repository; they never imply a vulnerability score.",
+    "overview": "A patch moves only when its proof aligns. The user-selected dark engineering workspace gives the evidence workflow the character of a precise instrument: charcoal surfaces, warm white type, restrained lime and precise diagram geometry.\n\nThe current product is one compact repository security console with four tabs. Services is the only repository selection point, with individual checkboxes, Select all and saved Step by step / Complete pipeline controls. Findings groups confirmed matches by service. Pipeline shows the six-step journey and real React Flow handoffs. Results shows observed model time/tokens, checks, candidate diff and human review. Public Sans, thin borders and small tonal shifts retain the established identity. Measured run counts describe stored execution for checked services; they never imply a vulnerability score.",
     "keyCharacteristics": [
       "Charcoal surfaces with a muted olive cast and warm white text.",
       "Restrained lime for primary action, selection and satisfied evidence gates.",
@@ -863,7 +863,7 @@
       "Do preserve the compact live mobile role summary, six directional legend entries and return-lane fit bounds.",
       "Do expose actual model IDs, observed checks and the CI/PR identity without implying merge approval.",
       "Do compose the current product through the operations components on one route; keep legacy prototype surfaces off-route.",
-      "Do lead with all six plain-language steps and use disclosures for inventory, unconfirmed leads, scout output and technical orchestration.",
+      "Do keep repository selection in Services, the six plain-language steps and graph in Pipeline, and observed tests and model usage in Results.",
       "Do make verified access and supported repair capability visible beside repository controls.",
       "Do show the detected stack, actual test plan and written capability reason before automatic repair controls.",
       "Do group advisory matches into one package/image update while preserving expandable source evidence.",

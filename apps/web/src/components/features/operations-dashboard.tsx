@@ -1,89 +1,203 @@
 'use client';
 
 import {useEffect, useRef, useState} from 'react';
-import {AlertTriangle, GitBranch, ArrowUpRight, RefreshCw, Network, ChevronDown} from 'lucide-react';
+import {AlertTriangle, ArrowRight, GitBranch, ListChecks, Network, RefreshCw, SearchCheck} from 'lucide-react';
 import {useLiveOrchestration} from '@/hooks/use-live-orchestration';
 import {useRepositoryMonitoring} from '@/hooks/use-repository-monitoring';
 import {isTerminal} from '@/types/live-orchestration';
 import type {LiveRun} from '@/types/live-orchestration';
 import type {MonitoredRepository} from '@/types/monitoring';
 import DashboardHeader from './operations/dashboard-header';
-import RunMetrics from './operations/run-metrics';
+import ExecutionControls from './operations/execution-controls';
+import RepositoryPanel from './operations/repository-panel';
+import FindingsPanel from './operations/findings-panel';
+import SecurityWatchPanel from './operations/security-watch-panel';
+import SecurityJourney from './operations/security-journey';
 import OrchestrationPanel from './operations/orchestration-panel';
+import RunMetrics from './operations/run-metrics';
+import RunAnalytics from './operations/run-analytics';
 import VerificationWorkbench from './operations/verification-workbench';
 import ReviewPanel from './operations/review-panel';
-import RunAnalytics from './operations/run-analytics';
-import SecurityJourney from './operations/security-journey';
-import RepositoryPanel from './operations/repository-panel';
-import SecurityWatchPanel from './operations/security-watch-panel';
-import FindingsPanel from './operations/findings-panel';
-import {canPrepareRepair} from './operations/repair-capability';
+import {canPrepareRepair, groupRepairFindings} from './operations/repair-capability';
 
-function belongsTo(run: LiveRun, repository?: MonitoredRepository) {return !!repository && (run.repositoryId === repository.id || run.repo.owner.toLowerCase() === repository.owner.toLowerCase() && run.repo.name.toLowerCase() === repository.name.toLowerCase());}
+type DashboardTab = 'services' | 'findings' | 'pipeline' | 'results';
+const tabs: {id: DashboardTab; label: string; Icon: typeof GitBranch}[] = [
+  {id: 'services', label: 'Services', Icon: GitBranch},
+  {id: 'findings', label: 'Findings', Icon: SearchCheck},
+  {id: 'pipeline', label: 'Pipeline', Icon: Network},
+  {id: 'results', label: 'Results', Icon: ListChecks},
+];
+function belongsTo(run: LiveRun, repository?: MonitoredRepository) {
+  return !!repository && (run.repositoryId === repository.id || run.repo.owner.toLowerCase() === repository.owner.toLowerCase() && run.repo.name.toLowerCase() === repository.name.toLowerCase());
+}
 
 export default function OperationsDashboard() {
-  const {service, run: selection, runs: allRuns, events: storedEvents, connection, error, busy, refresh, start, cancel, selectRun, adoptRun, clearSelection} = useLiveOrchestration();
+  const {service, run: selectedRun, runs: allRuns, events: storedEvents, connection, error, busy, refresh, cancel, selectRun, adoptRun, clearSelection} = useLiveOrchestration();
   const monitoring = useRepositoryMonitoring();
-  const [sourceMode, setSourceMode] = useState<'live' | 'cached'>('live');
-  const [repositoryId, setRepositoryId] = useState('');
-  const repository = monitoring.repositories.find(item => item.id === repositoryId);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [focusedId, setFocusedId] = useState('');
+  const [initialized, setInitialized] = useState(false);
+  const [tab, setTab] = useState<DashboardTab>('services');
+  const [notice, setNotice] = useState('');
   const requestedRun = useRef<string | null>(null);
   const followedAutomaticRuns = useRef(new Set<string>());
+
   useEffect(() => {
-    if (repositoryId || !monitoring.repositories.length) return;
-    let saved: string | null = null;
-    try {saved = localStorage.getItem('proofpatch.repository');} catch { /* Storage can be disabled. */ }
-    const preferred = monitoring.repositories.find(item => item.id === saved) ?? monitoring.repositories.find(item => item.enabled) ?? monitoring.repositories[0];
-    setRepositoryId(preferred.id);
-  }, [repositoryId, monitoring.repositories]);
-  const runs = allRuns.filter(item => belongsTo(item, repository));
-  const run = selection && belongsTo(selection, repository) ? selection : null;
+    if (!monitoring.loaded || initialized) return;
+    const known = new Set(monitoring.repositories.map(item => item.id));
+    let saved: string[] = [];
+    let preferred = '';
+    let hadSavedSelection = false;
+    try {
+      const stored = localStorage.getItem('proofpatch.selectedRepositories');
+      hadSavedSelection = stored !== null;
+      const parsed: unknown = JSON.parse(stored || '[]');
+      if (Array.isArray(parsed)) saved = parsed.filter((item): item is string => typeof item === 'string' && known.has(item));
+      preferred = localStorage.getItem('proofpatch.focusedRepository') || localStorage.getItem('proofpatch.repository') || '';
+    } catch { /* Browser storage is optional. */ }
+    if (!saved.length && !hadSavedSelection && monitoring.repositories.length) saved = [known.has(preferred) ? preferred : monitoring.repositories[0].id];
+    setSelectedIds(saved);
+    setFocusedId(saved.includes(preferred) ? preferred : saved[0] || '');
+    setInitialized(true);
+  }, [initialized, monitoring.loaded, monitoring.repositories]);
+  useEffect(() => {
+    if (!initialized) return;
+    try {localStorage.setItem('proofpatch.selectedRepositories', JSON.stringify(selectedIds)); localStorage.setItem('proofpatch.focusedRepository', focusedId);} catch { /* Selection still works. */ }
+  }, [initialized, selectedIds, focusedId]);
+  useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get('tab');
+    if (tabs.some(item => item.id === requested)) setTab(requested as DashboardTab);
+  }, []);
+
+  const selectedRepositories = monitoring.repositories.filter(item => selectedIds.includes(item.id));
+  const focusedRepository = selectedRepositories.find(item => item.id === focusedId);
+  const allSelectedFindings = monitoring.findings.filter(item => selectedIds.includes(item.repositoryId));
+  const focusedFindings = allSelectedFindings.filter(item => item.repositoryId === focusedId);
+  const runs = allRuns.filter(item => selectedRepositories.some(repository => belongsTo(item, repository)));
+  const run = selectedRun && belongsTo(selectedRun, focusedRepository) ? selectedRun : null;
   const events = run ? storedEvents : [];
-  const findings = monitoring.findings.filter(item => item.repositoryId === repositoryId);
   const activeRun = allRuns.find(item => !isTerminal(item.status));
+  const eligible = selectedRepositories.filter(repository => canPrepareRepair(repository));
+  const mode = !selectedRepositories.length || selectedRepositories.every(item => !item.autoRemediate) ? 'guided'
+    : eligible.length && eligible.every(item => item.autoRemediate && item.enabled) && selectedRepositories.every(item => !canPrepareRepair(item) || item.autoRemediate && item.enabled) ? 'automatic' : 'mixed';
+  const groupedFindings = groupRepairFindings(allSelectedFindings);
+  const affectedCount = groupedFindings.length;
+  const existingDrafts = groupedFindings.filter(group => group.finding.status === 'draft-created').length;
+
   useEffect(() => {
-    if (!repository?.autoRemediate) return;
-    const queued = findings.find(item => item.status === 'queued' && item.runId && !followedAutomaticRuns.current.has(item.runId));
+    if (run && !isTerminal(run.status)) return;
+    const queued = allSelectedFindings.find(item => item.status === 'queued' && item.runId && !followedAutomaticRuns.current.has(item.runId));
     if (!queued?.runId) return;
     followedAutomaticRuns.current.add(queued.runId);
-    if (run?.id !== queued.runId) void selectRun(queued.runId);
-  }, [repository, findings, run?.id, selectRun]);
+    setFocusedId(queued.repositoryId);
+    void selectRun(queued.runId);
+  }, [allSelectedFindings, run, selectRun]);
   useEffect(() => {
-    if (!repository) return;
+    if (!focusedRepository) {if (selectedRun) clearSelection(); return;}
     if (run) {requestedRun.current = null; return;}
-    const latest = allRuns.find(item => belongsTo(item, repository));
+    const latest = allRuns.find(item => belongsTo(item, focusedRepository));
     if (latest && requestedRun.current !== latest.id) {requestedRun.current = latest.id; void selectRun(latest.id);}
-    else if (!latest && selection) clearSelection();
-  }, [repository, run, allRuns, selection, selectRun, clearSelection]);
-  function chooseRepository(id: string) {requestedRun.current = null; setRepositoryId(id); try {localStorage.setItem('proofpatch.repository',id);} catch { /* Selection still works without browser storage. */ }}
-  async function prepareFix(id: string) {const result = await monitoring.remediate(id); if (result) adoptRun(result.run);}
-  async function add(url: string) {const result = await monitoring.add(url); if (!result) return false; chooseRepository(result.repository.id); return true;}
-  const repairFinding = findings.find(item => item.status === 'detected' && canPrepareRepair(repository, item));
-  const actionLabel = repairFinding ? 'Prepare draft fix' : 'Scan repository';
-  function runAction() {if (!repository) return; if (repairFinding) void prepareFix(repairFinding.id); else void monitoring.scan(repository.id);}
-  async function followActive() {if (!activeRun) return; const owner = monitoring.repositories.find(item => belongsTo(activeRun, item)); if (owner) chooseRepository(owner.id); await selectRun(activeRun.id);}
+    else if (!latest && selectedRun) clearSelection();
+  }, [focusedRepository, run, allRuns, selectedRun, selectRun, clearSelection]);
+
+  function changeTab(next: DashboardTab) {
+    setTab(next);
+    const url = new URL(window.location.href);
+    if (next === 'services') url.searchParams.delete('tab'); else url.searchParams.set('tab', next);
+    window.history.replaceState(null, '', url);
+  }
+  function focusRepository(id: string) {
+    requestedRun.current = null;
+    setSelectedIds(previous => previous.includes(id) ? previous : [...previous, id]);
+    setFocusedId(id);
+  }
+  function toggleRepository(id: string) {
+    const next = selectedIds.includes(id) ? selectedIds.filter(item => item !== id) : [...selectedIds, id];
+    setSelectedIds(next);
+    if (!next.includes(focusedId)) {requestedRun.current = null; setFocusedId(next[0] || '');}
+    else if (!selectedIds.includes(id)) {requestedRun.current = null; setFocusedId(id);}
+    setNotice('');
+  }
+  function selectAll(checked: boolean) {
+    const next = checked ? monitoring.repositories.map(item => item.id) : [];
+    setSelectedIds(next);
+    if (!next.includes(focusedId)) {requestedRun.current = null; setFocusedId(next[0] || '');}
+    setNotice('');
+  }
+  async function add(url: string) {
+    const result = await monitoring.add(url);
+    if (!result) return false;
+    setSelectedIds([result.repository.id]); setFocusedId(result.repository.id);
+    setNotice(`${result.repository.owner}/${result.repository.name} connected. Step by step is the default for a new service.`);
+    return true;
+  }
+  async function applyMode(next: 'guided' | 'automatic') {
+    setNotice('');
+    const result = await monitoring.setMode(selectedIds, next);
+    if (result) setNotice(next === 'guided' ? `Step by step saved for ${selectedIds.length} selected service${selectedIds.length === 1 ? '' : 's'}.` : `Complete pipeline enabled for ${result.enabled} supported service${result.enabled === 1 ? '' : 's'}.${result.scanOnly.length ? ` ${result.scanOnly.length} unsupported service${result.scanOnly.length === 1 ? '' : 's'} will scan only.` : ''}`);
+  }
+  async function scanSelected() {
+    setNotice('');
+    const result = await monitoring.scanSelected(selectedIds);
+    if (result) setNotice(`${result.queued} service scan${result.queued === 1 ? '' : 's'} queued. ${mode === 'automatic' ? 'New confirmed supported findings will continue through fix, tests, senior review, and a draft PR.' : 'Open Findings after the worker checks advisory sources.'}`);
+  }
+  async function prepareFix(id: string) {
+    const finding = monitoring.findings.find(item => item.id === id);
+    if (finding) focusRepository(finding.repositoryId);
+    const result = await monitoring.remediate(id);
+    if (result) {adoptRun(result.run); changeTab('pipeline');}
+  }
+  async function showRun(id: string) {
+    const target = allRuns.find(item => item.id === id);
+    const owner = monitoring.repositories.find(item => target && belongsTo(target, item));
+    if (owner) focusRepository(owner.id);
+    await selectRun(id);
+    changeTab('results');
+  }
+  async function followActive() {
+    if (!activeRun) return;
+    const owner = monitoring.repositories.find(item => belongsTo(activeRun, item));
+    if (owner) focusRepository(owner.id);
+    await selectRun(activeRun.id);
+    changeTab('pipeline');
+  }
   function exportRun() {
     if (!run) return;
     const url = URL.createObjectURL(new Blob([JSON.stringify({product: 'ProofPatch', exportedAt: new Date().toISOString(), run, events}, null, 2)], {type: 'application/json'}));
     const anchor = document.createElement('a'); anchor.href = url; anchor.download = `proofpatch-${run.id}.json`; anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
+
   return <div className="operations-dashboard" id="operations">
-    <DashboardHeader service={service} connection={connection} busy={busy || !!monitoring.pending} run={run} activeRun={activeRun} sourceMode={sourceMode} onSourceMode={setSourceMode} onRun={runAction} onCancel={() => void cancel()} onFollow={() => void followActive()} onRefresh={() => {void refresh(); void monitoring.refresh();}} onExport={exportRun} repositories={monitoring.repositories} repositoryId={repositoryId} onRepository={chooseRepository} actionLabel={actionLabel}/>
-    <main className="ops-main"><div className="ops-console-heading"><div><h1>Repository security</h1><p>Connect your code. Watch security news. Review the fix before it merges.</p></div><span><GitBranch size={13}/>{run?.repo.branch ?? repository?.defaultBranch ?? 'No repository selected'}{run?.repo.candidateSha && <code>{run.repo.candidateSha.slice(0, 7)}</code>}</span></div>
-      {connection === 'loading' && !service && <div className="ops-connection-loading" role="status"><span/><p>Connecting to the persisted worker queue…</p></div>}
+    <DashboardHeader service={service} connection={connection} busy={busy || !!monitoring.pending} run={run} activeRun={activeRun} onCancel={() => void cancel()} onFollow={() => void followActive()} onRefresh={() => {void refresh(); void monitoring.refresh();}} onExport={exportRun}/>
+    <main className="ops-main ops-command-center">
+      <div className="ops-console-heading"><div><h1>Security workspace</h1><p>Choose services, decide how they run, then follow the evidence.</p></div><span>{selectedRepositories.length} selected · {focusedRepository ? `showing ${focusedRepository.owner}/${focusedRepository.name}` : 'choose a service'}</span></div>
+      <nav className="ops-dashboard-tabs" aria-label="Dashboard views">{tabs.map(({id, label, Icon}) => <button key={id} aria-current={tab === id ? 'page' : undefined} onClick={() => changeTab(id)}><Icon size={15}/>{label}{id === 'services' && <span>{selectedRepositories.length}</span>}{id === 'findings' && <span>{affectedCount}</span>}</button>)}</nav>
       {error && <div className="ops-error-banner" role="alert"><AlertTriangle size={18}/><div><strong>{error.code}</strong><p>{error.message}</p></div><button className="button subtle" onClick={() => void refresh()}><RefreshCw size={13}/>Reconnect</button></div>}
-      {service && !service.ready && <div className="ops-error-banner" role="status"><AlertTriangle size={18}/><div><strong>Server setup required</strong><p>{!service.groqConfigured ? 'Groq credentials are missing. ' : ''}{!service.githubConfigured ? 'GitHub credentials are missing. ' : ''}Configure the server and reconnect. Credentials never enter this dashboard.</p></div></div>}
+      {service && !service.ready && <div className="ops-error-banner" role="status"><AlertTriangle size={18}/><div><strong>Server setup required</strong><p>{!service.groqConfigured ? 'Groq credentials are missing. ' : ''}{!service.githubConfigured ? 'GitHub credentials are missing. ' : ''}Configure the server and reconnect. Credentials stay on the server.</p></div></div>}
       {monitoring.error && <div className="ops-error-banner" role="alert"><AlertTriangle size={18}/><div><strong>{monitoring.error.code}</strong><p>{monitoring.error.message}</p></div><button className="button subtle" onClick={() => void monitoring.refresh()}><RefreshCw size={13}/>Reload monitoring</button></div>}
-      <RunMetrics runs={runs} loaded={service !== null && monitoring.loaded && !!repository}/>
-      <SecurityJourney repository={repository} snapshot={monitoring.snapshot} findings={findings} run={run} events={events}/>
-      <div className="ops-monitoring-grid"><RepositoryPanel repositories={monitoring.repositories} selectedId={repositoryId} loaded={monitoring.loaded} pending={monitoring.pending} onSelect={chooseRepository} onAdd={add} onUpdate={(id, changes) => void monitoring.update(id, changes)} onScan={id => void monitoring.scan(id)}/><SecurityWatchPanel snapshot={monitoring.snapshot} pending={monitoring.pending} onPoll={() => void monitoring.poll()} onToggle={enabled => void monitoring.configure({enabled})}/></div>
-      <FindingsPanel findings={findings} repository={repository} pending={monitoring.pending} onRepair={id => void prepareFix(id)} onRun={id => void selectRun(id)}/>
-      <div className="ops-case-strip"><div><strong>{run?.advisory?.titleEn ?? 'No repair run selected'}</strong></div><span>{run?.target ? `${run.target.packageName} ${run.target.installedVersion} → ${run.target.fixedVersion}` : run?.advisory ? `PHP ${run.advisory.fixedVersion}` : 'Awaiting a corroborated finding'}</span>{run?.advisory?.sources[0] && <a href={run.advisory.sources[0].url} target="_blank" rel="noreferrer">Source evidence<ArrowUpRight size={13}/></a>}</div>
-      <details className="ops-technical-orchestration"><summary><Network size={16}/>How the three agents work<span>Technical details</span><ChevronDown size={14}/></summary><OrchestrationPanel run={run} events={events} service={service}/></details>
-      {run?.failure && <div className="ops-error-banner" role="alert"><AlertTriangle size={18}/><div><strong>{run.failure.code}</strong><p>{run.failure.message}</p></div>{!activeRun && <button className="button outline" onClick={() => {if (run.target) void prepareFix(run.target.findingId); else void start(run.sourceMode);}} disabled={busy || !service?.ready}>Retry workflow</button>}</div>}
-      <div className="ops-developer-grid"><VerificationWorkbench run={run}/><ReviewPanel run={run}/></div>
-      <RunAnalytics runs={runs} run={run} events={events} onSelect={id => void selectRun(id)}/>
-      <footer className="ops-footer"><span>ProofPatch · Open Innovation · Packages + container images</span><span>Detected stack, observed tests, real draft PR. You decide whether to merge.</span></footer>
+
+      {tab === 'services' && <div className="ops-services-view">
+        <div className="ops-services-grid"><RepositoryPanel repositories={monitoring.repositories} selectedIds={selectedIds} focusedId={focusedId} loaded={monitoring.loaded} pending={monitoring.pending} onToggle={toggleRepository} onAll={selectAll} onFocus={focusRepository} onAdd={add} onWatch={(id, enabled) => void monitoring.update(id, {enabled})}/><ExecutionControls selectedCount={selectedRepositories.length} eligibleCount={eligible.length} existingDrafts={existingDrafts} mode={mode} pending={monitoring.pending} connected={monitoring.loaded && connection !== 'offline'} notice={notice} onMode={next => void applyMode(next)} onScan={() => void scanSelected()} onFindings={() => changeTab('findings')} onPipeline={() => changeTab('pipeline')}/></div>
+        <details className="ops-watch-details"><summary>Threat sources and watch schedule <span>Service status</span></summary><SecurityWatchPanel snapshot={monitoring.snapshot} pending={monitoring.pending} onPoll={() => void monitoring.poll()} onToggle={enabled => void monitoring.configure({enabled})}/></details>
+      </div>}
+
+      {tab === 'findings' && <div className="ops-findings-view"><div className="ops-tab-intro"><div><span>02 / REVIEW THE MATCHES</span><h2>Findings for checked services</h2><p>Published advisories are matched to the exact versions in each repository. Start a fix for one finding at a time in Step by step mode.</p></div><button onClick={() => changeTab('services')}>Change services<ArrowRight size={13}/></button></div>
+        {selectedRepositories.length ? selectedRepositories.map(repository => <section className="ops-repository-findings" key={repository.id}><div className="ops-repository-findings-title"><strong>{repository.owner}/{repository.name}</strong><span>{repository.autoRemediate ? 'Complete pipeline enabled' : 'Step by step'}</span></div><FindingsPanel findings={allSelectedFindings.filter(item => item.repositoryId === repository.id)} repository={repository} pending={monitoring.pending} onRepair={id => void prepareFix(id)} onRun={id => void showRun(id)}/></section>) : <div className="ops-tab-empty"><strong>No services selected</strong><p>Check one repository or Select all in Services.</p><button className="button primary" onClick={() => changeTab('services')}>Choose services</button></div>}
+      </div>}
+
+      {tab === 'pipeline' && <div className="ops-pipeline-page"><div className="ops-tab-intro"><div><span>03 / WATCH THE HANDOFF</span><h2>Repair pipeline</h2><p>Advisory match → package or image update → tests → senior review → draft PR → human review.</p></div><strong>{focusedRepository ? `${focusedRepository.owner}/${focusedRepository.name}` : 'Choose a service'}</strong></div>
+        <SecurityJourney repository={focusedRepository} snapshot={monitoring.snapshot} findings={focusedFindings} run={run} events={events}/><OrchestrationPanel run={run} events={events} service={service}/>
+        {run?.failure && <div className="ops-error-banner" role="alert"><AlertTriangle size={18}/><div><strong>{run.failure.code}</strong><p>{run.failure.message}</p></div>{run.target && !activeRun && <button className="button outline" onClick={() => void prepareFix(run.target!.findingId)} disabled={busy || !service?.ready}>Retry fix</button>}</div>}
+        <button className="ops-text-next" onClick={() => changeTab('results')}>Open checks, model usage, and draft PR<ArrowRight size={15}/></button>
+      </div>}
+
+      {tab === 'results' && <div className="ops-results-view"><div className="ops-tab-intro"><div><span>04 / INSPECT THE PROOF</span><h2>Results and human review</h2><p>Observed checks, each model call, token use, code diff, and the actual draft PR.</p></div><strong>{run ? `Run ${run.id.slice(0, 8)}` : 'No run selected'}</strong></div>
+        <RunMetrics runs={runs} loaded={service !== null && monitoring.loaded && !!selectedRepositories.length}/>
+        {run && <section className="ops-run-facts"><h2>Selected run</h2><p>{run.advisory?.titleEn ?? focusedFindings[0]?.summary ?? 'No advisory summary recorded.'}</p><dl><div><dt>Started</dt><dd>{new Date(run.createdAt).toLocaleString('en-GB',{timeZone:'Asia/Tokyo',dateStyle:'medium',timeStyle:'medium'})} JST</dd></div><div><dt>Last activity</dt><dd>{new Date(run.updatedAt).toLocaleString('en-GB',{timeZone:'Asia/Tokyo',dateStyle:'medium',timeStyle:'medium'})} JST</dd></div><div><dt>Checks passed</dt><dd>{run.checks.filter(check => check.status === 'passed').length} / {run.checks.length}</dd></div></dl></section>}
+        {runs.length ? <RunAnalytics runs={runs} run={run} events={events} onSelect={id => void showRun(id)}/> : <div className="ops-tab-empty"><strong>No run results yet</strong><p>Scan a selected service. In Step by step mode, choose a finding to start the repair run; Complete pipeline mode starts supported repairs automatically.</p><button className="button primary" onClick={() => changeTab('services')}>Go to Services</button></div>}
+        {run && <div className="ops-developer-grid"><VerificationWorkbench run={run}/><ReviewPanel run={run}/></div>}
+      </div>}
+      <footer className="ops-footer"><span>ProofPatch · Open Innovation · Packages + container images</span><span>Draft PRs are for human review. You decide whether to merge.</span></footer>
     </main>
   </div>;
 }

@@ -6,10 +6,10 @@ Updated **25 October 2026 (Asia/Calcutta)**. The working service accepts GitHub 
 
 1. Start the API, worker and dashboard with a server-side GitHub identity and Groq key. The frontend never receives these credentials.
 2. Click **Add repository**, paste a clean HTTPS `github.com/owner/repository` URL and select **Connect & inspect**. The server reads an immutable default-branch commit, permissions, dependency/image declarations and relevant baseline test files. Adding a URL cannot grant access the server identity lacks.
-3. Inspect **Detected stack** and **How this repository will be tested**. New supported public connections enable automatic draft preparation by default. Reconnecting preserves existing settings. Pause automatic fixes with the repository toggle when needed.
-4. Use **Scan now** for a queued refresh, or keep **Watch for new vulnerabilities** enabled for the default 300-second schedule. The heartbeat, source status and timestamps show whether the worker is functioning.
-5. Review **Vulnerabilities found** separately from unconfirmed forum leads. OSV or supported vendor evidence establishes findings. Multiple advisories for one exact update share a repair row and run; expand their actual source evidence. A forum post alone cannot authorize a repair.
-6. Follow **Prepare draft fix**, the six-step journey and optional technical graph. Inspect the actual diff, checks and runner output. The central workflow verifies the candidate without installing a custom workflow in your target repository.
+3. In **Services**, check one repository or **Select all**, then expand its inspection row for the detected stack and relevant tests. New connections start with automatic repair off; reconnecting preserves existing settings.
+4. Choose **Step by step** to scan and then start a confirmed finding yourself, or **Complete pipeline** to enable automatic repair for checked supported repositories. Select **Scan selected**. Individual continuous-watch checkboxes keep the default 300-second schedule active for each service when the global schedule is on. Threat source health and heartbeat are in the Services disclosure.
+5. In **Findings**, review affected versions separately from unconfirmed forum leads. OSV or supported vendor evidence establishes findings. Multiple advisories for one exact update share a repair row and run; expand their actual source evidence. A forum post alone cannot authorize a repair.
+6. Follow the six-step journey and actual agent graph in **Pipeline**. Inspect checks, candidate diff, model usage, runner output and the draft PR in **Results**. The central workflow verifies the candidate without installing a custom workflow in your target repository.
 7. Open the real draft PR. Your developer reviews and merges in GitHub, then owns deployment and running-service verification. A draft does not close the finding or claim production is fixed.
 
 ## Exact current coverage
