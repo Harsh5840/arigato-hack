@@ -1,48 +1,32 @@
 ---
 name: ProofPatch
-description: One dark repository security console for watching advisories and reviewing bounded repairs.
+description: One light repository security console that shows how an advisory becomes a reviewed, tested draft repair.
 colors:
-  primary: "#c7ef79"
-  primary-hover: "#d6f99d"
-  primary-text: "#18220e"
-  background: "#151713"
-  sidebar: "#11130f"
-  panel: "#1a1d17"
-  card: "#1b1e19"
-  machine-panel: "#1e211b"
-  ink: "#f1f1eb"
-  muted: "#a0a29c"
-  line: "#32352f"
-  border: "#34392e"
-  outline-background: "#252c1e"
-  outline-text: "#d3efb0"
-  critical-background: "#39231f"
-  critical-text: "#ffb2a8"
-  high-background: "#332c1c"
-  high-text: "#eac38a"
-  medium-background: "#2f3020"
-  medium-text: "#d1d59c"
-  destructive: "#f69790"
-  flow-canvas: "#181c16"
-  flow-grid: "#394131"
-  flow-toolbar: "#20251c"
-  flow-node: "#22291d"
-  flow-node-border: "#536144"
-  flow-node-active: "#2d3823"
-  flow-node-body: "#bac7ac"
-  flow-edge: "#69795b"
-  flow-arrow: "#879878"
-  flow-edge-label: "#c5cdbb"
-  flow-handle: "#9daf8d"
-  flow-held: "#f4b0a1"
-  flow-held-border: "#e9a08e"
-  flow-control: "#2a3322"
-  flow-control-hover: "#3b482f"
-  flow-control-border: "#505c43"
-  flow-control-ink: "#d6e5c6"
-  role-selected: "#303d24"
-  role-selected-border: "#8fba60"
-  role-selected-ink: "#ddf8bc"
+  primary: "#2d5a1b"
+  primary-hover: "#234914"
+  primary-text: "#f4fbe9"
+  lime: "#c7ef79"
+  lime-soft: "#eef8da"
+  lime-ink: "#2b4a12"
+  background: "#f3f5f0"
+  surface: "#fbfcfa"
+  surface-2: "#f1f4ee"
+  surface-3: "#e8ece4"
+  ink: "#172019"
+  ink-2: "#445045"
+  ink-3: "#646e64"
+  line: "#dde2d8"
+  line-strong: "#c6cdbf"
+  good: "#2b7438"
+  good-background: "#e3f1e0"
+  warn: "#925600"
+  warn-background: "#fbefd8"
+  bad: "#b0281f"
+  bad-background: "#fbe6e2"
+  neutral-background: "#eceee9"
+  role-supply: "#2a78d6"
+  role-fixer: "#eb6834"
+  role-reviewer: "#1baf7a"
 typography:
   headline:
     fontFamily: "Public Sans, sans-serif"
@@ -258,61 +242,31 @@ components:
 
 ## Overview
 
-**Creative North Star: "Verification Interlock"**
+**Creative North Star: "The Repair Line"**
 
-A patch moves only when its proof aligns. The user-selected dark engineering workspace gives the evidence workflow the character of a precise instrument: charcoal surfaces, warm white type, restrained lime and precise diagram geometry.
+A security alert travels down one visible line: connect, watch, confirm, prepare, test and review. The console makes that line literal. A light engineering workspace (green-tinted neutrals, Public Sans, one deep-green action colour and brand lime for the subject) frames a live run card, an Anatomy-built isometric bench whose lime cartridge is the candidate fix, a six-step explainer and a timeline replayed from stored events.
 
-The current product is one compact repository security console. A six-step journey leads from repository connection and stack/test detection through source watching, confirmed risk, a supported package or image update, tests and senior review to a draft awaiting a human. Repository and source controls, grouped corroborated findings, expandable technical orchestration, grouped verification, the actual candidate diff and review handoff share one operational surface. Public Sans, thin borders and small tonal shifts retain the established identity. Measured run counts and proportional charts describe stored execution for the selected repository; they never imply a vulnerability score.
+The user replaced the earlier dark workspace with this light direction on 25 October 2026. `src/styles/console.css` is the only routed stylesheet; `workspace.css`, `orchestration.css`, `live-orchestration.css`, `operations.css` and `monitoring.css` style historical off-route components only and are no longer imported by `src/app/layout.tsx`.
 
 **Key Characteristics:**
 
-- Charcoal surfaces with a muted olive cast and warm white text.
-- Restrained lime for primary action, selection and satisfied evidence gates.
-- Plain-language sequence first, with detailed technical evidence in native disclosures.
-- Compact evidence surfaces with explicit status and human review authority.
-- Functional agent geometry and measured bars tied to recorded run state.
-
-This is the built frontend in `src/styles/workspace.css`, extended by `operations.css` and `monitoring.css` after the orchestration styles in `src/app/layout.tsx`. Its tokens override the starter dark theme. Implementation uses Next.js, React, Tailwind, locally loaded Public Sans and the installed Bklit gauge source. Generated Anatomy geometry remains in historical off-route components. `PRODUCT.md` and the layout direction contract constrain this document; the earlier root `design/DESIGN-SPEC.md` describes a rejected concept and is not visual authority.
-
-`src/app/page.tsx` routes only `OperationsDashboard`; `workspace.tsx` is a thin compatibility export. `monitoring.css` is imported last after `operations.css`. There is no routed sidebar, Agents/Simulation switch, Overview, Findings, Evidence or Roadmap page. Their source and Anatomy assets remain historical, off-route material. The layout contract commits the sticky repository/action header, measured metrics and six connected steps before inventory, source health and findings. The actual three-agent graph and event rail sit inside technical details. This current-console contract takes precedence over the historical surface descriptions retained below.
+- Green-tinted light neutrals in one grey family; no pure white or black.
+- One deep-green action colour; brand lime marks the subject, progress and the running step.
+- Status colours are reserved and always paired with a word or icon.
+- Three validated role hues (Supply Chain blue, Remediation orange, DevSec aqua) shared by the explainer chips, timeline lanes and token bars.
+- Every figure and chart is posed or drawn from stored run evidence; nothing is simulated in the routed console.
 
 ## Colors
 
-The palette combines olive charcoal neutrals with a clear lime signal and warm severity colors. Frontmatter records the normative values; application custom properties remain the implementation source.
+Frontmatter records the normative values; `:root` in `console.css` is the implementation source and also maps the shadcn and chart tokens consumed by `globals.css` and the Bklit gauge.
 
-### Primary
+- **Action Green** (`primary`, `primary-hover`, `primary-text`): primary buttons, links, focus outline, selected tabs.
+- **Brand Lime** (`lime`, `lime-soft`, `lime-ink`): the repair-line cartridge, the running step and station lamp, the flow progress line, selected rows. Never a status by itself.
+- **Neutrals** (`background`, `surface`, `surface-2`, `surface-3`, `ink`, `ink-2`, `ink-3`, `line`, `line-strong`): page, cards, insets and three text levels. `ink-3` keeps at least 4.5:1 on both surfaces.
+- **Status** (`good`, `warn`, `bad`, `neutral-background`): completed, held or warning, failed and cancelled. Reserved; never reused for a data series.
+- **Role hues** (`role-supply`, `role-fixer`, `role-reviewer`): the three agent roles. Validated with the dataviz validator on `#fbfcfa`, all pairs: worst CVD delta E 9.2, worst normal-vision delta E 24.0. Aqua sits below 3:1 on the surface, so every role mark carries a visible text label.
 
-- **Instrument Lime** (`primary`): primary action, focus outline, raised evidence gates and the patch cartridge. The legacy CSS name `--blue` resolves to this lime.
-- **Light Lime** (`primary-hover`): primary button hover.
-- **Dark Olive Ink** (`primary-text`): readable foreground on the lime action.
-
-### Secondary
-
-- **Critical Clay** (`critical-background`, `critical-text`): critical severity badge.
-- **High Amber** (`high-background`, `high-text`): high severity badge.
-- **Medium Khaki** (`medium-background`, `medium-text`): medium severity badge.
-- **Regression Coral** (`destructive`): failed and blocked feedback; always paired with words or an icon.
-- **Held Peach** (`flow-held`, `flow-held-border`): written held status and gate outline in the Agents surface.
-
-### Neutral
-
-- **Workspace Charcoal** (`background`) and **Navigation Charcoal** (`sidebar`): page and sticky console header; the latter also belongs to historical fixed navigation.
-- **Evidence Charcoal** (`panel`, `card`): grouped findings and evidence.
-- **Instrument Charcoal** (`machine-panel`): the slightly raised machine field.
-- **Warm White** (`ink`): headings and main text.
-- **Sage Grey** (`muted`): supporting copy and metadata.
-- **Olive Dividers** (`line`, `border`): panel outlines, rows and structural divisions.
-- **Diagram Charcoal** (`flow-canvas`), **Grid Olive** (`flow-grid`) and **Toolbar Olive** (`flow-toolbar`): canvas field, quiet diagram dots and grouped run controls.
-- **Agent Olive** (`flow-node`, `flow-node-border`, `flow-node-active`): graph cards at rest and during the current step. In Live service the state comes from the stored worker run; in Simulation it comes from the local timer. Completed role headings brighten to existing pale lime.
-- **Routing Sage** (`flow-edge`, `flow-arrow`, `flow-edge-label`, `flow-handle`): visible connections, arrow direction, labels and port dots. `flow-node-body` carries secondary node copy.
-- **Control Olive** (`flow-control`, `flow-control-hover`, `flow-control-border`, `flow-control-ink`): React Flow zoom/fit controls.
-- **Selected Role Olive** (`role-selected`, `role-selected-border`, `role-selected-ink`): the inspector's pressed agent selector.
-
-The Live extension normalizes its status, controls, source rows and evidence surfaces to these existing charcoal, sage, lime and peach roles. The observed diagram-dot color is now named `flow-grid`. This is legitimate documentation of built color use within the incumbent world; it does not repair detector drift or alter `.impeccable/config.json`. Frontmatter records the shipped values, while the sidecar supplies named metadata and derived tonal ramps. Generated ramp steps are panel aids, not additional shipped application colors.
-
-**The State Has Words Rule.** Color reinforces a written verification state. A lime cartridge alone never asserts that a patch is verified.
-
-The console reuses the saved palette without adding colors: lime for completed journey steps, enabled watch controls, completed runs and reported token bars; sage for phase durations; amber for unconfirmed leads, source failures, held outcomes and owner tasks; coral for failed outcomes; and grey for cancelled outcomes. Each chart pairs color with a label and measured count. The repository control, inventory and monitoring disclosures reuse the card/panel roles; actual diff additions and deletions reuse outline and critical roles.
+**The State Has Words Rule.** Colour reinforces a written verification state. A lime cartridge alone never asserts that a patch is verified.
 
 ## Typography
 
@@ -324,7 +278,7 @@ The type is close-set and functional. Large case titles contrast with small, reg
 
 ### Hierarchy
 
-- **Current console:** `console-heading` is the desktop title, adapting to (20px) below (740px). `measured-metric` uses tabular numerals and adapts to (25px). Panel headings use (15px), compact labels (10–11px), actual diff text (11px) and the mobile diff (10px). Compact flow agent titles use `console-flow-title`; system titles are (14px), with agent descriptions (12px) and system descriptions (11px). The following earlier hierarchy remains specific to historical surfaces.
+- **Current console:** body 14.5px with line-height 1.55; the hero title is fluid (32 to 46px, tracking -0.035em); section headings 20px; card headings 15 to 16px; supporting copy 13 to 13.5px; labels and chips 11.5 to 12.5px. Metrics use 30px tabular numerals (25px on mobile). Code, identities and timestamps use the system monospace stack. Timeline lane labels are 12.5px and axis ticks 11px monospace. The following earlier hierarchy remains specific to historical surfaces.
 - **Journey and monitoring:** the journey heading uses (16px), step titles (12px), and supporting descriptions (11px). Mobile uses (15px), (11px) and (10px) respectively. Repository names and package versions wrap within their rows. These observed component sizes describe this implementation; they do not establish additional global type steps.
 
 - **Headline:** page heading; desktop role is in frontmatter, adapting to (26px) on mobile.
@@ -343,11 +297,9 @@ The type is close-set and functional. Large case titles contrast with small, reg
 
 ### Current single console
 
-The sticky header and content share a maximum width (1540px), desktop gutters (28px) and mobile gutters (18px). There is no left navigation. Header controls include a repository selector popover, written service status, Run options and the selected repository's action, Cancel or Follow active run. Four measured metrics form equal columns. The six-step journey follows, then repository inventory, detected stack/test plan and source health in equal columns with a (25px) gap, followed by grouped corroborated findings. These monitoring sections use (24px) separation and the established bordered panel surface.
+The sticky, translucent header and content share a maximum width (1320px) with desktop gutters (28px) and mobile gutters (16px). Order: hero (live run card plus the repair-line figure, columns `.78fr 1.3fr`), four metrics divided by rules, the six-step explainer, the run timeline, repositories and security watch (`1.1fr 1fr`), vulnerabilities, the selected case strip, the collapsed agent graph and event rail, workbench and review (`1.55fr 1fr`), then observations and run history.
 
-Below the selected repair strip, the initially collapsed **How the three agents work** disclosure contains a bordered orchestration stage using `minmax(0,1fr) 300px` for graph and latest-first event rail; the rail narrows to (260px) below (1150px). The developer workbench and review use `minmax(0,1.6fr) minmax(0,1fr)` with a (28px) gap. Outcomes, phase durations and tokens use columns `.85fr 1.2fr 1fr`; history follows in the same document.
-
-At (1100px), the journey becomes two rows of three steps. At (960px), events move below the graph, workbench/review stack, and analytics become two columns with token usage beneath. At (740px), the header becomes two rows with a full-width repository control; metrics become two-by-two and observations stack. All six journey steps remain visible in two columns, monitoring panels stack, the repository URL form becomes vertical, and each finding becomes a single column with status and action together. No journey connector is needed on mobile. Inside technical details, the mobile role summary remains above an initially collapsed **Interactive agent flow** disclosure; expanding it reveals the full vertical graph and six-entry numbered legend. The graph switches to vertical coordinates at (680px). Desktop graph height is (410px), (440px) on large screens and (430px) at the intermediate width; vertical mobile height is (1070px). Compact desktop nodes use x (0,340,680), padding (0.05), numbered edges and a three-column legend; mobile preserves the reserved return-lane bounds described below. The event rail and runner output scroll inside bounded regions. Mobile run history intentionally scrolls horizontally at a (640px) table minimum; the selected run identity and outcome remain visible at its start.
+At (1100px) the hero stacks, the step track becomes three columns without its connector line, and the event rail moves under the graph. At (960px) monitoring, developer and observation grids stack. At (740px) the header wraps with a full-width repository control, metrics become two-by-two and the station legend becomes two columns. At (560px) steps become compact rows with the icon on the left. Every single-column grid uses `minmax(0, 1fr)` so long identifiers cannot widen the page.
 
 ### Historical off-route workspace
 
@@ -403,13 +355,13 @@ Flow nodes use the dedicated `flow-node` radius. Live nodes have minimum height 
 
 ### Current console composition
 
-`OperationsDashboard` composes `DashboardHeader`, `RunMetrics`, `SecurityJourney`, `RepositoryPanel`, `SecurityWatchPanel`, `FindingsPanel`, the disclosed `OrchestrationPanel`, `VerificationWorkbench`, `ReviewPanel` and `RunAnalytics`. The header offers **Prepare draft fix** for an eligible detected package or image finding, or **Scan repository** when no eligible update is selected. It cancels the active run or follows it while another history entry is selected. The repository popover selects real persisted registry entries, displays verified access and links to the connection panel. Production GitHub App installation remains planned. Run options retain the advisory source chooser for historical manual PHP execution, reconnect and selected-run export. The queued event rail says **Run queued** and explains that it is waiting for the worker; it does not prompt another start.
+`OperationsDashboard` composes `DashboardHeader`, `ConsoleHero`, `RunMetrics`, `SecurityJourney` (the six-step explainer), `RunTimeline`, `RepositoryPanel`, `SecurityWatchPanel`, `FindingsPanel`, the disclosed `OrchestrationPanel`, `VerificationWorkbench`, `ReviewPanel` and `RunAnalytics`. `flow-model.ts` is the single source of the six steps: actor, receives, does, produces, cannot, the run-status to step mapping and the evidence line under each title. Selecting a step in the explainer or a station in the figure legend sets one shared focus.
 
-The four metrics are deduplicated stored runs, unique recorded draft URLs, median valid completed duration with its sample count, and API-reported tokens with metered-call count. Repository selection filters the run evidence, history, metrics and analytics. Outcome bars disclose `n`; phase bars derive from transition intervals and aggregate repeated visits; token bars group reported usage by role/model. Missing timing or usage remains absent or a dash. These are observations of stored runs for the selected repository, not unique vulnerabilities, savings or population performance. The separate read-only forum scout's usage appears in Security watch and is excluded from repair-run metrics.
+**Repair-line figure.** Built by `design/anatomy/repair-line/build.mjs` with the vendored Anatomy kit into `repair-line.geometry.ts` (78 solids, seven settled paint orders). Six numbered stations map to the six steps. The cartridge moves to the active or last recorded station; when a run is blocked it stops at the lowered gate arm, which lifts only when a draft is allowed. Lamps are lime while running and ink once recorded; focusing a step dims the other stations. The kit audit passes in the rest, pressing, published and blocked poses and the line-end check reports 0 floating ends. It is an illustration posed from stored state and says so in its caption and SVG description.
 
-The workbench has keyboard-operable **Checks**, **Candidate diff** and **Runner output** tabs. Check disclosures group **Source + inventory**, **Policy gates**, generic **Runtime checks**, **Business checks** and **CI provenance**. Business suite assertions remain distinct from the suite's aggregate gate, so seven HTTP assertions or a dozen storefront assertions do not masquerade as the number of controller gates. A client-only installed Bklit `Gauge` uses the recorded check total, uniform notches and solid lime; its adjacent written count remains authoritative and the gauge is hidden on mobile. The diff comes from the API's immutable base/candidate GitHub comparison, with per-file disclosures, addition/deletion colors, actual patch text, error/retry states and a complete-comparison link when bounded. A container diff explains that the image reference chooses the container's software and identifies removed and updated lines. Runner output exposes recorded logs and identities; residual scanner findings and owner follow-ups remain written beside a passing gate.
+**Run timeline.** One lane per actor; phase bars come from `phaseSegments` (tested) and take the owner's role hue; dashed verticals mark handoffs; event dots have hover and focus tooltips; one elapsed-time axis starts when work starts, with queue wait and post-run events reported in text. A disclosed event log is the table view. A running run draws a moving "now" line.
 
-Review shows the actual draft PR action, publication-gate state, English/Japanese senior summary and advisory evidence, plus owner-task and concern disclosures. Model role controls expose actual IDs, recorded call state and usage. The compact mobile role summary and expandable full graph retain the three-agent/control-layer distinction. Legacy controls and specimens described below are historical unless explicitly reused here.
+**Observations.** A run-history chart (bar height is elapsed time, colour plus a legend word give the outcome, click selects the run), token usage as direct-labelled role bars, and the run history table. Phase time now lives in the timeline.
 
 ### Repository connection and security watch
 
@@ -497,12 +449,12 @@ Only edges incident to the currently running node animate. The reduced-motion ru
 
 ### Do:
 
-- **Do** use the charcoal, warm white and lime roles to extend this engineering workspace.
+- **Do** use the light neutrals, action green and brand lime roles from `console.css`; keep status colours for status only.
 - **Do** show a written status next to every meaningful color or gauge result.
 - **Do** preserve all five gate conditions and the blocked middle finger when regression fails.
 - **Do** retain visible status and a reachable action in every mobile finding row.
 - **Do** preserve synthetic labels in Simulation and Overview, human review authority, visible focus and reduced motion.
-- **Do** treat `workspace.css`, `orchestration.css`, `live-orchestration.css`, `operations.css`, `monitoring.css` and the current feature components as the built visual source.
+- **Do** treat `console.css`, the operations components and `design/anatomy/repair-line/build.mjs` as the built visual source.
 - **Do** preserve exactly three product agents and identify controller, evidence, gate and human review separately.
 - **Do** keep DevSec baseline/frozen checks before repair, candidate replay and failed-check return visible at both graph sizes.
 - **Do** distinguish Live service results from the fictional inventory and test outcomes in Simulation and Overview.
@@ -510,7 +462,7 @@ Only edges incident to the currently running node animate. The reduced-motion ru
 - **Do** preserve the compact live mobile role summary, six directional legend entries and return-lane fit bounds.
 - **Do** expose actual model IDs, observed checks and the CI/PR identity without implying merge approval.
 - **Do** compose the current product through the operations components on one route; keep legacy prototype surfaces off-route.
-- **Do** lead with all six plain-language steps and use disclosures for inventory, unconfirmed leads, scout output and technical orchestration.
+- **Do** lead with the live run card, the repair-line figure and all six plain-language steps; use disclosures for inventory, unconfirmed leads, scout output and technical orchestration.
 - **Do** make verified access and supported repair capability visible beside repository controls.
 - **Do** show the detected stack, actual test plan and written capability reason before automatic repair controls.
 - **Do** group advisory matches into one package/image update while preserving expandable source evidence.
@@ -524,7 +476,8 @@ Only edges incident to the currently running node animate. The reduced-motion ru
 - **Don't** advance the machine through a blocked gate or display five active gauge notches for four satisfied checks.
 - **Don't** hide mobile status behind horizontal table discovery.
 - **Don't** turn every panel into a floating shadow card or add decorative animation to verification states.
-- **Don't** restore the earlier rejected concept from the root design specification.
+- **Don't** restore the earlier rejected concept from the root design specification, or reintroduce the retired dark theme in the routed console.
+- **Don't** hide content behind scroll-driven entry animation; it blanks print, export and full-page capture.
 - **Don't** present the deterministic controller as a fourth agent or grant an agent merge authority.
 - **Don't** turn a ready graph state into an automatic merge or a guarantee of complete security.
 - **Don't** treat an unconfirmed lead, unavailable source or monitor-only connection as authority to repair.

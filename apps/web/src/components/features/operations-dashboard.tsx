@@ -1,7 +1,7 @@
 'use client';
 
 import {useEffect, useRef, useState} from 'react';
-import {AlertTriangle, GitBranch, ArrowUpRight, RefreshCw, Network, ChevronDown} from 'lucide-react';
+import {AlertTriangle, ArrowUpRight, RefreshCw, Network, ChevronDown} from 'lucide-react';
 import {useLiveOrchestration} from '@/hooks/use-live-orchestration';
 import {useRepositoryMonitoring} from '@/hooks/use-repository-monitoring';
 import {isTerminal} from '@/types/live-orchestration';
@@ -18,6 +18,9 @@ import RepositoryPanel from './operations/repository-panel';
 import SecurityWatchPanel from './operations/security-watch-panel';
 import FindingsPanel from './operations/findings-panel';
 import {canPrepareRepair} from './operations/repair-capability';
+import ConsoleHero from './operations/console-hero';
+import RunTimeline from './operations/run-timeline';
+import {activeStepIndex, stepDone} from './operations/flow-model';
 
 function belongsTo(run: LiveRun, repository?: MonitoredRepository) {return !!repository && (run.repositoryId === repository.id || run.repo.owner.toLowerCase() === repository.owner.toLowerCase() && run.repo.name.toLowerCase() === repository.name.toLowerCase());}
 
@@ -26,6 +29,7 @@ export default function OperationsDashboard() {
   const monitoring = useRepositoryMonitoring();
   const [sourceMode, setSourceMode] = useState<'live' | 'cached'>('live');
   const [repositoryId, setRepositoryId] = useState('');
+  const [chosenStep, setChosenStep] = useState<number | null>(null);
   const repository = monitoring.repositories.find(item => item.id === repositoryId);
   const requestedRun = useRef<string | null>(null);
   const followedAutomaticRuns = useRef(new Set<string>());
@@ -41,6 +45,8 @@ export default function OperationsDashboard() {
   const events = run ? storedEvents : [];
   const findings = monitoring.findings.filter(item => item.repositoryId === repositoryId);
   const activeRun = allRuns.find(item => !isTerminal(item.status));
+  const runningStep = activeStepIndex(repository, run);
+  const focus = chosenStep ?? (runningStep >= 0 ? runningStep : Math.max(0, stepDone(repository, monitoring.snapshot, findings, run).lastIndexOf(true)));
   useEffect(() => {
     if (!repository?.autoRemediate) return;
     const queued = findings.find(item => item.status === 'queued' && item.runId && !followedAutomaticRuns.current.has(item.runId));
@@ -69,20 +75,22 @@ export default function OperationsDashboard() {
   }
   return <div className="operations-dashboard" id="operations">
     <DashboardHeader service={service} connection={connection} busy={busy || !!monitoring.pending} run={run} activeRun={activeRun} sourceMode={sourceMode} onSourceMode={setSourceMode} onRun={runAction} onCancel={() => void cancel()} onFollow={() => void followActive()} onRefresh={() => {void refresh(); void monitoring.refresh();}} onExport={exportRun} repositories={monitoring.repositories} repositoryId={repositoryId} onRepository={chooseRepository} actionLabel={actionLabel}/>
-    <main className="ops-main"><div className="ops-console-heading"><div><h1>Repository security</h1><p>Connect your code. Watch security news. Review the fix before it merges.</p></div><span><GitBranch size={13}/>{run?.repo.branch ?? repository?.defaultBranch ?? 'No repository selected'}{run?.repo.candidateSha && <code>{run.repo.candidateSha.slice(0, 7)}</code>}</span></div>
+    <main className="ops-main" id="main">
       {connection === 'loading' && !service && <div className="ops-connection-loading" role="status"><span/><p>Connecting to the persisted worker queue…</p></div>}
       {error && <div className="ops-error-banner" role="alert"><AlertTriangle size={18}/><div><strong>{error.code}</strong><p>{error.message}</p></div><button className="button subtle" onClick={() => void refresh()}><RefreshCw size={13}/>Reconnect</button></div>}
       {service && !service.ready && <div className="ops-error-banner" role="status"><AlertTriangle size={18}/><div><strong>Server setup required</strong><p>{!service.groqConfigured ? 'Groq credentials are missing. ' : ''}{!service.githubConfigured ? 'GitHub credentials are missing. ' : ''}Configure the server and reconnect. Credentials never enter this dashboard.</p></div></div>}
       {monitoring.error && <div className="ops-error-banner" role="alert"><AlertTriangle size={18}/><div><strong>{monitoring.error.code}</strong><p>{monitoring.error.message}</p></div><button className="button subtle" onClick={() => void monitoring.refresh()}><RefreshCw size={13}/>Reload monitoring</button></div>}
+      <ConsoleHero repository={repository} snapshot={monitoring.snapshot} findings={findings} run={run} events={events} focus={chosenStep ?? -1} onFocus={setChosenStep}/>
       <RunMetrics runs={runs} loaded={service !== null && monitoring.loaded && !!repository}/>
-      <SecurityJourney repository={repository} snapshot={monitoring.snapshot} findings={findings} run={run} events={events}/>
+      <SecurityJourney repository={repository} snapshot={monitoring.snapshot} findings={findings} run={run} focus={focus} onFocus={setChosenStep}/>
+      <div id="timeline"><RunTimeline run={run} events={events}/></div>
       <div className="ops-monitoring-grid"><RepositoryPanel repositories={monitoring.repositories} selectedId={repositoryId} loaded={monitoring.loaded} pending={monitoring.pending} onSelect={chooseRepository} onAdd={add} onUpdate={(id, changes) => void monitoring.update(id, changes)} onScan={id => void monitoring.scan(id)}/><SecurityWatchPanel snapshot={monitoring.snapshot} pending={monitoring.pending} onPoll={() => void monitoring.poll()} onToggle={enabled => void monitoring.configure({enabled})}/></div>
       <FindingsPanel findings={findings} repository={repository} pending={monitoring.pending} onRepair={id => void prepareFix(id)} onRun={id => void selectRun(id)}/>
       <div className="ops-case-strip"><div><strong>{run?.advisory?.titleEn ?? 'No repair run selected'}</strong></div><span>{run?.target ? `${run.target.packageName} ${run.target.installedVersion} → ${run.target.fixedVersion}` : run?.advisory ? `PHP ${run.advisory.fixedVersion}` : 'Awaiting a corroborated finding'}</span>{run?.advisory?.sources[0] && <a href={run.advisory.sources[0].url} target="_blank" rel="noreferrer">Source evidence<ArrowUpRight size={13}/></a>}</div>
-      <details className="ops-technical-orchestration"><summary><Network size={16}/>How the three agents work<span>Technical details</span><ChevronDown size={14}/></summary><OrchestrationPanel run={run} events={events} service={service}/></details>
+      <details className="ops-technical-orchestration"><summary><Network size={16}/>Agent graph and event rail<span>Technical details</span><ChevronDown size={14}/></summary><OrchestrationPanel run={run} events={events} service={service}/></details>
       {run?.failure && <div className="ops-error-banner" role="alert"><AlertTriangle size={18}/><div><strong>{run.failure.code}</strong><p>{run.failure.message}</p></div>{!activeRun && <button className="button outline" onClick={() => {if (run.target) void prepareFix(run.target.findingId); else void start(run.sourceMode);}} disabled={busy || !service?.ready}>Retry workflow</button>}</div>}
       <div className="ops-developer-grid"><VerificationWorkbench run={run}/><ReviewPanel run={run}/></div>
-      <RunAnalytics runs={runs} run={run} events={events} onSelect={id => void selectRun(id)}/>
+      <RunAnalytics runs={runs} run={run} onSelect={id => void selectRun(id)}/>
       <footer className="ops-footer"><span>ProofPatch · Open Innovation · Packages + container images</span><span>Detected stack, observed tests, real draft PR. You decide whether to merge.</span></footer>
     </main>
   </div>;

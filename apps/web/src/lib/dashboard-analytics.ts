@@ -108,6 +108,37 @@ export function stageDurations(run: Run, events: readonly RunEvent[], now = Date
   return [...buckets.values()];
 }
 
+export type PhaseSegment = { stage: ActiveStage; label: string; node: RunEvent['node']; start: number; end: number };
+const stageOwner: Record<ActiveStage, RunEvent['node']> = {
+  queued: 'controller', 'source-fetching': 'supply-chain', triaging: 'supply-chain', matching: 'controller',
+  baseline: 'devsec', patching: 'remediation', verifying: 'devsec', reviewing: 'devsec', publishing: 'gate',
+};
+
+/** Ordered, non-overlapping phase intervals for a timeline. Unlike stageDurations, repeat visits stay separate. */
+export function phaseSegments(run: Run, events: readonly RunEvent[], now = Date.now()): PhaseSegment[] {
+  const created = timestamp(run.createdAt);
+  if (created === null) return [];
+  const transitions = [...new Map(events.filter((event) => event.runId === run.id).map((event) => [event.id, event])).values()]
+    .map((event) => ({ event, at: timestamp(event.at) }))
+    .filter((value): value is { event: RunEvent; at: number } => value.at !== null && value.at >= created && (Object.hasOwn(stageLabels, value.event.kind) || terminal.has(value.event.kind as RunStatus)))
+    .sort((a, b) => a.at - b.at || a.event.id - b.event.id);
+  const terminalAt = transitions.find(({ event }) => terminal.has(event.kind as RunStatus))?.at;
+  const end = terminal.has(run.status) ? terminalAt ?? timestamp(run.updatedAt) : now;
+  if (end === null || end < created) return [];
+  const segments: PhaseSegment[] = [];
+  for (let index = 0; index < transitions.length; index++) {
+    const { event, at } = transitions[index];
+    if (terminal.has(event.kind as RunStatus) || at > end) break;
+    const stage = event.kind as ActiveStage;
+    const until = Math.min(transitions[index + 1]?.at ?? end, end);
+    const previous = segments.at(-1);
+    // A repeated transition into the same stage extends it rather than drawing a zero-width seam.
+    if (previous?.stage === stage) previous.end = until;
+    else segments.push({ stage, label: stageLabels[stage], node: stageOwner[stage], start: at, end: until });
+  }
+  return segments;
+}
+
 /** Include only actual reported usage, even when a call failed after reporting usage. */
 export function tokenBreakdown(run: Run): TokenBucket[] {
   const buckets = new Map<string, TokenBucket>();

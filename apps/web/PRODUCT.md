@@ -14,7 +14,7 @@ The four-person team entered the Japanese hackathon's Open Innovation track. The
 
 ## Confirmed visual direction
 
-The user selected a dark engineering workspace with warm white Public Sans, restrained lime and precise diagrams, then requested a single component-based developer dashboard with a beginner-readable flow. Preserve this identity. The simple six-step journey is the main explanation; the interactive React Flow graph and detailed agent/event trace are expandable technical evidence. Bklit Gauge presents actual check coverage. Historical Anatomy and pitch assets remain available but off-route.
+On 25 October 2026 the user replaced the earlier dark workspace with a light theme and asked for a more presentable console that shows how the flow works. The current direction is a light engineering workspace: Public Sans, green-tinted neutrals, one deep-green action colour, brand lime for the subject and progress, and precise diagram geometry. The first viewport pairs a live run card with the Anatomy-built repair-line figure, which is posed from stored run state. A six-step explainer (who acts, what each step receives, does, produces and cannot do) and a run timeline replayed from stored events follow. The interactive React Flow graph and event rail remain expandable technical evidence. Bklit Gauge presents actual check coverage.
 
 ## Implemented behavior
 

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import type { AgentCall, Run, RunEvent } from '../../../packages/contracts/src/live.ts';
-import { checkGroups, stageDurations, summarizeRuns, tokenBreakdown } from '../src/lib/dashboard-analytics.ts';
+import { checkGroups, phaseSegments, stageDurations, summarizeRuns, tokenBreakdown } from '../src/lib/dashboard-analytics.ts';
 
 const at = (seconds: number) => new Date(Date.UTC(2026, 9, 25, 0, 0, seconds)).toISOString();
 function run(patch: Partial<Run> = {}): Run {
@@ -89,4 +89,16 @@ test('generic runner evidence separates observed runtime, business suite and pro
   assert.equal(groups.find(group=>group.id==='runtime')?.checks[0].id,'runner_package_version');
   assert.equal(groups.find(group=>group.id==='workflow')?.checks[0].id,'evidence_identity');
   assert.equal(groups.find(group=>group.id==='policy')?.checks[0].id,'runner_no_known_advisories');
+});
+
+test('phase segments keep run order, merge repeat transitions, assign owners and stop at the terminal event', () => {
+  const events = [event(1, 'queued', 0), event(2, 'triaging', 10), event(3, 'baseline', 15), event(4, 'patching', 18), event(5, 'verifying', 25), event(6, 'patching', 40), event(7, 'patching', 41), event(8, 'publishing', 50), event(9, 'completed', 55), event(10, 'post-publication-ci-follow-up', 500), event(11, 'triaging', 70, 'other-run')];
+  const segments = phaseSegments(run(), events);
+  assert.deepEqual(segments.map((segment) => [segment.stage, segment.node, (segment.end - segment.start) / 1000]), [['queued', 'controller', 10], ['triaging', 'supply-chain', 5], ['baseline', 'devsec', 3], ['patching', 'remediation', 7], ['verifying', 'devsec', 15], ['patching', 'remediation', 10], ['publishing', 'gate', 5]]);
+});
+
+test('active phase segments end at the observation time and are absent without a valid start', () => {
+  const live = run({ status: 'verifying' });
+  assert.deepEqual(phaseSegments(live, [event(1, 'patching', 5), event(2, 'verifying', 20)], Date.parse(at(30))).map((segment) => [segment.stage, (segment.end - segment.start) / 1000]), [['patching', 15], ['verifying', 10]]);
+  assert.deepEqual(phaseSegments(run({ createdAt: 'not a date' }), [event(1, 'patching', 5)]), []);
 });

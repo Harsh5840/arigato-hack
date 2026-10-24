@@ -1,19 +1,51 @@
-import {Github, Rss, SearchCheck, Wrench, ShieldCheck, GitPullRequestDraft, ArrowRight, Radio, Check} from 'lucide-react';
-import {isTerminal, liveStatusLabels, type LiveEvent, type LiveRun} from '@/types/live-orchestration';
-import type {MonitoredRepository, MonitoringSnapshot, SupplyFinding} from '@/types/monitoring';
-import {japanTime} from './format';
+'use client';
 
-export default function SecurityJourney({repository, snapshot, findings, run, events}: {repository?: MonitoredRepository; snapshot: MonitoringSnapshot | null; findings: SupplyFinding[]; run: LiveRun | null; events: LiveEvent[]}) {
-  const activeStep = !repository ? 0 : run && !isTerminal(run.status) ? ['patching'].includes(run.status) ? 3 : ['verifying', 'reviewing'].includes(run.status) ? 4 : run.status === 'publishing' ? 5 : ['queued', 'baseline'].includes(run.status) ? 2 : 1 : -1;
-  const matched = findings.length > 0 || !!run?.checks.some(check => check.id === 'affected_inventory' && check.status === 'passed');
-  const steps = [
-    {title: 'Connect & inspect', detail: repository?.inventorySha ? `${repository.repairCapability?.stack.join(', ') || 'Dependencies'} detected; test plan checked` : 'Add a GitHub URL; detect its stack and tests', Icon: Github, done: !!repository?.inventorySha},
-    {title: 'Watch for alerts', detail: snapshot?.lastCycleAt ? 'Official advisories and forum leads checked' : 'The server keeps checking security sources', Icon: Rss, done: !!snapshot?.lastCycleAt},
-    {title: 'Confirm the risk', detail: run?.target ? `${run.target.packageName} ${run.target.installedVersion}` : matched ? 'An installed package or image is affected' : 'Match the advisory to your exact version', Icon: SearchCheck, done: matched},
-    {title: 'Prepare the update', detail: run?.repo.candidateSha ? `Fix written on branch · ${run.repo.candidateSha.slice(0, 7)}` : 'Fix Agent updates the package or image', Icon: Wrench, done: !!run?.repo.candidateSha},
-    {title: 'Test & review', detail: run?.checks.length ? `${run.checks.filter(check => check.status === 'passed').length}/${run.checks.length} observed checks passed` : 'Run relevant tests, then senior AI review', Icon: ShieldCheck, done: !!run?.draftPRAllowed},
-    {title: 'You review the PR', detail: run?.pullRequest ? `Draft PR #${run.pullRequest.number} is ready for you` : 'Open a draft PR; you decide on merge', Icon: GitPullRequestDraft, done: !!run?.pullRequest},
-  ];
-  const latest = events.at(-1);
-  return <section className="ops-security-journey" aria-label="How a security alert becomes a reviewed repair"><div className="ops-journey-heading"><h2>From alert to a fix you can review</h2><span>{run?.orchestrationEngine === 'langgraph' ? 'LangGraph · separate server worker' : 'Server-run orchestration'}</span></div><ol>{steps.map(({title, detail, Icon, done}, index) => <li key={title} className={`${activeStep === index ? 'active' : ''} ${done ? 'done' : ''}`} aria-current={activeStep === index ? 'step' : undefined}><div><span>{index + 1}</span>{done ? <Check size={17}/> : <Icon size={17}/>}</div><strong>{title}</strong><p>{detail}</p>{index < steps.length - 1 && <ArrowRight size={15} className="ops-step-arrow"/>}</li>)}</ol><div className="ops-journey-activity" role="status"><Radio size={14}/><strong>{run ? liveStatusLabels[run.status] : repository ? 'Ready to watch this repository' : 'Connect a repository to begin'}</strong><p>{latest?.message ?? (run?.status === 'queued' ? 'The run is queued for the separate worker.' : 'No execution results are invented. The activity here comes from stored worker events.')}</p>{latest && <time dateTime={latest.at}>{japanTime(latest.at)} JST</time>}</div></section>;
+import type {CSSProperties} from 'react';
+import {Github, Rss, SearchCheck, Wrench, ShieldCheck, GitPullRequestDraft, Check, UserRound, Cpu, Bot, ArrowRight} from 'lucide-react';
+import type {LiveRun} from '@/types/live-orchestration';
+import type {MonitoredRepository, MonitoringSnapshot, SupplyFinding} from '@/types/monitoring';
+import {activeStepIndex, flowSteps, stepDone, stepEvidence, type ActorKind} from './flow-model';
+
+const icons = [Github, Rss, SearchCheck, Wrench, ShieldCheck, GitPullRequestDraft];
+const actorIcon: Record<ActorKind, typeof Bot> = {you: UserRound, system: Cpu, agent: Bot};
+// Same role hues as the timeline lanes and token bars.
+const roleOf: Partial<Record<string, string>> = {confirm: 'role-supply', prepare: 'role-fixer', verify: 'role-reviewer'};
+
+interface Props {
+  repository?: MonitoredRepository; snapshot: MonitoringSnapshot | null; findings: SupplyFinding[]; run: LiveRun | null;
+  focus: number; onFocus: (index: number) => void;
+}
+export default function SecurityJourney({repository, snapshot, findings, run, focus, onFocus}: Props) {
+  const active = activeStepIndex(repository, run);
+  const done = stepDone(repository, snapshot, findings, run);
+  const reached = Math.max(active, done.lastIndexOf(true));
+  const step = flowSteps[focus];
+  const ActorIcon = actorIcon[step.actorKind];
+  return <section className="flow" aria-labelledby="flow-title">
+    <div className="section-head"><h2 id="flow-title">How a fix is made</h2><p>Six steps from a security alert to a pull request you review. Select a step to see who acts and what it is allowed to do.</p></div>
+    <ol className="flow-track" style={{'--reached': `${Math.max(0, reached) / (flowSteps.length - 1) * 100}%`} as CSSProperties}>
+      {flowSteps.map((item, index) => {const Icon = icons[index]; const state = active === index ? 'active' : done[index] ? 'done' : 'idle'; return <li key={item.id} data-state={state}>
+        <button aria-pressed={focus === index} aria-current={active === index ? 'step' : undefined} onClick={() => onFocus(index)}>
+          <span className="flow-node">{state === 'done' ? <Check size={18} strokeWidth={2.2}/> : <Icon size={18} strokeWidth={1.8}/>}</span>
+          <span className="flow-step-text"><strong>{item.title}</strong><span>{stepEvidence(index, repository, snapshot, findings, run)}</span></span>
+          <span className={`actor-chip ${item.actorKind} ${roleOf[item.id] ?? ''}`}>{item.actor}</span>
+        </button>
+      </li>;})}
+    </ol>
+    <div className="flow-detail" aria-live="polite">
+      <div className="flow-detail-head">
+        <span className={`actor-badge ${step.actorKind} ${roleOf[step.id] ?? ''}`}><ActorIcon size={16} strokeWidth={1.8}/></span>
+        <div><h3>{step.title}</h3><p>{step.actor}{step.actorKind === 'agent' ? ' · a model call with bounded tools' : step.actorKind === 'system' ? ' · deterministic, no model decides' : ' · human authority'}</p></div>
+        <span className={`flow-detail-state ${active === focus ? 'active' : done[focus] ? 'done' : ''}`}>{active === focus ? 'Running now' : done[focus] ? 'Recorded' : !repository && focus === 0 ? 'Start here' : 'Not reached yet'}</span>
+      </div>
+      <dl className="flow-io">
+        <div><dt>Receives</dt><dd>{step.receives}</dd></div>
+        <div className="flow-io-arrow" aria-hidden="true"><ArrowRight size={16}/></div>
+        <div className="flow-io-main"><dt>Does</dt><dd>{step.does}</dd></div>
+        <div className="flow-io-arrow" aria-hidden="true"><ArrowRight size={16}/></div>
+        <div><dt>Produces</dt><dd>{step.produces}</dd></div>
+      </dl>
+      <p className="flow-guard"><ShieldCheck size={15}/><span><strong>Cannot:</strong> {step.cannot}</span></p>
+    </div>
+  </section>;
 }

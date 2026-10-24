@@ -75,12 +75,12 @@ export default function LiveAgentFlow({run, events, onSelect, compact = false}: 
       ['evidence', 'devsec', 'gate', 'Checks + review', 'bottom-out', 'top-in'],
       ['pr', 'gate', 'review', 'Draft PR', 'right-out', 'left-in'],
     ];
-    return links.map(([id, source, target, label, sourceHandle, targetHandle], index) => ({id, source, target, label: mobile || compact ? String(index + 1) : label, ariaLabel: mobile || compact ? `${index + 1}. ${mobileHandoffs[index]}` : label, sourceHandle, targetHandle, type: 'smoothstep', pathOptions: {offset: mobile && id === 'candidate' ? 40 : mobile && id === 'evidence' ? 72 : 20}, animated: !!active && (source === active || target === active), markerEnd: {type: MarkerType.ArrowClosed, color: '#879878'}, style: {stroke: '#69795b', strokeWidth: 1.4}, labelStyle: {fill: '#c5cdbb', fontSize: 11}, labelBgStyle: {fill: '#181c16'}, labelBgPadding: [6, 4]} as Edge));
+    return links.map(([id, source, target, label, sourceHandle, targetHandle], index) => ({id, source, target, label: mobile || compact ? String(index + 1) : label, ariaLabel: mobile || compact ? `${index + 1}. ${mobileHandoffs[index]}` : label, sourceHandle, targetHandle, type: 'smoothstep', pathOptions: {offset: mobile && id === 'candidate' ? 40 : mobile && id === 'evidence' ? 72 : 20}, animated: !!active && (source === active || target === active), markerEnd: {type: MarkerType.ArrowClosed, color: '#6f7a6f'}, style: {stroke: '#9aa497', strokeWidth: 1.4}, labelStyle: {fill: '#3c473d', fontSize: 11, fontWeight: 600}, labelBgStyle: {fill: '#fbfcf9'}, labelBgPadding: [6, 4]} as Edge));
   }, [mobile, compact, active]);
   const onNodesChange = useCallback((changes: NodeChange<FlowNode>[]) => setNodes(previous => applyNodeChanges(changes, previous)), []);
   return <><div className={`orchestration-canvas live-flow-canvas ${mobile ? 'is-mobile' : ''}`} aria-label="Live agent orchestration diagram">
-    <ReactFlow key={mobile ? 'mobile' : 'desktop'} nodes={shownNodes} edges={edges} nodeTypes={nodeTypes} onNodesChange={onNodesChange} onNodeClick={(_, node) => onSelect(node.id as LiveNode)} nodesConnectable={false} deleteKeyCode={null} minZoom={.3} maxZoom={1.6} colorMode="dark" preventScrolling={false}>
-      <InitialFit mobile={mobile} compact={compact}/><Background gap={24} color="#394131" size={1}/>
+    <ReactFlow key={mobile ? 'mobile' : 'desktop'} nodes={shownNodes} edges={edges} nodeTypes={nodeTypes} onNodesChange={onNodesChange} onNodeClick={(_, node) => onSelect(node.id as LiveNode)} nodesConnectable={false} deleteKeyCode={null} minZoom={.3} maxZoom={1.6} colorMode="light" preventScrolling={false}>
+      <InitialFit mobile={mobile} compact={compact}/><Background gap={24} color="#d3d9ce" size={1}/>
     </ReactFlow>
   </div>{(mobile || compact) && <ol className={`live-flow-legend ${compact ? 'compact' : ''}`} aria-label="Numbered diagram handoffs">{mobileHandoffs.map((handoff, index) => <li key={handoff}><span>{index + 1}</span>{handoff}</li>)}</ol>}</>;
 }
