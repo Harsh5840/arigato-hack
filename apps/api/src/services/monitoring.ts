@@ -49,15 +49,19 @@ export async function monitorCycle(monitor: MonitoringStore, runs: RunStore) {
       const error = forum.errors.find(error => error.source === id || (typeof source !== 'string' && error.source === source.url));
       return { id, name: typeof source === 'string' ? source : source.name || id, kind: 'forum' as const, status: error ? 'error' as const : 'ok' as const, checkedAt: started, ...(error ? { error: error.message } : {}) };
     });
-    monitor.configure({ sources: [{ id: 'osv', name: 'OSV verified package advisories', kind: 'advisory', status: 'idle' }, ...health] });
+    monitor.configure({ sources: [{ id: 'osv', name: 'OSV exact package advisories', kind: 'advisory', status: 'idle' }, {id:'nginx-vendor',name:'nginx image vendor advisories',kind:'advisory',status:'idle'},{id:'php-vendor',name:'PHP + JPCERT image advisories',kind:'advisory',status:'idle'}, ...health] });
     const targets = monitor.repositories().filter(repo => requested.some(item => item.id === repo.id) || ((forced || (snapshot.enabled && due)) && repo.enabled));
     let osvError: string | undefined;
+    const sourceResults=new Map<string,{status:'ok'|'error';checkedAt:string;error?:string}>();
     for (const repo of targets) {
+      let touchedSources:string[]=[];
       try {
         monitor.patchRepository(repo.id, { scanStatus: 'scanning', lastError: undefined });
         const current = await readRepository({ owner: repo.owner, name: repo.name }, signal);
         const repairCapability=await getRepositoryRepairCapability(current,signal);
+        touchedSources=[...(current.inventory.some(item=>item.ecosystem!=='Docker')?['osv']:[]),...(current.inventory.some(item=>item.ecosystem==='Docker'&&item.name==='library/nginx')?['nginx-vendor']:[]),...(current.inventory.some(item=>item.ecosystem==='Docker'&&item.name==='library/php')?['php-vendor']:[])];
         const findings = await scanDependencies(repo.id, current.inventory, signal);
+        for(const source of touchedSources)if(sourceResults.get(source)?.status!=='error')sourceResults.set(source,{status:'ok',checkedAt:new Date().toISOString()});
         const checkedAt = new Date().toISOString();
         monitor.patchRepository(repo.id, { inventory: current.inventory, inventorySha: current.sha, canPush: current.canPush, repairCapability, profile:repairCapability.supported?'generic':'monitor-only', autoRemediate:repo.autoRemediate&&repairCapability.supported, defaultBranch: current.defaultBranch, lastCheckedAt: checkedAt, nextCheckAt: new Date(Date.now() + snapshot.intervalSeconds * 1000).toISOString(), scanStatus: 'idle', scanRequestedAt: undefined, lastError: current.warnings.length ? current.warnings.join(' ').slice(0, 1000) : undefined });
         for (const finding of findings) {
@@ -68,6 +72,7 @@ export async function monitorCycle(monitor: MonitoringStore, runs: RunStore) {
       } catch (error) {
         const message = error instanceof Error ? error.message : 'Repository scan failed.';
         osvError = message;
+        for(const source of touchedSources)sourceResults.set(source,{status:'error',checkedAt:new Date().toISOString(),error:message.slice(0,700)});
         monitor.patchRepository(repo.id, { scanStatus: 'error', scanRequestedAt: undefined, lastError: message.slice(0, 1000) });
       }
     }
@@ -82,7 +87,7 @@ export async function monitorCycle(monitor: MonitoringStore, runs: RunStore) {
       } catch (error) { monitor.configure({ scoutError: error instanceof Error ? error.message : 'Groq forum scout failed.' }); }
     }
     const current = monitor.snapshot();
-    monitor.configure({ lastCycleAt: started, nextCycleAt: new Date(Date.now() + snapshot.intervalSeconds * 1000).toISOString(), lastError: osvError, sources: current.sources.map(source => source.id === 'osv' ? { ...source, status: osvError ? 'error' : targets.length ? 'ok' : 'idle', checkedAt: targets.length ? new Date().toISOString() : source.checkedAt, error: osvError } : source) });
+    monitor.configure({ lastCycleAt: started, nextCycleAt: new Date(Date.now() + snapshot.intervalSeconds * 1000).toISOString(), lastError: osvError, sources: current.sources.map(source => sourceResults.has(source.id)?{...source,...sourceResults.get(source.id)}:source) });
   } catch (error) { monitor.configure({ lastCycleAt: started, nextCycleAt: new Date(Date.now() + snapshot.intervalSeconds * 1000).toISOString(), lastError: error instanceof Error ? error.message : 'Monitoring cycle failed.' }); }
   finally { cycling = false; }
 }

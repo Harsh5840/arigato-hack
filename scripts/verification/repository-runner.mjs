@@ -13,6 +13,7 @@ const artifacts = resolve(process.cwd(), 'artifacts');
 mkdirSync(working, { recursive: true }); mkdirSync(artifacts, { recursive: true });
 const log = [];
 const cleanEnvironment = () => ({ PATH: process.env.PATH, HOME: resolve(working, 'home'), LANG: 'C.UTF-8', GIT_TERMINAL_PROMPT: '0', GIT_CONFIG_NOSYSTEM: '1', GIT_CONFIG_GLOBAL: '/dev/null', DOCKER_CONFIG: resolve(working, 'docker-home') });
+const hostOwner = `${process.getuid?.() ?? 1000}:${process.getgid?.() ?? 1000}`;
 mkdirSync(cleanEnvironment().HOME, { recursive: true }); mkdirSync(cleanEnvironment().DOCKER_CONFIG, { recursive: true });
 function command(program, args, { cwd = working, timeout = 180_000, allowFailure = false } = {}) {
   const child = spawnSync(program, args, { cwd, env: cleanEnvironment(), encoding: 'utf8', shell: false, timeout, maxBuffer: 8_000_000 });
@@ -75,7 +76,7 @@ function copyFiles(files, destination) {
   for (const [path, content] of Object.entries(files)) { assert.ok(safeRepairPath(path)); const full = resolve(destination, path); mkdirSync(dirname(full), { recursive: true }); writeFileSync(full, content); }
 }
 function docker(image, arguments_, { folder, network = 'none', writable = false, timeout = 180_000, extra = [], allowFailure = false } = {}) {
-  const args = ['run', '--rm', '--network', network, '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges', '--cpus', '2', '--memory', '1g', '--pids-limit', '256', '--user', writable ? '0:0' : '10001:10001'];
+  const args = ['run', '--rm', '--network', network, '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges', '--cpus', '2', '--memory', '1g', '--pids-limit', '256', '--user', writable ? hostOwner : '10001:10001'];
   if (!writable) args.push('--read-only', '--tmpfs', '/tmp:rw,noexec,nosuid,size=128m');
   if (folder) args.push('--mount', `type=bind,source=${folder},target=/app${writable ? '' : ',readonly'}`, '--workdir', '/app');
   args.push('--env', 'HOME=/tmp', '--env', 'PIP_DISABLE_PIP_VERSION_CHECK=1', '--env', 'PYTHONDONTWRITEBYTECODE=1', ...extra, '--entrypoint', arguments_[0], image, ...arguments_.slice(1));
@@ -158,7 +159,7 @@ function imageVulnerabilities(report) { return (report.Results || []).flatMap(re
 function scanImage(image, name) {
   const output = resolve(artifacts, name + '.json');
   const cache = resolve(working, 'trivy-cache'); mkdirSync(cache, { recursive: true });
-  command('docker', ['run', '--rm', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges', '--cpus', '2', '--memory', '2g', '--pids-limit', '256', '--mount', `type=bind,source=${artifacts},target=/evidence`, '--mount', `type=bind,source=${cache},target=/cache`, runnerImages.trivy, 'image', '--cache-dir', '/cache', '--image-src', 'remote', '--scanners', 'vuln', '--list-all-pkgs', '--ignorefile', '/dev/null', '--skip-check-update', '--timeout', '4m', '--format', 'json', '--output', `/evidence/${name}.json`, image], { timeout: 300_000 });
+  command('docker', ['run', '--rm', '--user', hostOwner, '--env', 'HOME=/tmp', '--env', 'XDG_CACHE_HOME=/tmp', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges', '--cpus', '2', '--memory', '2g', '--pids-limit', '256', '--mount', `type=bind,source=${artifacts},target=/evidence`, '--mount', `type=bind,source=${cache},target=/cache`, runnerImages.trivy, 'image', '--cache-dir', '/cache', '--image-src', 'remote', '--scanners', 'vuln', '--list-all-pkgs', '--ignorefile', '/dev/null', '--skip-check-update', '--timeout', '4m', '--format', 'json', '--output', `/evidence/${name}.json`, image], { timeout: 300_000 });
   const report = JSON.parse(readFileSync(output, 'utf8'));
   assert.ok(report.SchemaVersion === 2 && report.ArtifactType === 'container_image' && Array.isArray(report.Results) && report.Results.length > 0 && report.Metadata, 'Independent image scan returned incomplete or unsupported evidence.');
   return report;

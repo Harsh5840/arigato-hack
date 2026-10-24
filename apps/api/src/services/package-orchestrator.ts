@@ -14,6 +14,7 @@ import { analyzePackage, proposePackageRepair, reviewPackageRepair } from '../ad
 import { configuredModels } from '../adapters/groq.js';
 import { getRepositoryRepairCapability, loadRepairContext } from './stack-discovery.js';
 import { discoverRepairPolicy, frozenRepairDigest, requiredRepairChecks, validateGenericRepair, type RepairPolicy } from './repair-policy.js';
+import { imageReferences, imageMatches, replacementImage, type RepairTarget } from '../../../../scripts/verification/repair-policy.mjs';
 import type { Evidence, Repair, Review } from '../adapters/types.js';
 
 // Historical fixture-test compatibility only. Runtime uses discovered policies.
@@ -34,6 +35,20 @@ export function validatePackageRepair(finding: SupplyFinding, baseFiles: Record<
 }
 
 interface GeneratedFileIdentity { targetRepository: string; runId: string; baseSha: string; candidateSha: string; workflowSha: string; githubRunId: number; verifierSha256: string }
+/** A dependency edit is mechanical. The model explains the remediation; this
+ * tool substitutes only the controller-corroborated image token in baseline bytes. */
+export function renderContainerImageRepair(content: string, target: RepairTarget): string {
+  let count = 0;
+  const rendered = content.split(/(?<=\n)/).map(line => {
+    const selected = imageReferences(line).filter(image => imageMatches(image, target));
+    if (selected.length > 1) throw new Error('A container line has ambiguous selected image references.');
+    if (!selected.length) return line;
+    count++;
+    return line.replace(selected[0], replacementImage(selected[0], target));
+  }).join('');
+  if (!count || rendered === content) throw new Error('The selected affected image token is missing or has no approved replacement.');
+  return rendered;
+}
 /** Resolver-produced integrity metadata is bound to the exact preparation run. */
 export function parseGeneratedLockfiles(raw: string | undefined, policy: RepairPolicy, expected: GeneratedFileIdentity): Repair['files'] {
   if (!raw || Buffer.byteLength(raw) > 2_000_000) throw new Error('The trusted preparation artifact is missing or oversized.');
@@ -138,6 +153,15 @@ export async function executePackageRun(store: RunStore, monitor: MonitoringStor
         const needsLock = policy.kind === 'npm' || policy.kind === 'composer';
         const modelPaths = policy.allowedPaths.filter(path => !/(?:^|\/)(?:package-lock\.json|composer\.lock)$/.test(path));
         repair = await call('fixer', () => proposePackageRepair({ ...finding, repairPolicy: { kind: policy.kind, allowedPaths: modelPaths, testCommand: policy.testCommand, lockfileGeneration: needsLock ? 'trusted central package manager; do not invent lockfile bytes' : 'not required' } }, baselineFiles, modelPaths, state.feedback, signal));
+        if (policy.kind === 'container') {
+          // The structured role already rejects paths outside modelPaths. Ignore
+          // its proposed file bytes and use the deterministic image-edit tool.
+          const content = renderContainerImageRepair(baselineFiles[policy.manifestPath], finding);
+          repair = { ...repair, files: [{ path: policy.manifestPath, content }],
+            summaryEn: `Updated only the selected image reference in ${policy.manifestPath}: ${finding.installedVersion} → ${finding.fixedVersion}, pinned to the controller-verified registry digest. The Fix Agent supplied the remediation explanation; a deterministic tool preserved all other baseline bytes.`,
+            summaryJa: `${policy.manifestPath} の対象イメージ参照のみを ${finding.installedVersion} から ${finding.fixedVersion} に更新し、検証済みのダイジェストに固定しました。修正エージェントの説明に基づき、決定論的ツールが他の内容を保持して置換しました。` };
+          store.event(id, 'remediation', 'mechanical-image-patch', 'The Fix Agent planned the update. The image-edit tool applied the verified tag/digest while preserving comments, quotes, whitespace, commands and mounts.');
+        }
         try { candidateFiles = validateGenericRepair(policy, finding, baselineFiles, repair.files, needsLock ? { allowUnresolvedLock: true } : undefined); }
         catch (error) { return { decision: 'retry', feedback: error instanceof Error ? error.message : 'Candidate policy rejected.' }; }
         let finalEdits = repair.files.filter(file => file.content !== baselineFiles[file.path]);

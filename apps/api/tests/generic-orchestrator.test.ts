@@ -1,12 +1,27 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { assertGenericEvidence, parseGeneratedLockfiles } from '../src/services/package-orchestrator.js';
+import { assertGenericEvidence, parseGeneratedLockfiles, renderContainerImageRepair } from '../src/services/package-orchestrator.js';
 import type { Evidence } from '../src/adapters/types.js';
 import type { RepairPolicy } from '../src/services/repair-policy.js';
 
 const policy: RepairPolicy = { version: 'generic-repair-v1', kind: 'npm', root: 'services/api', manifestPath: 'services/api/package-lock.json', allowedPaths: ['services/api/package.json', 'services/api/package-lock.json'], testPaths: ['services/api/tests/catalog.test.mjs'], testCommand: ['npm', 'run', 'test', '--ignore-scripts'], runnerImage: 'node:22@sha256:' + 'a'.repeat(64) };
 const expected = { targetRepository: 'independent-team/payment-service', runId: 'run-123-a1-prepare', baseSha: 'a'.repeat(40), candidateSha: 'b'.repeat(40), workflowSha: 'c'.repeat(40), githubRunId: 123, verifierSha256: 'd'.repeat(64) };
 const artifact = () => ({ target_repository: expected.targetRepository, run_id: expected.runId, base_sha: expected.baseSha, candidate_sha: expected.candidateSha, workflow_sha: expected.workflowSha, github_run_id: expected.githubRunId, verifier_sha256: expected.verifierSha256, files: [{ path: 'services/api/package-lock.json', content: '{"lockfileVersion":3}' }] });
+
+test('mechanical Compose image tool preserves quotes, indentation, comments and CRLF bytes', () => {
+  const target = { ecosystem: 'Docker', packageName: 'library/nginx', installedVersion: '1.26.0', fixedVersion: '1.30.6', manifestPath: 'compose.yaml', fixedImageRef: 'nginx:1.30.6@sha256:' + 'a'.repeat(64) };
+  const original = '# nginx:1.26.0 is mentioned only in a comment\r\nservices:\r\n  web:\r\n    image: "nginx:1.26.0"  # keep this comment\r\n    command: ["nginx", "-g", "daemon off;"]\r\n  backup:\r\n    image: \'nginx:1.25.0\'\r\n';
+  assert.equal(renderContainerImageRepair(original, target), original.replace('image: "nginx:1.26.0"', 'image: "' + target.fixedImageRef + '"'));
+  const quoted = '  image: \'docker.io/library/nginx:1.26.0\' # keep\n';
+  assert.equal(renderContainerImageRepair(quoted, target), "  image: 'docker.io/library/nginx:1.30.6@sha256:" + 'a'.repeat(64) + "' # keep\n");
+});
+
+test('mechanical Dockerfile tool preserves platform, stage alias and every unrelated instruction', () => {
+  const target = { ecosystem: 'Docker', packageName: 'library/php', installedVersion: '8.3.35-cli-bookworm', fixedVersion: '8.3.36-cli-bookworm', manifestPath: 'Dockerfile', fixedImageRef: 'php:8.3.36-cli-bookworm@sha256:' + 'b'.repeat(64) };
+  const original = '# no formatting changes\nFROM --platform=linux/amd64 php:8.3.35-cli-bookworm AS runtime\nWORKDIR /app\nCMD ["php", "public/index.php"]';
+  assert.equal(renderContainerImageRepair(original, target), original.replace('php:8.3.35-cli-bookworm', target.fixedImageRef));
+  assert.throws(() => renderContainerImageRepair('FROM php:8.3.34-cli-bookworm\n', target), /missing/);
+});
 
 test('generic orchestration accepts only the resolver lockfile belonging to the exact preparation run', () => {
   assert.deepEqual(parseGeneratedLockfiles(JSON.stringify(artifact()), policy, expected), [{ path: 'services/api/package-lock.json', content: '{"lockfileVersion":3}' }]);
