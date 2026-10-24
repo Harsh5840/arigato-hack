@@ -1,0 +1,47 @@
+{
+  "product": "ProofPatch",
+  "mode": "SIMULATED_DEMO",
+  "generatedAt": "2026-10-24T09:52:22.883Z",
+  "finding": {
+    "id": "PP-001",
+    "title": "Cross-tenant invoice access",
+    "severity": "Critical",
+    "repo": "billing-api",
+    "area": "Authorization",
+    "summary": "Tenant B can read Tenant A’s invoice.",
+    "before": "200 · unauthorized access",
+    "after": "404 · access denied",
+    "diff": [
+      "- return invoices.find(i => i.id === invoiceId);",
+      "+ return invoices.find(i =>",
+      "+   i.id === invoiceId &&",
+      "+   i.tenantId === session.tenantId",
+      "+ );"
+    ],
+    "checks": [
+      "Cross-tenant request denied",
+      "Invoice owner can still read",
+      "Unauthenticated request rejected",
+      "Missing invoice returns 404"
+    ]
+  },
+  "stage": 4,
+  "verification": {
+    "baselineFailed": true,
+    "patchedPassed": true,
+    "regressionPassed": true,
+    "testHashMatches": true,
+    "commitMatches": true
+  },
+  "draftEligible": true,
+  "baselineCommit": "DEMO-BASE",
+  "patchCommit": "DEMO-PATCH",
+  "testId": "DEMO-TEST-001",
+  "limitations": [
+    "Synthetic data only",
+    "No scanner or agent executed",
+    "No repository changed",
+    "No GitHub PR created",
+    "Demo identifiers are not cryptographic hashes"
+  ]
+}

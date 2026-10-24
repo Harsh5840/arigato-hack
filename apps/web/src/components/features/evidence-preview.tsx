@@ -1,0 +1,4 @@
+import type { Finding, Stage } from '@/types/security';
+export default function EvidencePreview({ finding, stage, blocked, open }: { finding: Finding; stage: Stage; blocked: boolean; open: () => void }) {
+  return <section className="panel evidence-preview"><h2>Evidence preview</h2><h3>{finding.title}</h3><span className="fixture-label">Synthetic demo fixture</span><p>{finding.summary}</p><dl className="evidence-rows"><div><dt>Before</dt><dd>{finding.before}</dd></div><div><dt>After</dt><dd>{stage >= 3 ? finding.after : 'Not run'}</dd></div></dl><p className="small">{blocked ? 'Regression failed. Draft preparation is blocked until all required checks pass.' : 'A fix is ready only after the check fails before and passes after.'}</p><button className="button outline full" onClick={open}>Open finding</button></section>;
+}

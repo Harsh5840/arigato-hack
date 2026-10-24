@@ -1,0 +1,823 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-24T11:26:27.373Z",
+  "title": "Design System: ProofPatch",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Primary",
+        "tonalRamp": [
+          "oklch(0.15 0.1521 124.83)",
+          "oklch(0.26 0.1521 124.83)",
+          "oklch(0.38 0.1521 124.83)",
+          "oklch(0.49 0.1521 124.83)",
+          "oklch(0.61 0.1521 124.83)",
+          "oklch(0.72 0.1521 124.83)",
+          "oklch(0.84 0.1521 124.83)",
+          "oklch(0.95 0.1521 124.83)"
+        ]
+      },
+      "primary-hover": {
+        "role": "primary",
+        "displayName": "Primary Hover",
+        "tonalRamp": [
+          "oklch(0.15 0.1228 125.64)",
+          "oklch(0.26 0.1228 125.64)",
+          "oklch(0.38 0.1228 125.64)",
+          "oklch(0.49 0.1228 125.64)",
+          "oklch(0.61 0.1228 125.64)",
+          "oklch(0.72 0.1228 125.64)",
+          "oklch(0.84 0.1228 125.64)",
+          "oklch(0.95 0.1228 125.64)"
+        ]
+      },
+      "primary-text": {
+        "role": "primary",
+        "displayName": "Primary Text",
+        "tonalRamp": [
+          "oklch(0.15 0.0384 130.59)",
+          "oklch(0.26 0.0384 130.59)",
+          "oklch(0.38 0.0384 130.59)",
+          "oklch(0.49 0.0384 130.59)",
+          "oklch(0.61 0.0384 130.59)",
+          "oklch(0.72 0.0384 130.59)",
+          "oklch(0.84 0.0384 130.59)",
+          "oklch(0.95 0.0384 130.59)"
+        ]
+      },
+      "background": {
+        "role": "neutral",
+        "displayName": "Background",
+        "tonalRamp": [
+          "oklch(0.15 0.0084 128.93)",
+          "oklch(0.26 0.0084 128.93)",
+          "oklch(0.38 0.0084 128.93)",
+          "oklch(0.49 0.0084 128.93)",
+          "oklch(0.61 0.0084 128.93)",
+          "oklch(0.72 0.0084 128.93)",
+          "oklch(0.84 0.0084 128.93)",
+          "oklch(0.95 0.0084 128.93)"
+        ]
+      },
+      "sidebar": {
+        "role": "neutral",
+        "displayName": "Sidebar",
+        "tonalRamp": [
+          "oklch(0.15 0.0086 128.99)",
+          "oklch(0.26 0.0086 128.99)",
+          "oklch(0.38 0.0086 128.99)",
+          "oklch(0.49 0.0086 128.99)",
+          "oklch(0.61 0.0086 128.99)",
+          "oklch(0.72 0.0086 128.99)",
+          "oklch(0.84 0.0086 128.99)",
+          "oklch(0.95 0.0086 128.99)"
+        ]
+      },
+      "panel": {
+        "role": "neutral",
+        "displayName": "Panel",
+        "tonalRamp": [
+          "oklch(0.15 0.0122 129.08)",
+          "oklch(0.26 0.0122 129.08)",
+          "oklch(0.38 0.0122 129.08)",
+          "oklch(0.49 0.0122 129.08)",
+          "oklch(0.61 0.0122 129.08)",
+          "oklch(0.72 0.0122 129.08)",
+          "oklch(0.84 0.0122 129.08)",
+          "oklch(0.95 0.0122 129.08)"
+        ]
+      },
+      "card": {
+        "role": "neutral",
+        "displayName": "Card",
+        "tonalRamp": [
+          "oklch(0.15 0.0104 132.71)",
+          "oklch(0.26 0.0104 132.71)",
+          "oklch(0.38 0.0104 132.71)",
+          "oklch(0.49 0.0104 132.71)",
+          "oklch(0.61 0.0104 132.71)",
+          "oklch(0.72 0.0104 132.71)",
+          "oklch(0.84 0.0104 132.71)",
+          "oklch(0.95 0.0104 132.71)"
+        ]
+      },
+      "machine-panel": {
+        "role": "neutral",
+        "displayName": "Machine Panel",
+        "tonalRamp": [
+          "oklch(0.15 0.0120 129.02)",
+          "oklch(0.26 0.0120 129.02)",
+          "oklch(0.38 0.0120 129.02)",
+          "oklch(0.49 0.0120 129.02)",
+          "oklch(0.61 0.0120 129.02)",
+          "oklch(0.72 0.0120 129.02)",
+          "oklch(0.84 0.0120 129.02)",
+          "oklch(0.95 0.0120 129.02)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "tonalRamp": [
+          "oklch(0.15 0.0080 106.55)",
+          "oklch(0.26 0.0080 106.55)",
+          "oklch(0.38 0.0080 106.55)",
+          "oklch(0.49 0.0080 106.55)",
+          "oklch(0.61 0.0080 106.55)",
+          "oklch(0.72 0.0080 106.55)",
+          "oklch(0.84 0.0080 106.55)",
+          "oklch(0.95 0.0080 106.55)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted",
+        "tonalRamp": [
+          "oklch(0.15 0.0089 121.69)",
+          "oklch(0.26 0.0089 121.69)",
+          "oklch(0.38 0.0089 121.69)",
+          "oklch(0.49 0.0089 121.69)",
+          "oklch(0.61 0.0089 121.69)",
+          "oklch(0.72 0.0089 121.69)",
+          "oklch(0.84 0.0089 121.69)",
+          "oklch(0.95 0.0089 121.69)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Line",
+        "tonalRamp": [
+          "oklch(0.15 0.0112 128.85)",
+          "oklch(0.26 0.0112 128.85)",
+          "oklch(0.38 0.0112 128.85)",
+          "oklch(0.49 0.0112 128.85)",
+          "oklch(0.61 0.0112 128.85)",
+          "oklch(0.72 0.0112 128.85)",
+          "oklch(0.84 0.0112 128.85)",
+          "oklch(0.95 0.0112 128.85)"
+        ]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Border",
+        "tonalRamp": [
+          "oklch(0.15 0.0200 127.39)",
+          "oklch(0.26 0.0200 127.39)",
+          "oklch(0.38 0.0200 127.39)",
+          "oklch(0.49 0.0200 127.39)",
+          "oklch(0.61 0.0200 127.39)",
+          "oklch(0.72 0.0200 127.39)",
+          "oklch(0.84 0.0200 127.39)",
+          "oklch(0.95 0.0200 127.39)"
+        ]
+      },
+      "outline-background": {
+        "role": "neutral",
+        "displayName": "Outline Background",
+        "tonalRamp": [
+          "oklch(0.15 0.0266 129.58)",
+          "oklch(0.26 0.0266 129.58)",
+          "oklch(0.38 0.0266 129.58)",
+          "oklch(0.49 0.0266 129.58)",
+          "oklch(0.61 0.0266 129.58)",
+          "oklch(0.72 0.0266 129.58)",
+          "oklch(0.84 0.0266 129.58)",
+          "oklch(0.95 0.0266 129.58)"
+        ]
+      },
+      "outline-text": {
+        "role": "neutral",
+        "displayName": "Outline Text",
+        "tonalRamp": [
+          "oklch(0.15 0.0877 127.51)",
+          "oklch(0.26 0.0877 127.51)",
+          "oklch(0.38 0.0877 127.51)",
+          "oklch(0.49 0.0877 127.51)",
+          "oklch(0.61 0.0877 127.51)",
+          "oklch(0.72 0.0877 127.51)",
+          "oklch(0.84 0.0877 127.51)",
+          "oklch(0.95 0.0877 127.51)"
+        ]
+      },
+      "critical-background": {
+        "role": "secondary",
+        "displayName": "Critical Background",
+        "tonalRamp": [
+          "oklch(0.15 0.0349 30.71)",
+          "oklch(0.26 0.0349 30.71)",
+          "oklch(0.38 0.0349 30.71)",
+          "oklch(0.49 0.0349 30.71)",
+          "oklch(0.61 0.0349 30.71)",
+          "oklch(0.72 0.0349 30.71)",
+          "oklch(0.84 0.0349 30.71)",
+          "oklch(0.95 0.0349 30.71)"
+        ]
+      },
+      "critical-text": {
+        "role": "secondary",
+        "displayName": "Critical Text",
+        "tonalRamp": [
+          "oklch(0.15 0.0918 27.42)",
+          "oklch(0.26 0.0918 27.42)",
+          "oklch(0.38 0.0918 27.42)",
+          "oklch(0.49 0.0918 27.42)",
+          "oklch(0.61 0.0918 27.42)",
+          "oklch(0.72 0.0918 27.42)",
+          "oklch(0.84 0.0918 27.42)",
+          "oklch(0.95 0.0918 27.42)"
+        ]
+      },
+      "high-background": {
+        "role": "secondary",
+        "displayName": "High Background",
+        "tonalRamp": [
+          "oklch(0.15 0.0287 86.96)",
+          "oklch(0.26 0.0287 86.96)",
+          "oklch(0.38 0.0287 86.96)",
+          "oklch(0.49 0.0287 86.96)",
+          "oklch(0.61 0.0287 86.96)",
+          "oklch(0.72 0.0287 86.96)",
+          "oklch(0.84 0.0287 86.96)",
+          "oklch(0.95 0.0287 86.96)"
+        ]
+      },
+      "high-text": {
+        "role": "secondary",
+        "displayName": "High Text",
+        "tonalRamp": [
+          "oklch(0.15 0.0859 76.61)",
+          "oklch(0.26 0.0859 76.61)",
+          "oklch(0.38 0.0859 76.61)",
+          "oklch(0.49 0.0859 76.61)",
+          "oklch(0.61 0.0859 76.61)",
+          "oklch(0.72 0.0859 76.61)",
+          "oklch(0.84 0.0859 76.61)",
+          "oklch(0.95 0.0859 76.61)"
+        ]
+      },
+      "medium-background": {
+        "role": "secondary",
+        "displayName": "Medium Background",
+        "tonalRamp": [
+          "oklch(0.15 0.0272 110.91)",
+          "oklch(0.26 0.0272 110.91)",
+          "oklch(0.38 0.0272 110.91)",
+          "oklch(0.49 0.0272 110.91)",
+          "oklch(0.61 0.0272 110.91)",
+          "oklch(0.72 0.0272 110.91)",
+          "oklch(0.84 0.0272 110.91)",
+          "oklch(0.95 0.0272 110.91)"
+        ]
+      },
+      "medium-text": {
+        "role": "secondary",
+        "displayName": "Medium Text",
+        "tonalRamp": [
+          "oklch(0.15 0.0750 111.23)",
+          "oklch(0.26 0.0750 111.23)",
+          "oklch(0.38 0.0750 111.23)",
+          "oklch(0.49 0.0750 111.23)",
+          "oklch(0.61 0.0750 111.23)",
+          "oklch(0.72 0.0750 111.23)",
+          "oklch(0.84 0.0750 111.23)",
+          "oklch(0.95 0.0750 111.23)"
+        ]
+      },
+      "destructive": {
+        "role": "secondary",
+        "displayName": "Destructive",
+        "tonalRamp": [
+          "oklch(0.15 0.1155 24.61)",
+          "oklch(0.26 0.1155 24.61)",
+          "oklch(0.38 0.1155 24.61)",
+          "oklch(0.49 0.1155 24.61)",
+          "oklch(0.61 0.1155 24.61)",
+          "oklch(0.72 0.1155 24.61)",
+          "oklch(0.84 0.1155 24.61)",
+          "oklch(0.95 0.1155 24.61)"
+        ]
+      },
+      "flow-canvas": {
+        "role": "neutral",
+        "displayName": "Flow Canvas",
+        "tonalRamp": [
+          "oklch(0.15 0.0129 135.13)",
+          "oklch(0.26 0.0129 135.13)",
+          "oklch(0.38 0.0129 135.13)",
+          "oklch(0.49 0.0129 135.13)",
+          "oklch(0.61 0.0129 135.13)",
+          "oklch(0.72 0.0129 135.13)",
+          "oklch(0.84 0.0129 135.13)",
+          "oklch(0.95 0.0129 135.13)"
+        ]
+      },
+      "flow-toolbar": {
+        "role": "neutral",
+        "displayName": "Flow Toolbar",
+        "tonalRamp": [
+          "oklch(0.15 0.0180 131.32)",
+          "oklch(0.26 0.0180 131.32)",
+          "oklch(0.38 0.0180 131.32)",
+          "oklch(0.49 0.0180 131.32)",
+          "oklch(0.61 0.0180 131.32)",
+          "oklch(0.72 0.0180 131.32)",
+          "oklch(0.84 0.0180 131.32)",
+          "oklch(0.95 0.0180 131.32)"
+        ]
+      },
+      "flow-node": {
+        "role": "neutral",
+        "displayName": "Flow Node",
+        "tonalRamp": [
+          "oklch(0.15 0.0237 132.49)",
+          "oklch(0.26 0.0237 132.49)",
+          "oklch(0.38 0.0237 132.49)",
+          "oklch(0.49 0.0237 132.49)",
+          "oklch(0.61 0.0237 132.49)",
+          "oklch(0.72 0.0237 132.49)",
+          "oklch(0.84 0.0237 132.49)",
+          "oklch(0.95 0.0237 132.49)"
+        ]
+      },
+      "flow-node-border": {
+        "role": "neutral",
+        "displayName": "Flow Node Border",
+        "tonalRamp": [
+          "oklch(0.15 0.0481 129.04)",
+          "oklch(0.26 0.0481 129.04)",
+          "oklch(0.38 0.0481 129.04)",
+          "oklch(0.49 0.0481 129.04)",
+          "oklch(0.61 0.0481 129.04)",
+          "oklch(0.72 0.0481 129.04)",
+          "oklch(0.84 0.0481 129.04)",
+          "oklch(0.95 0.0481 129.04)"
+        ]
+      },
+      "flow-node-active": {
+        "role": "neutral",
+        "displayName": "Flow Node Active",
+        "tonalRamp": [
+          "oklch(0.15 0.0385 130.75)",
+          "oklch(0.26 0.0385 130.75)",
+          "oklch(0.38 0.0385 130.75)",
+          "oklch(0.49 0.0385 130.75)",
+          "oklch(0.61 0.0385 130.75)",
+          "oklch(0.72 0.0385 130.75)",
+          "oklch(0.84 0.0385 130.75)",
+          "oklch(0.95 0.0385 130.75)"
+        ]
+      },
+      "flow-node-body": {
+        "role": "neutral",
+        "displayName": "Flow Node Body",
+        "tonalRamp": [
+          "oklch(0.15 0.0397 128.30)",
+          "oklch(0.26 0.0397 128.30)",
+          "oklch(0.38 0.0397 128.30)",
+          "oklch(0.49 0.0397 128.30)",
+          "oklch(0.61 0.0397 128.30)",
+          "oklch(0.72 0.0397 128.30)",
+          "oklch(0.84 0.0397 128.30)",
+          "oklch(0.95 0.0397 128.30)"
+        ]
+      },
+      "flow-edge": {
+        "role": "neutral",
+        "displayName": "Flow Edge",
+        "tonalRamp": [
+          "oklch(0.15 0.0488 130.71)",
+          "oklch(0.26 0.0488 130.71)",
+          "oklch(0.38 0.0488 130.71)",
+          "oklch(0.49 0.0488 130.71)",
+          "oklch(0.61 0.0488 130.71)",
+          "oklch(0.72 0.0488 130.71)",
+          "oklch(0.84 0.0488 130.71)",
+          "oklch(0.95 0.0488 130.71)"
+        ]
+      },
+      "flow-arrow": {
+        "role": "neutral",
+        "displayName": "Flow Arrow",
+        "tonalRamp": [
+          "oklch(0.15 0.0500 130.50)",
+          "oklch(0.26 0.0500 130.50)",
+          "oklch(0.38 0.0500 130.50)",
+          "oklch(0.49 0.0500 130.50)",
+          "oklch(0.61 0.0500 130.50)",
+          "oklch(0.72 0.0500 130.50)",
+          "oklch(0.84 0.0500 130.50)",
+          "oklch(0.95 0.0500 130.50)"
+        ]
+      },
+      "flow-edge-label": {
+        "role": "neutral",
+        "displayName": "Flow Edge Label",
+        "tonalRamp": [
+          "oklch(0.15 0.0261 126.61)",
+          "oklch(0.26 0.0261 126.61)",
+          "oklch(0.38 0.0261 126.61)",
+          "oklch(0.49 0.0261 126.61)",
+          "oklch(0.61 0.0261 126.61)",
+          "oklch(0.72 0.0261 126.61)",
+          "oklch(0.84 0.0261 126.61)",
+          "oklch(0.95 0.0261 126.61)"
+        ]
+      },
+      "flow-handle": {
+        "role": "neutral",
+        "displayName": "Flow Handle",
+        "tonalRamp": [
+          "oklch(0.15 0.0518 130.38)",
+          "oklch(0.26 0.0518 130.38)",
+          "oklch(0.38 0.0518 130.38)",
+          "oklch(0.49 0.0518 130.38)",
+          "oklch(0.61 0.0518 130.38)",
+          "oklch(0.72 0.0518 130.38)",
+          "oklch(0.84 0.0518 130.38)",
+          "oklch(0.95 0.0518 130.38)"
+        ]
+      },
+      "flow-held": {
+        "role": "secondary",
+        "displayName": "Flow Held",
+        "tonalRamp": [
+          "oklch(0.15 0.0830 32.81)",
+          "oklch(0.26 0.0830 32.81)",
+          "oklch(0.38 0.0830 32.81)",
+          "oklch(0.49 0.0830 32.81)",
+          "oklch(0.61 0.0830 32.81)",
+          "oklch(0.72 0.0830 32.81)",
+          "oklch(0.84 0.0830 32.81)",
+          "oklch(0.95 0.0830 32.81)"
+        ]
+      },
+      "flow-held-border": {
+        "role": "secondary",
+        "displayName": "Flow Held Border",
+        "tonalRamp": [
+          "oklch(0.15 0.0915 34.43)",
+          "oklch(0.26 0.0915 34.43)",
+          "oklch(0.38 0.0915 34.43)",
+          "oklch(0.49 0.0915 34.43)",
+          "oklch(0.61 0.0915 34.43)",
+          "oklch(0.72 0.0915 34.43)",
+          "oklch(0.84 0.0915 34.43)",
+          "oklch(0.95 0.0915 34.43)"
+        ]
+      },
+      "flow-control": {
+        "role": "neutral",
+        "displayName": "Flow Control",
+        "tonalRamp": [
+          "oklch(0.15 0.0318 130.76)",
+          "oklch(0.26 0.0318 130.76)",
+          "oklch(0.38 0.0318 130.76)",
+          "oklch(0.49 0.0318 130.76)",
+          "oklch(0.61 0.0318 130.76)",
+          "oklch(0.72 0.0318 130.76)",
+          "oklch(0.84 0.0318 130.76)",
+          "oklch(0.95 0.0318 130.76)"
+        ]
+      },
+      "flow-control-hover": {
+        "role": "neutral",
+        "displayName": "Flow Control Hover",
+        "tonalRamp": [
+          "oklch(0.15 0.0440 130.57)",
+          "oklch(0.26 0.0440 130.57)",
+          "oklch(0.38 0.0440 130.57)",
+          "oklch(0.49 0.0440 130.57)",
+          "oklch(0.61 0.0440 130.57)",
+          "oklch(0.72 0.0440 130.57)",
+          "oklch(0.84 0.0440 130.57)",
+          "oklch(0.95 0.0440 130.57)"
+        ]
+      },
+      "flow-control-border": {
+        "role": "neutral",
+        "displayName": "Flow Control Border",
+        "tonalRamp": [
+          "oklch(0.15 0.0419 128.80)",
+          "oklch(0.26 0.0419 128.80)",
+          "oklch(0.38 0.0419 128.80)",
+          "oklch(0.49 0.0419 128.80)",
+          "oklch(0.61 0.0419 128.80)",
+          "oklch(0.72 0.0419 128.80)",
+          "oklch(0.84 0.0419 128.80)",
+          "oklch(0.95 0.0419 128.80)"
+        ]
+      },
+      "flow-control-ink": {
+        "role": "neutral",
+        "displayName": "Flow Control Ink",
+        "tonalRamp": [
+          "oklch(0.15 0.0444 128.40)",
+          "oklch(0.26 0.0444 128.40)",
+          "oklch(0.38 0.0444 128.40)",
+          "oklch(0.49 0.0444 128.40)",
+          "oklch(0.61 0.0444 128.40)",
+          "oklch(0.72 0.0444 128.40)",
+          "oklch(0.84 0.0444 128.40)",
+          "oklch(0.95 0.0444 128.40)"
+        ]
+      },
+      "role-selected": {
+        "role": "neutral",
+        "displayName": "Role Selected",
+        "tonalRamp": [
+          "oklch(0.15 0.0450 130.80)",
+          "oklch(0.26 0.0450 130.80)",
+          "oklch(0.38 0.0450 130.80)",
+          "oklch(0.49 0.0450 130.80)",
+          "oklch(0.61 0.0450 130.80)",
+          "oklch(0.72 0.0450 130.80)",
+          "oklch(0.84 0.0450 130.80)",
+          "oklch(0.95 0.0450 130.80)"
+        ]
+      },
+      "role-selected-border": {
+        "role": "neutral",
+        "displayName": "Role Selected Border",
+        "tonalRamp": [
+          "oklch(0.15 0.1280 130.03)",
+          "oklch(0.26 0.1280 130.03)",
+          "oklch(0.38 0.1280 130.03)",
+          "oklch(0.49 0.1280 130.03)",
+          "oklch(0.61 0.1280 130.03)",
+          "oklch(0.72 0.1280 130.03)",
+          "oklch(0.84 0.1280 130.03)",
+          "oklch(0.95 0.1280 130.03)"
+        ]
+      },
+      "role-selected-ink": {
+        "role": "neutral",
+        "displayName": "Role Selected Ink",
+        "tonalRamp": [
+          "oklch(0.15 0.0833 127.61)",
+          "oklch(0.26 0.0833 127.61)",
+          "oklch(0.38 0.0833 127.61)",
+          "oklch(0.49 0.0833 127.61)",
+          "oklch(0.61 0.0833 127.61)",
+          "oklch(0.72 0.0833 127.61)",
+          "oklch(0.84 0.0833 127.61)",
+          "oklch(0.95 0.0833 127.61)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "Page headline",
+        "purpose": "Primary page heading."
+      },
+      "case-title": {
+        "displayName": "Selected finding",
+        "purpose": "Selected case title, with responsive adjustments."
+      },
+      "title": {
+        "displayName": "Section title",
+        "purpose": "Section hierarchy; panel headings are denser."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Evidence and case explanations."
+      },
+      "label": {
+        "displayName": "Metadata",
+        "purpose": "Compact written severity and status."
+      },
+      "button": {
+        "displayName": "Action",
+        "purpose": "Compact primary and secondary controls."
+      },
+      "code": {
+        "displayName": "Illustrative diff",
+        "purpose": "Readable synthetic patch evidence."
+      },
+      "flow-agent-title": {
+        "displayName": "Graph agent title",
+        "purpose": "Names one of exactly three product agents."
+      },
+      "flow-system-title": {
+        "displayName": "Graph infrastructure title",
+        "purpose": "Names the deterministic control and human review layer."
+      },
+      "flow-agent-body": {
+        "displayName": "Graph agent description",
+        "purpose": "States each agent's responsibility."
+      },
+      "flow-edge-label": {
+        "displayName": "Handoff label",
+        "purpose": "Names the directed baseline, repair, replay, evidence and return routes."
+      },
+      "inspector-title": {
+        "displayName": "Selected role title",
+        "purpose": "Introduces the selected agent or infrastructure role's contract."
+      },
+      "mobile-role-name": {
+        "displayName": "Mobile full role name",
+        "purpose": "Shows each product agent before the graph at mobile width."
+      },
+      "mobile-handoff": {
+        "displayName": "Mobile written handoff",
+        "purpose": "States baseline, repair, replay and human review before the interactive diagram."
+      }
+    },
+    "shadows": [
+      {
+        "name": "dialog",
+        "value": "0 24px 90px #0008",
+        "purpose": "Separate the modal from the workspace; resting panels rely on tone and borders."
+      }
+    ],
+    "motion": [
+      {
+        "name": "control-state",
+        "value": "background .16s, color .16s",
+        "purpose": "Navigation and button hover."
+      },
+      {
+        "name": "interlock",
+        "value": "transform 740ms cubic-bezier(.22,.7,.25,1)",
+        "purpose": "Evidence-driven gate and cartridge movement."
+      },
+      {
+        "name": "cartridge-delay",
+        "value": "220ms",
+        "purpose": "Successful cartridge travel follows raised gates."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "transition: none",
+        "purpose": "Machine motion is disabled; global transitions are reduced to .01ms."
+      },
+      {
+        "name": "simulation-step",
+        "value": "850ms",
+        "purpose": "Deterministic timer advances the synthetic handoff; no model executes."
+      },
+      {
+        "name": "flow-reduced-motion",
+        "value": "animation: none !important",
+        "purpose": "Stops React Flow edge-path animation for reduced-motion preferences."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "large",
+        "value": "1600px"
+      },
+      {
+        "name": "compact-desktop",
+        "value": "1180px"
+      },
+      {
+        "name": "stacked-stage",
+        "value": "900px"
+      },
+      {
+        "name": "mobile",
+        "value": "680px"
+      },
+      {
+        "name": "orchestration-wrap",
+        "value": "1050px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary action",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Run the synthetic workflow.",
+      "html": "<button class=\"ds-primary\"><svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"m6 3 14 9-14 9z\" fill=\"currentColor\"/></svg>Run demo</button>",
+      "css": ".ds-primary{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:1px solid transparent;border-radius:7px;padding:10px 15px;font:600 12px/1.3 var(--font-public,'Public Sans'),sans-serif;white-space:nowrap;cursor:pointer;transition:background .16s,color .16s;background:var(--blue,#c7ef79);color:#18220e}.ds-primary:hover{background:#d6f99d}.ds-primary:focus-visible{outline:2px solid var(--blue,#c7ef79);outline-offset:4px}.ds-primary:disabled{cursor:not-allowed;opacity:.5}@media(prefers-reduced-motion:reduce){.ds-primary{transition:none}}"
+    },
+    {
+      "name": "Outline action",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Open the selected finding for human review.",
+      "html": "<button class=\"ds-outline\">Review finding<svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M7 7h10v10M7 17 17 7\"/></svg></button>",
+      "css": ".ds-outline{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:1px solid transparent;border-radius:7px;padding:10px 15px;font:600 12px/1.3 var(--font-public,'Public Sans'),sans-serif;white-space:nowrap;cursor:pointer;transition:background .16s,color .16s;border-color:#555d48;background:#252c1e;color:#d3efb0}.ds-outline:hover{background:#323e27;border-color:#879c6b}.ds-outline:focus-visible{outline:2px solid var(--blue,#c7ef79);outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-outline{transition:none}}"
+    },
+    {
+      "name": "Subtle action",
+      "kind": "button",
+      "description": "Export or support the review workflow.",
+      "html": "<button class=\"ds-subtle\">Export selected</button>",
+      "css": ".ds-subtle{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:1px solid transparent;border-radius:7px;padding:10px 15px;font:600 12px/1.3 var(--font-public,'Public Sans'),sans-serif;white-space:nowrap;cursor:pointer;transition:background .16s,color .16s;background:#252a20;border-color:#3c4333;color:#d1d8c4}.ds-subtle:hover{background:#303a26}.ds-subtle:focus-visible{outline:2px solid var(--blue,#c7ef79);outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-subtle{transition:none}}"
+    },
+    {
+      "name": "Scenario chooser",
+      "kind": "input",
+      "refersTo": "scenario-select",
+      "description": "Native demo outcome select; this surface has no text-entry field.",
+      "html": "<label class=\"ds-scenario\">Demo outcome<select aria-label=\"Demo outcome\"><option>Checks pass</option><option>Benign regression fails</option></select></label>",
+      "css": ".ds-scenario{display:flex;flex-direction:column;gap:6px;font:10px var(--font-public,'Public Sans'),sans-serif;color:#a4b391}.ds-scenario select{font:11px var(--font-public,'Public Sans'),sans-serif;padding:9px;border:1px solid #50613f;border-radius:6px;background:#242f19;color:#dae9c7}.ds-scenario select:focus-visible{outline:2px solid var(--blue,#c7ef79);outline-offset:4px}"
+    },
+    {
+      "name": "Workspace navigation",
+      "kind": "nav",
+      "description": "Five destinations; mobile uses an icon above every label in an equal-column grid.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Workspace\"><button aria-current=\"page\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"3\" y=\"3\" width=\"8\" height=\"8\" rx=\"2\"/><path d=\"M7 11v4a2 2 0 0 0 2 2h4\"/><rect x=\"13\" y=\"13\" width=\"8\" height=\"8\" rx=\"2\"/></svg><span>Agents</span></button><button><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"9\" rx=\"1\"/><rect x=\"14\" y=\"3\" width=\"7\" height=\"5\" rx=\"1\"/><rect x=\"14\" y=\"12\" width=\"7\" height=\"9\" rx=\"1\"/><rect x=\"3\" y=\"16\" width=\"7\" height=\"5\" rx=\"1\"/></svg><span>Overview</span></button><button><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6\"/><circle cx=\"11\" cy=\"13\" r=\"2\"/><path d=\"m13 15 2 2\"/></svg><span>Findings</span></button><button><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><ellipse cx=\"12\" cy=\"5\" rx=\"9\" ry=\"3\"/><path d=\"M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5M3 12c0 1.66 4 3 9 3s9-1.34 9-3\"/></svg><span>Evidence</span></button><button><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"6\" cy=\"6\" r=\"3\"/><circle cx=\"18\" cy=\"18\" r=\"3\"/><path d=\"M9 6h8a4 4 0 0 1 0 8H7a4 4 0 0 0 0 8h8\"/></svg><span>Roadmap</span></button></nav>",
+      "css": ".ds-nav{display:flex;flex-direction:column;gap:5px;max-width:196px;padding:12px;background:#11130f}.ds-nav button{display:flex;align-items:center;gap:11px;border:0;background:transparent;padding:12px;border-radius:8px;text-align:left;font:13px var(--font-public,'Public Sans'),sans-serif;color:#a9aca3;cursor:pointer;transition:background .16s,color .16s}.ds-nav button:hover{color:var(--ink,#f1f1eb);background:#22261e}.ds-nav button[aria-current=page]{background:#2c3423;color:#d2f39d}.ds-nav button:focus-visible{outline:2px solid var(--blue,#c7ef79);outline-offset:4px}.ds-nav svg{flex-shrink:0}@media(max-width:680px){.ds-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));max-width:none;gap:2px}.ds-nav button{min-width:0;flex-direction:column;justify-content:center;gap:5px;padding:10px 1px;border-radius:6px 6px 0 0;font-size:9px}.ds-nav svg{width:15px;height:15px}}@media(prefers-reduced-motion:reduce){.ds-nav button{transition:none}}"
+    },
+    {
+      "name": "Critical severity",
+      "kind": "chip",
+      "refersTo": "severity-critical",
+      "description": "Written severity with clay tint; a status is separate.",
+      "html": "<span class=\"ds-critical\">Critical</span>",
+      "css": ".ds-critical{display:inline-flex;align-items:center;gap:5px;border:1px solid #684236;border-radius:4px;padding:3px 6px;background:#39231f;color:#ffb2a8;font:500 10px/1.4 var(--font-public,'Public Sans'),sans-serif;white-space:nowrap}"
+    },
+    {
+      "name": "Evidence preview",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "Compact before/after result with explicit synthetic and blocked labels.",
+      "html": "<section class=\"ds-evidence\"><h2>Evidence preview</h2><h3>Cross-tenant invoice access</h3><span class=\"ds-fixture\">Synthetic demo fixture</span><dl><div><dt>Before</dt><dd>200 · unauthorized access</dd></div><div><dt>After</dt><dd>404 · access denied</dd></div></dl><p>Regression failed. Draft preparation is blocked until all required checks pass.</p></section>",
+      "css": ".ds-evidence{max-width:355px;padding:20px;border:1px solid var(--line,#32352f);background:#1a1d17;border-radius:12px;color:var(--ink,#f1f1eb);font-family:var(--font-public,'Public Sans'),sans-serif}.ds-evidence h2{margin:0 0 16px;font-size:15px;font-weight:600}.ds-evidence h3{margin:0 0 9px;font-size:17px;line-height:1.35;font-weight:600;letter-spacing:-.02em}.ds-fixture{font-size:9px;padding:3px 6px;border:1px solid #3c4730;border-radius:4px;color:#b9c5aa;background:#252d1e}.ds-evidence dl{margin:14px 0 2px;background:#151a10;border:1px solid #354029;border-radius:6px;font-size:10px;overflow:hidden}.ds-evidence dl>div{display:flex}.ds-evidence dl>div+div{border-top:1px solid #354029}.ds-evidence dt{padding:9px 10px;width:58px;color:#98a688;flex-shrink:0;background:#1d2516}.ds-evidence dd{margin:0;padding:9px 10px;color:#d5dec9;overflow-wrap:anywhere}.ds-evidence p{margin:9px 0 0;font-size:10px;line-height:1.6;color:#abb69b}"
+    },
+    {
+      "name": "Five-condition evidence gate",
+      "kind": "custom",
+      "description": "Static SVG specimen of the blocked 4/5 state; production renders the client-only Bklit Gauge.",
+      "html": "<section class=\"ds-gate\" aria-label=\"4 of 5 evidence gates satisfied in the synthetic demo\"><div><h2>Evidence gate</h2><p>Benign regression blocks the draft.</p><strong>4 / 5 satisfied</strong></div><svg width=\"95\" height=\"54\" viewBox=\"0 0 95 70\" role=\"img\" aria-label=\"Four active notches, one inactive\"><g fill=\"var(--chart-1,#c7ef79)\"><path d=\"M14 33 22 19 29 23 21 37z\"/><path d=\"M29 10h19v8H29z\"/><path d=\"m54 18 10 14-7 5-10-14z\"/><path d=\"m8 43 8-3 7 17-8 3z\"/></g><path fill=\"var(--border,#34392e)\" d=\"m58 43 8-3 7 17-8 3z\"/></svg></section>",
+      "css": ".ds-gate{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:20px;max-width:380px;border:1px solid var(--line,#32352f);border-radius:12px;background:#1a1d17;color:var(--ink,#f1f1eb);font-family:var(--font-public,'Public Sans'),sans-serif}.ds-gate h2{margin:0;font-size:13px;font-weight:600}.ds-gate p{font-size:10px;line-height:1.6;margin:6px 0;color:#aab59a}.ds-gate strong{font-size:11px;color:#c7dfac;font-variant-numeric:tabular-nums}.ds-gate svg{flex-shrink:0}"
+    },
+    {
+      "name": "Agent node",
+      "kind": "custom",
+      "refersTo": "flow-agent",
+      "description": "Static card specimen of a selectable React Flow agent node; the application owns the live routing and dragging.",
+      "html": "<div class=\"ds-agent\" tabindex=\"0\"><div class=\"ds-agent-heading\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11\"/><path d=\"m9 12 2 2 4-4\"/></svg><span>Agent 3</span><i></i></div><strong>Development Security Agent</strong><p>Watch, test and verify</p><div class=\"ds-agent-footer\"><span>Run isolated checks</span><span>Planned</span></div><b class=\"ds-port ds-port-left\"></b><b class=\"ds-port ds-port-right\"></b></div>",
+      "css": ".ds-agent{width:214px;min-height:152px;padding:17px 17px 0;background:#22291d;border:1px solid #536144;border-radius:10px;position:relative;color:var(--ink,#f1f1eb);font-family:var(--font-public,'Public Sans'),sans-serif}.ds-agent-heading{display:flex;align-items:center;gap:8px;color:#c9d9b7;margin-bottom:13px}.ds-agent-heading span{font-size:10px}.ds-agent-heading i{margin-left:auto;border:1px solid #a8ba94;width:6px;height:6px;border-radius:50%}.ds-agent>strong{display:block;font-size:16px;letter-spacing:-.025em;line-height:1.25;font-weight:600}.ds-agent>p{font-size:11px;color:#bac7ac;margin:7px 0 0;line-height:1.45}.ds-agent-footer{display:flex;justify-content:space-between;gap:5px;margin-top:16px;padding:10px 0;border-top:1px solid #46523b;color:#bac7ac;font-size:9px}.ds-agent-footer span:last-child{color:#d0dfbf}.ds-port{position:absolute;width:6px;height:6px;border:1px solid #181c16;background:#9daf8d;border-radius:50%;top:50%}.ds-port-left{left:-4px}.ds-port-right{right:-4px}.ds-agent:focus-visible{outline:2px solid #c7ef79;outline-offset:4px}"
+    },
+    {
+      "name": "Role selector",
+      "kind": "chip",
+      "refersTo": "role-selected",
+      "description": "Three agent selectors above the role inspector.",
+      "html": "<div class=\"ds-role-picker\" aria-label=\"Select agent\"><button aria-pressed=\"true\">Supply chain</button><button aria-pressed=\"false\">Remediation</button><button aria-pressed=\"false\">DevSec</button></div>",
+      "css": ".ds-role-picker{display:flex;gap:6px;flex-wrap:wrap}.ds-role-picker button{border:1px solid #46513b;background:#1c2218;padding:8px 11px;border-radius:6px;font:11px var(--font-public,'Public Sans'),sans-serif;color:#b4c1a7;cursor:pointer}.ds-role-picker button[aria-pressed=true]{background:#303d24;border-color:#8fba60;color:#ddf8bc}.ds-role-picker button:hover{background:#303d24}.ds-role-picker button:focus-visible{outline:2px solid var(--blue,#c7ef79);outline-offset:4px}"
+    },
+    {
+      "name": "Mobile agent summary",
+      "kind": "custom",
+      "refersTo": "mobile-agent-summary",
+      "description": "Mobile-only semantic role orientation immediately after the hero; hidden above 680px.",
+      "html": "<section class=\"ds-mobile-agent-summary\" aria-label=\"Three agent roles and handoffs\"><dl><div><dt>Supply Chain Agent</dt><dd>Discover upstream risk</dd></div><div><dt>Remediation Agent</dt><dd>Propose the repair</dd></div><div><dt>Development Security Agent</dt><dd>Watch, test and verify</dd></div></dl><p>Supply Chain → DevSec baseline → Remediation → DevSec replay → human review</p></section>",
+      "css": ".ds-mobile-agent-summary{display:none;font-family:var(--font-public,'Public Sans'),sans-serif}@media(max-width:680px){.ds-mobile-agent-summary{display:block;margin:0 0 23px;padding-bottom:18px;border-bottom:1px solid var(--line,#32352f)}.ds-mobile-agent-summary dl{margin:0}.ds-mobile-agent-summary dl>div{padding:9px 0}.ds-mobile-agent-summary dt{width:auto;padding:0;background:transparent;font-size:12px;font-weight:600;color:var(--ink,#f1f1eb)}.ds-mobile-agent-summary dd{padding:0;font-size:10px;color:#bac7ac;margin:4px 0 0}.ds-mobile-agent-summary>p{font-size:10px;line-height:1.8;color:var(--green,#c7ef79);margin:11px 0 0;max-width:48ch}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Verification Interlock",
+    "overview": "A patch moves only when its proof aligns. The user-selected dark engineering workspace gives the evidence workflow the character of a precise instrument: charcoal surfaces, warm white type, restrained lime and an isometric mechanism whose position carries meaning.\n\nThe workspace is compact and operational. Selected findings, before/after evidence and explicit verification states carry the hierarchy. Public Sans keeps interface copy direct; thin borders and small tonal shifts organize dense information. The machine provides the signature silhouette and makes the gate tangible.",
+    "keyCharacteristics": [
+      "Charcoal surfaces with a muted olive cast and warm white text.",
+      "Restrained lime for primary action, selection and satisfied evidence gates.",
+      "Compact evidence surfaces with explicit status and human review authority.",
+      "Functional isometric geometry tied to the selected finding's state."
+    ],
+    "rules": [
+      {
+        "name": "The State Has Words Rule",
+        "body": "Color reinforces a written verification state. A lime cartridge alone never asserts that a patch is verified.",
+        "section": "colors"
+      },
+      {
+        "name": "The Evidence Before Ornament Rule",
+        "body": "Geometry must explain the selected finding's progression. Keep the machine's five gate fingers and cartridge movement tied to evidence state.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Baseline Before Candidate Rule",
+        "body": "Supply Chain sends its risk brief to DevSec; DevSec records an affected baseline and freezes checks before Remediation writes. Remediation returns the candidate to DevSec. Local-change jobs enter through DevSec and request repair directly. Gate failure routes the failed evidence back to Remediation for another candidate; passing security checks never erase failed legitimate-use controls.",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "Do use the charcoal, warm white and lime roles to extend this engineering workspace.",
+      "Do show a written status next to every meaningful color or gauge result.",
+      "Do preserve all five gate conditions and the blocked middle finger when regression fails.",
+      "Do retain visible status and a reachable action in every mobile finding row.",
+      "Do preserve synthetic labels, human review authority, visible focus and reduced motion.",
+      "Do treat `workspace.css` and the current feature components as the built visual source.",
+      "Do preserve exactly three product agents and identify controller, evidence, gate and human review separately.",
+      "Do keep DevSec baseline/frozen checks before repair, candidate replay and failed-check return visible at both graph sizes.",
+      "Do keep advisory snapshots, fictional inventory and simulated test results explicitly distinguishable.",
+      "Do retain owner follow-up as a hold even when all five represented checks pass."
+    ],
+    "donts": [
+      "Don't describe simulated evidence, placeholder identifiers or local draft previews as live execution or a sent pull request.",
+      "Don't advance the machine through a blocked gate or display five active gauge notches for four satisfied checks.",
+      "Don't hide mobile status behind horizontal table discovery.",
+      "Don't turn every panel into a floating shadow card or add decorative animation to verification states.",
+      "Don't restore the earlier rejected concept from the root design specification.",
+      "Don't present the deterministic controller as a fourth agent or grant an agent merge authority.",
+      "Don't turn a ready graph state into an automatic merge or a guarantee of complete security."
+    ]
+  }
+}

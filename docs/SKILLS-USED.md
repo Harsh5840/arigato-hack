@@ -1,0 +1,15 @@
+# Applied skills and component sources
+
+- [Impeccable](https://github.com/pbakaus/impeccable): loaded local v4.1.1 for direction, craft floor, detector, independent review and documentation. No mid-session update.
+- [Anthropic frontend-design](https://github.com/anthropics/skills/tree/main/skills/frontend-design): subject-specific composition, typography, hierarchy and restraint.
+- [Anthropic pptx](https://github.com/anthropics/skills/tree/main/skills/pptx): editable PptxGenJS deck, varied layouts, native chart/tables, notes and Office validation.
+- [Anatomy](https://github.com/wheresryan22/anatomy): original 63-part interlock, actual kit geometry, state mapping, passing/blocked assets, geometry and line audits.
+- [Bklit UI](https://github.com/bklit/bklit-ui): real Gauge installed from https://ui.bklit.com/r/gauge-chart.json via shadcn; source under apps/web/src/components/charts. MIT license included. Bklit Studio was not copied.
+- Built-in Presentations and PDF skills: renders, first-party import, file validation and PDF preview.
+- React Flow is a library, not a skill: @xyflow/react 12.12.0 powers the actual interactive agent graph, following its official documentation.
+
+Downloaded project skills live in .agents/skills: frontend-design, pptx, anatomy and bklit-ui. Public Sans is self-hosted from Google Fonts with its OFL license.
+
+“Peacock” did not identify an unambiguous frontend skill in GitHub search. It was not installed or represented as used.
+
+No Anatomy gallery publishing or other external publication was performed.

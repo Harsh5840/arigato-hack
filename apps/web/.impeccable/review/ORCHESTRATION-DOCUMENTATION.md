@@ -1,0 +1,13 @@
+# Agents design record update
+
+Updated 24 October 2026. Documentation merge for the built Agents surface; application source and `.impeccable/config.json` were not modified.
+
+- Extended the existing `DESIGN.md` while preserving its eight canonical sections, Verification Interlock identity, Overview machine and client-only Bklit evidence-gauge record.
+- Recorded default Agents navigation, all five destinations and the mobile icon-over-label grid; actual React Flow sizing, measured-node/dimension-aware initial fit, desktop positions and vertical mobile routing; three agent contracts, deterministic controller, baseline-before-candidate handoffs, candidate replay and failed-check return.
+- Documented run/status/stop/reset/export, selected role inspector, temporary Agents run state versus persisted findings, research snapshots versus simulated execution, owner follow-up holds and reduced-motion behavior.
+- Added the final mobile-only semantic role summary immediately below the hero: three full agent names/verbs and the explicit baseline → repair → replay → human review handoff. Recorded its source type, row spacing, divider, inherited `dt`/`dd` resets and desktop-hidden behavior. Opened `orchestration-mobile-first-viewport.png`; all three roles and the handoff are visible before the graph in the supplied 390 × 900 capture.
+- Merged intentional Agents color/type advisory drift using exact incumbent CSS/component values and named semantic roles. The schemaVersion 2 sidecar retains existing primitives/specimens, updates navigation, adds agent-node/role-selector specimens and extends color ramps, type metadata, motion and breakpoints. Synthesized ramps are preview aids rather than additional shipped colors.
+
+Source basis: `PRODUCT.md`, `src/app/layout.tsx`, `src/styles/workspace.css`, `src/styles/orchestration.css`, `src/components/features/agent-orchestration.tsx`, `src/components/features/workspace.tsx`, `src/components/layout/sidebar.tsx`, `src/lib/orchestration.ts`, and the authoritative root `docs/THREE-AGENT-ARCHITECTURE.md`. Read the supplied orchestration desktop, mobile, mobile-flow and blocked captures at their existing review paths. Final source uses `InitialFit` after node measurement and nonzero React Flow dimensions, padding 0.3 mobile / 0.08 desktop, and explicit 1160px / 570px canvas heights.
+
+Documentation validation: eight canonical sections remain; sidecar JSON parses with schemaVersion 2, eleven component specimens, forty color metadata entries and fourteen typography metadata entries. The mobile summary specimen uses the exact source styling and media query. This report closes the documentation/persistence update only. It does not issue a visual or runtime review verdict.

@@ -1,0 +1,6 @@
+[
+  ["scroll", ".iso-plate:first-child"],
+  ["shot", "design/anatomy/closeup-pass.png", ".iso-plate:first-child", 4],
+  ["scroll", ".iso-plate:nth-child(2)"],
+  ["shot", "design/anatomy/closeup-blocked.png", ".iso-plate:nth-child(2)", 4]
+]
