@@ -13,7 +13,7 @@ export function monitoringHandlers(monitor: MonitoringStore, runs: RunStore) {
       const repo = monitor.repository(c.req.param('id')!); if (!repo) return error(c, 'Repository not found.', 404);
       const body = await c.req.json().catch(() => null);
       if (!body || Object.keys(body).some(key => !['enabled','autoRemediate'].includes(key)) || Object.values(body).some(value => typeof value !== 'boolean')) return error(c, 'Only enabled and autoRemediate boolean settings are accepted.');
-      if (body.autoRemediate && (!repo.canPush || repo.profile !== 'python-requests-demo')) return error(c, 'Automatic repair needs push access and the reviewed Python verification policy. Other repositories can be monitored.', 409);
+      if (body.autoRemediate && (!repo.canPush || !repo.repairCapability?.supported)) return error(c, repo.repairCapability?.reason || 'Automatic repair requires push access and a supported detected test plan. Monitoring remains available.', 409);
       return c.json({ repository: monitor.patchRepository(repo.id, body) });
     },
     scan: (c: Context) => { const repo = monitor.repository(c.req.param('id')!); if (!repo) return error(c, 'Repository not found.', 404); return c.json({ repository: monitor.requestScan(repo.id), findings: monitor.findings(repo.id) }, 202); },

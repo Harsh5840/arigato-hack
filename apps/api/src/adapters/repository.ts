@@ -10,6 +10,7 @@ export interface RepositoryRef { owner: string; name: string; defaultBranch?: st
 export interface RepositorySnapshot extends RepositoryRef {
   url: string; defaultBranch: string; canPush: boolean; sha: string; treeSha: string;
   inventory: Dependency[]; files: Record<string, string>; warnings: string[];
+  paths: string[]; private: boolean;
 }
 export function parseRepository(input: string | RepositoryRef): RepositoryRef {
   let owner: string, name: string;
@@ -57,6 +58,20 @@ async function json(repo: RepositoryRef, path: string, options: Parameters<typeo
   if (response.status === 204) { await response.body?.cancel(); return undefined; }
   return boundedJson(response, 2_000_000);
 }
+export async function getCentralRunner(signal?: AbortSignal): Promise<{repo:RepositoryRef;sha:string;workflow:string}> {
+  const repo=parseRepository(process.env.PROOFPATCH_RUNNER_REPOSITORY_URL||'https://github.com/Harsh5840/arigato-hack');
+  const metadata=object(await json(repo,'',{signal}),'Runner repository');
+  const defaultBranch=string(metadata.default_branch,'Runner default branch',250);
+  const commit=object(await json(repo,`/commits/${encodeURIComponent(defaultBranch)}`,{signal}),'Runner commit');
+  return {repo:{...repo,defaultBranch},sha:identity(commit.sha),workflow:'repository-repair.yml'};
+}
+export async function dispatchCentralVerification(runner:{repo:RepositoryRef;sha:string;workflow:string},input:{target:RepositoryRef;baseSha:string;headSha:string;runId:string;plan:Record<string,unknown>;beforeWrite?:()=>void},signal?:AbortSignal):Promise<{startedAt:string}> {
+  parseRepository(input.target); identity(input.baseSha); identity(input.headSha); identity(runner.sha);runIdentity(input.runId);safeWorkflow(runner.workflow);
+  const plan=JSON.stringify(input.plan); if(plan.length>12000)throw new Error('The verification plan exceeds its bound.');
+  const startedAt=new Date().toISOString();
+  await json(runner.repo,`/actions/workflows/${runner.workflow}/dispatches`,{method:'POST',signal,beforeWrite:input.beforeWrite,body:{ref:runner.repo.defaultBranch??'main',inputs:{target_owner:input.target.owner,target_repo:input.target.name,base_sha:input.baseSha,head_sha:input.headSha,run_id:input.runId,plan}}});
+  return {startedAt};
+}
 export async function readRepositorySnapshot(repo: RepositoryRef, sha: string, paths: readonly string[], signal?: AbortSignal): Promise<Record<string, string>> {
   identity(sha);
   if (paths.length > 100 || new Set(paths).size !== paths.length || paths.some((path) => !safeRepositoryPath(path))) throw new Error('Repository snapshot paths exceed the safe path or count limit.');
@@ -82,8 +97,10 @@ export async function readRepository(input: string | RepositoryRef, signal?: Abo
   if (tree.truncated === true || !Array.isArray(tree.tree)) throw new Error('Repository tree is truncated; ProofPatch cannot claim complete dependency inventory.');
   let total = 0;
   const paths: string[] = [];
+  const treePaths: string[] = [];
   for (const raw of tree.tree) {
     const entry = object(raw, 'Tree entry');
+    if (typeof entry.path === 'string' && entry.type === 'blob' && ['100644','100755'].includes(String(entry.mode)) && safeRepositoryPath(entry.path) && !/(?:^|\/)(?:node_modules|vendor|\.git|\.venv)(?:\/|$)/.test(entry.path)) treePaths.push(entry.path);
     if (typeof entry.path !== 'string' || !isInventoryPath(entry.path)) continue;
     if (entry.type !== 'blob' || entry.mode !== '100644' && entry.mode !== '100755' || !safeRepositoryPath(entry.path) || !Number.isInteger(entry.size) || (entry.size as number) < 0) throw new Error('Dependency manifest is not a safe regular file.');
     total += entry.size as number;
@@ -93,7 +110,7 @@ export async function readRepository(input: string | RepositoryRef, signal?: Abo
   const files = await readRepositorySnapshot(repo, sha, paths, signal);
   const parsed = parseInventoryFiles(files);
   const permissions = metadata.permissions && typeof metadata.permissions === 'object' ? object(metadata.permissions, 'Repository permissions') : {};
-  return { ...repo, defaultBranch, url: `https://github.com/${repo.owner}/${repo.name}`, sha, treeSha, canPush: permissions.push === true, files, ...parsed };
+  return { ...repo, defaultBranch, url: `https://github.com/${repo.owner}/${repo.name}`, sha, treeSha, canPush: permissions.push === true, files, paths: treePaths, private: metadata.private === true, ...parsed };
 }
 export async function readRepositoryCandidateDiff(repo: RepositoryRef, baseSha: string, headSha: string, signal?: AbortSignal): Promise<CandidateDiff> {
   identity(baseSha); identity(headSha);
@@ -147,7 +164,7 @@ export async function dispatchRepositoryVerification(repo: RepositoryRef, input:
   return { startedAt };
 }
 
-export interface RepositoryVerificationInput { workflow: string; runId: string; baseSha: string; headSha: string; startedAt: string; verifierSha256: string; requiredCheckIds?: string[] }
+export interface RepositoryVerificationInput { workflow: string; runId: string; baseSha: string; headSha: string; startedAt: string; verifierSha256: string; requiredCheckIds?: string[]; workflowSha?: string; targetRepository?: string }
 interface ActionRun { id: number; html_url: string; status: string; conclusion: string | null; display_title: string; created_at: string; event: string; head_sha: string }
 function parseActionRun(repo: RepositoryRef, raw: unknown): ActionRun {
   const data = object(raw, 'Actions run');
@@ -160,7 +177,8 @@ export function parseRepositoryEvidence(rawFiles: Record<string, string>, run: {
   try { if (rawFiles['verification.json']) value = object(JSON.parse(rawFiles['verification.json']), 'Verification evidence'); } catch { /* A failed identity check below blocks publication. */ }
   const checks: EvidenceCheck[] = [];
   const add = (id: string, label: string, pass: boolean, detail: string) => checks.push({ id, label, status: pass ? 'passed' : 'failed', detail });
-  const validIdentity = value.base_sha === expected.baseSha && value.candidate_sha === expected.headSha && value.run_id === expected.runId && value.verifier_sha256 === expected.verifierSha256 && value.workflow_sha === expected.baseSha && value.github_run_id === String(run.id) && run.head_sha === expected.baseSha;
+  const workflowSha=expected.workflowSha??expected.baseSha;
+  const validIdentity = value.base_sha === expected.baseSha && value.candidate_sha === expected.headSha && value.run_id === expected.runId && value.verifier_sha256 === expected.verifierSha256 && value.workflow_sha === workflowSha && value.github_run_id === String(run.id) && run.head_sha === workflowSha && (!expected.targetRepository || value.target_repository === expected.targetRepository);
   add('evidence_identity', 'Verified candidate, frozen oracle and workflow run match', validIdentity, `Expected candidate ${expected.headSha}; base ${expected.baseSha}; Actions ${run.id}.`);
   const evidenceChecks = Array.isArray(value.checks) && value.checks.length <= 100 ? value.checks.map((entry) => object(entry, 'Verification check')) : [];
   const validChecks = evidenceChecks.length > 0 && new Set(evidenceChecks.map((entry) => entry.id)).size === evidenceChecks.length && evidenceChecks.every((entry) => typeof entry.id === 'string' && /^[a-z0-9_-]{1,100}$/.test(entry.id) && typeof entry.label === 'string' && entry.label.length <= 300 && typeof entry.pass === 'boolean' && typeof entry.detail === 'string' && entry.detail.length <= 3000) && (expected.requiredCheckIds ?? []).every((id) => evidenceChecks.some((entry) => entry.id === id));
@@ -186,13 +204,13 @@ async function downloadRepositoryArtifact(repo: RepositoryRef, artifact: Record<
   const digest = sha256(bytes);
   if (typeof artifact.digest === 'string' && artifact.digest !== `sha256:${digest}`) throw new Error('Evidence archive does not match the GitHub artifact digest.');
   let size = 0;
-  const archive = unzipSync(bytes, { filter(file) { size += file.originalSize; if (size > 6_000_000 || file.originalSize > 2_000_000) throw new Error('Evidence archive is too large after decompression.'); return file.name === 'verification.json'; } });
+  const archive = unzipSync(bytes, { filter(file) { size += file.originalSize; if (size > 6_000_000 || file.originalSize > 2_000_000) throw new Error('Evidence archive is too large after decompression.'); return ['verification.json','generated-files.json'].includes(file.name); } });
   return { files: Object.fromEntries(Object.entries(archive).map(([name, content]) => [name, strFromU8(content)])), digest };
 }
 export async function waitRepositoryVerification(repo: RepositoryRef, input: RepositoryVerificationInput, onProgress: (progress: VerificationProgress) => void | Promise<void>, signal?: AbortSignal): Promise<Evidence> {
   safeWorkflow(input.workflow); runIdentity(input.runId); identity(input.baseSha); identity(input.headSha);
   if (!/^[a-f0-9]{64}$/.test(input.verifierSha256) || !Number.isFinite(Date.parse(input.startedAt))) throw new Error('Verification oracle digest or start time is invalid.');
-  const deadline = Date.now() + 8 * 60_000;
+  const deadline = Date.now() + 12 * 60_000;
   let current: ActionRun | undefined, previous = '';
   while (Date.now() < deadline) {
     signal?.throwIfAborted();
@@ -202,7 +220,7 @@ export async function waitRepositoryVerification(repo: RepositoryRef, input: Rep
       current = data.workflow_runs.map((raw) => parseActionRun(repo, raw)).filter((run) => run.event === 'workflow_dispatch' && run.display_title === `ProofPatch ${input.runId}` && Date.parse(run.created_at) >= Date.parse(input.startedAt) - 60_000).sort((a, b) => b.id - a.id)[0];
     } else current = parseActionRun(repo, await json(repo, `/actions/runs/${current.id}`, { signal }));
     if (current) {
-      if (current.head_sha !== input.baseSha) throw new Error('Default branch moved before workflow execution. Evidence cannot be bound to the frozen base.');
+      if (current.head_sha !== (input.workflowSha??input.baseSha)) throw new Error('Runner workflow changed before execution. Evidence cannot be bound to the frozen workflow.');
       const data = object(await json(repo, `/actions/runs/${current.id}/jobs?per_page=20`, { signal }), 'Workflow jobs');
       const jobs = Array.isArray(data.jobs) ? data.jobs.map((raw) => object(raw, 'Workflow job')) : [];
       const steps = jobs.flatMap((job) => Array.isArray(job.steps) ? job.steps.map((raw) => { const step = object(raw, 'Workflow step'); return { name: string(step.name, 'Step name', 300), status: string(step.status, 'Step status'), conclusion: typeof step.conclusion === 'string' ? step.conclusion : null }; }) : []);

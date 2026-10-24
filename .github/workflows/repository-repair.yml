@@ -1,0 +1,88 @@
+name: Generic repository repair evidence
+run-name: ProofPatch ${{ inputs.run_id }}
+on:
+  workflow_dispatch:
+    inputs:
+      target_owner:
+        description: Public target repository owner
+        required: true
+        type: string
+      target_repo:
+        description: Public target repository name
+        required: true
+        type: string
+      base_sha:
+        description: Immutable target baseline commit
+        required: true
+        type: string
+      head_sha:
+        description: Candidate direct child of the target baseline
+        required: true
+        type: string
+      run_id:
+        description: Unique graph attempt and prepare/verify identity
+        required: true
+        type: string
+      plan:
+        description: Bounded JSON with mode, ecosystem, package_name, installed_version, fixed_version, manifest_path, optional fixed_image_ref and advisory_ids
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: generic-repair-${{ inputs.run_id }}
+  cancel-in-progress: false
+defaults:
+  run:
+    shell: bash --noprofile --norc -e -o pipefail {0}
+jobs:
+  trusted-evidence:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    env:
+      TARGET_OWNER: ${{ inputs.target_owner }}
+      TARGET_REPO: ${{ inputs.target_repo }}
+      BASE_SHA: ${{ inputs.base_sha }}
+      HEAD_SHA: ${{ inputs.head_sha }}
+      PROOFPATCH_RUN_ID: ${{ inputs.run_id }}
+      PLAN_JSON: ${{ inputs.plan }}
+      WORKFLOW_SHA: ${{ github.sha }}
+      WORKFLOW_REF: ${{ github.ref }}
+    steps:
+      - name: Load centrally owned verifier at the dispatched immutable commit
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22'
+      - name: Discover stack, resolve lock or execute frozen tests in isolation
+        run: node scripts/verification/repository-runner.mjs
+      - name: Preserve exact-candidate evidence, failures and generated lockfiles
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: proofpatch-${{ inputs.run_id }}
+          path: |
+            artifacts/verification.json
+            artifacts/generated-files.json
+            artifacts/runner.log
+          if-no-files-found: error
+          retention-days: 7
+      - name: Preserve complete independent image scans separately
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: proofpatch-scans-${{ inputs.run_id }}
+          path: |
+            artifacts/baseline-image-scan.json
+            artifacts/candidate-image-scan.json
+          if-no-files-found: ignore
+          retention-days: 7
+      - name: Explain evidence scope
+        if: always()
+        run: |
+          echo '### Generic supply-chain candidate evidence' >> "$GITHUB_STEP_SUMMARY"
+          echo 'The central verifier runs from this service repository; target workflows are never executed.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Package downloads have no application source or credentials. Candidate tests run without external network, host ports, privileged capabilities or a Docker socket. The vulnerable baseline is never executed.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Prepare produces a lockfile; it is not verification. Only successful verify evidence bound to the final candidate SHA can authorize a draft PR. Human review, merge and deployment remain required.' >> "$GITHUB_STEP_SUMMARY"

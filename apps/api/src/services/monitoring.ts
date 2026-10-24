@@ -5,23 +5,25 @@ import { fetchForumLeads, forumFeeds, scanDependencies } from '../adapters/suppl
 import type { MonitoringStore } from '../db/monitoring.js';
 import type { RunStore } from '../db/client.js';
 import { triageForumLeads } from '../adapters/package-groq.js';
+import { getRepositoryRepairCapability } from './stack-discovery.js';
 
 export async function registerRepository(monitor: MonitoringStore, url: string, signal?: AbortSignal) {
   if (monitor.repositories().length >= 20 && !monitor.repositories().some(repo => repo.url === url.replace(/\.git$/, '').replace(/\/$/, ''))) throw new Error('This server supports at most 20 registered repositories.');
   const snapshot = await readRepository(url, signal);
   const previous = monitor.repositories().find(repo => `${repo.owner}/${repo.name}`.toLowerCase() === `${snapshot.owner}/${snapshot.name}`.toLowerCase());
-  const profile: MonitoredRepository['profile'] = snapshot.owner === 'Harsh5840' && snapshot.name === 'arigato-python-demo' ? 'python-requests-demo' : snapshot.owner === 'Harsh5840' && snapshot.name === 'arigato-php-demo' ? 'php-runtime-demo' : 'monitor-only';
+  const repairCapability=await getRepositoryRepairCapability(snapshot,signal);
+  const profile: MonitoredRepository['profile'] = repairCapability.supported ? 'generic' : 'monitor-only';
   const now = new Date().toISOString();
-  const repo: MonitoredRepository = { id: previous?.id || createHash('sha256').update(`${snapshot.owner}/${snapshot.name}`.toLowerCase()).digest('hex').slice(0, 20), owner: snapshot.owner, name: snapshot.name, url: snapshot.url, defaultBranch: snapshot.defaultBranch, enabled: previous?.enabled ?? true, autoRemediate: previous?.autoRemediate ?? false, profile, createdAt: previous?.createdAt || now, updatedAt: now, inventory: snapshot.inventory, inventorySha: snapshot.sha, canPush: snapshot.canPush, scanStatus: 'queued', scanRequestedAt: now };
+  const repo: MonitoredRepository = { id: previous?.id || createHash('sha256').update(`${snapshot.owner}/${snapshot.name}`.toLowerCase()).digest('hex').slice(0, 20), owner: snapshot.owner, name: snapshot.name, url: snapshot.url, defaultBranch: snapshot.defaultBranch, enabled: previous?.enabled ?? true, autoRemediate: repairCapability.supported && (previous?.autoRemediate ?? true), profile, repairCapability, createdAt: previous?.createdAt || now, updatedAt: now, inventory: snapshot.inventory, inventorySha: snapshot.sha, canPush: snapshot.canPush, scanStatus: 'queued', scanRequestedAt: now };
   monitor.saveRepository(repo); return repo;
 }
 
 export function queueRemediation(monitor: MonitoringStore, runs: RunStore, findingId: string) {
   const finding = monitor.finding(findingId); if (!finding) throw new Error('Finding not found.');
   const repo = monitor.repository(finding.repositoryId); if (!repo) throw new Error('Repository not found.');
-  if (!repo.canPush || repo.profile !== 'python-requests-demo') throw new Error('This repository is monitored, but automatic repair requires an enabled, maintainer-reviewed verification policy. The current generic repair pilot supports the Python requests fixture.');
-  if (finding.ecosystem !== 'PyPI' || finding.packageName.toLowerCase() !== 'requests' || finding.manifestPath !== 'requirements.txt') throw new Error('This maintainer-reviewed repair profile supports only PyPI requests in requirements.txt. Other packages remain monitor-only.');
-  if (!finding.fixedVersion || finding.status === 'needs-owner') throw new Error('No supported published safe version is known; owner review is required.');
+  if (!repo.canPush || !repo.repairCapability?.supported || !repo.repairCapability.ecosystems.includes(finding.ecosystem)) throw new Error(repo.repairCapability?.reason || 'Automatic repair needs write access, a supported exact manifest and detected baseline tests.');
+  if (repo.repairCapability.targets && !repo.repairCapability.targets.some(target=>target.ecosystem===finding.ecosystem&&target.packageName===finding.packageName&&target.manifestPath===finding.manifestPath)) throw new Error('This package and manifest do not have a detected baseline test policy. Monitoring remains available.');
+  if (!finding.fixedVersion) throw new Error('No supported published safe version is known; owner review is required.');
   const result = runs.createForFinding(repo, finding);
   for (const related of monitor.findings(repo.id).filter(item => item.ecosystem === finding.ecosystem && item.packageName === finding.packageName && item.installedVersion === finding.installedVersion && item.fixedVersion === finding.fixedVersion && item.manifestPath === finding.manifestPath)) monitor.patchFinding(related.id, { status: result.run.pullRequest ? 'draft-created' : 'queued', runId: result.run.id });
   return result;
@@ -54,13 +56,14 @@ export async function monitorCycle(monitor: MonitoringStore, runs: RunStore) {
       try {
         monitor.patchRepository(repo.id, { scanStatus: 'scanning', lastError: undefined });
         const current = await readRepository({ owner: repo.owner, name: repo.name }, signal);
+        const repairCapability=await getRepositoryRepairCapability(current,signal);
         const findings = await scanDependencies(repo.id, current.inventory, signal);
         const checkedAt = new Date().toISOString();
-        monitor.patchRepository(repo.id, { inventory: current.inventory, inventorySha: current.sha, canPush: current.canPush, defaultBranch: current.defaultBranch, lastCheckedAt: checkedAt, nextCheckAt: new Date(Date.now() + snapshot.intervalSeconds * 1000).toISOString(), scanStatus: 'idle', scanRequestedAt: undefined, lastError: current.warnings.length ? current.warnings.join(' ').slice(0, 1000) : undefined });
+        monitor.patchRepository(repo.id, { inventory: current.inventory, inventorySha: current.sha, canPush: current.canPush, repairCapability, profile:repairCapability.supported?'generic':'monitor-only', autoRemediate:repo.autoRemediate&&repairCapability.supported, defaultBranch: current.defaultBranch, lastCheckedAt: checkedAt, nextCheckAt: new Date(Date.now() + snapshot.intervalSeconds * 1000).toISOString(), scanStatus: 'idle', scanRequestedAt: undefined, lastError: current.warnings.length ? current.warnings.join(' ').slice(0, 1000) : undefined });
         for (const finding of findings) {
           monitor.saveFinding(finding);
           const stored = monitor.finding(finding.id)!;
-          if (repo.autoRemediate && stored.status === 'detected' && repo.profile === 'python-requests-demo') queueRemediation(monitor, runs, stored.id);
+          if (repo.enabled && repo.autoRemediate && stored.status === 'detected' && repairCapability.supported && repairCapability.ecosystems.includes(stored.ecosystem) && (!repairCapability.targets || repairCapability.targets.some(target=>target.ecosystem===stored.ecosystem&&target.packageName===stored.packageName&&target.manifestPath===stored.manifestPath))) queueRemediation(monitor, runs, stored.id);
         }
       } catch (error) {
         const message = error instanceof Error ? error.message : 'Repository scan failed.';

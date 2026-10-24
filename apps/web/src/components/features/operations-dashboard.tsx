@@ -17,6 +17,7 @@ import SecurityJourney from './operations/security-journey';
 import RepositoryPanel from './operations/repository-panel';
 import SecurityWatchPanel from './operations/security-watch-panel';
 import FindingsPanel from './operations/findings-panel';
+import {canPrepareRepair} from './operations/repair-capability';
 
 function belongsTo(run: LiveRun, repository?: MonitoredRepository) {return !!repository && (run.repositoryId === repository.id || run.repo.owner.toLowerCase() === repository.owner.toLowerCase() && run.repo.name.toLowerCase() === repository.name.toLowerCase());}
 
@@ -27,6 +28,7 @@ export default function OperationsDashboard() {
   const [repositoryId, setRepositoryId] = useState('');
   const repository = monitoring.repositories.find(item => item.id === repositoryId);
   const requestedRun = useRef<string | null>(null);
+  const followedAutomaticRuns = useRef(new Set<string>());
   useEffect(() => {
     if (repositoryId || !monitoring.repositories.length) return;
     let saved: string | null = null;
@@ -40,6 +42,13 @@ export default function OperationsDashboard() {
   const findings = monitoring.findings.filter(item => item.repositoryId === repositoryId);
   const activeRun = allRuns.find(item => !isTerminal(item.status));
   useEffect(() => {
+    if (!repository?.autoRemediate) return;
+    const queued = findings.find(item => item.status === 'queued' && item.runId && !followedAutomaticRuns.current.has(item.runId));
+    if (!queued?.runId) return;
+    followedAutomaticRuns.current.add(queued.runId);
+    if (run?.id !== queued.runId) void selectRun(queued.runId);
+  }, [repository, findings, run?.id, selectRun]);
+  useEffect(() => {
     if (!repository) return;
     if (run) {requestedRun.current = null; return;}
     const latest = allRuns.find(item => belongsTo(item, repository));
@@ -49,10 +58,9 @@ export default function OperationsDashboard() {
   function chooseRepository(id: string) {requestedRun.current = null; setRepositoryId(id); try {localStorage.setItem('proofpatch.repository',id);} catch { /* Selection still works without browser storage. */ }}
   async function prepareFix(id: string) {const result = await monitoring.remediate(id); if (result) adoptRun(result.run);}
   async function add(url: string) {const result = await monitoring.add(url); if (!result) return false; chooseRepository(result.repository.id); return true;}
-  const repairFinding = findings.find(item => item.status === 'detected' && item.ecosystem === 'PyPI' && item.packageName.toLowerCase() === 'requests' && item.manifestPath === 'requirements.txt');
-  const canRepair = !!repository && repository.profile === 'python-requests-demo' && repository.canPush;
-  const actionLabel = canRepair && repairFinding ? 'Prepare draft fix' : repository?.profile === 'php-runtime-demo' ? 'Run PHP demo' : 'Watch now';
-  function runAction() {if (!repository) return; if (canRepair && repairFinding) void prepareFix(repairFinding.id); else if (repository.profile === 'php-runtime-demo') void start(sourceMode); else void monitoring.scan(repository.id);}
+  const repairFinding = findings.find(item => item.status === 'detected' && canPrepareRepair(repository, item));
+  const actionLabel = repairFinding ? 'Prepare draft fix' : 'Scan repository';
+  function runAction() {if (!repository) return; if (repairFinding) void prepareFix(repairFinding.id); else void monitoring.scan(repository.id);}
   async function followActive() {if (!activeRun) return; const owner = monitoring.repositories.find(item => belongsTo(activeRun, item)); if (owner) chooseRepository(owner.id); await selectRun(activeRun.id);}
   function exportRun() {
     if (!run) return;
@@ -75,7 +83,7 @@ export default function OperationsDashboard() {
       {run?.failure && <div className="ops-error-banner" role="alert"><AlertTriangle size={18}/><div><strong>{run.failure.code}</strong><p>{run.failure.message}</p></div>{!activeRun && <button className="button outline" onClick={() => {if (run.target) void prepareFix(run.target.findingId); else void start(run.sourceMode);}} disabled={busy || !service?.ready}>Retry workflow</button>}</div>}
       <div className="ops-developer-grid"><VerificationWorkbench run={run}/><ReviewPanel run={run}/></div>
       <RunAnalytics runs={runs} run={run} events={events} onSelect={id => void selectRun(id)}/>
-      <footer className="ops-footer"><span>ProofPatch · Open Innovation · Japanese sources + package advisories</span><span>Supported repair profiles only. Checks are bounded. A human decides whether to merge.</span></footer>
+      <footer className="ops-footer"><span>ProofPatch · Open Innovation · Packages + container images</span><span>Detected stack, observed tests, real draft PR. You decide whether to merge.</span></footer>
     </main>
   </div>;
 }

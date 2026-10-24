@@ -1,0 +1,12 @@
+{
+    "evidence_class": "observed_runtime_configuration",
+    "php_version": "8.3.36",
+    "upload_progress_enabled": "0",
+    "serialize_handler": "php",
+    "checks": {
+        "runtime_matches_reviewed_release": true,
+        "upload_progress_disabled_at_startup": true,
+        "expected_serializer": true
+    },
+    "limitation": "No exploit was executed. Deployment and worker restart are not verified by this CLI probe."
+}

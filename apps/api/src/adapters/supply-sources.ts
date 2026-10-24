@@ -1,6 +1,7 @@
 import type { AdvisoryLead, Dependency, SupplyFinding } from '../../../../packages/contracts/src/monitoring.js';
 import { boundedBytes, boundedJson, combinedSignal, object, sha256, string } from './http.js';
 import { compareVersions, normalizedPackageName, stableVersion } from './inventory.js';
+import { scanContainerDependencies } from './container-supply.js';
 
 const osvRoot = 'https://api.osv.dev/v1';
 async function sourceJson(url: string, signal?: AbortSignal, init?: RequestInit, limit = 6_000_000): Promise<unknown> {
@@ -10,7 +11,8 @@ async function sourceJson(url: string, signal?: AbortSignal, init?: RequestInit,
 }
 async function queryBatch(dependencies: Pick<Dependency, 'ecosystem' | 'name' | 'version'>[], signal?: AbortSignal): Promise<string[][]> {
   if (!dependencies.length) return [];
-  if (dependencies.length > 100) throw new Error('OSV request exceeds the 100-dependency bound.');
+  if (dependencies.length > 1000) throw new Error('OSV request exceeds the 1000-dependency bound.');
+  if (dependencies.length > 100) { const results:string[][]=[]; for(let offset=0;offset<dependencies.length;offset+=100)results.push(...await queryBatch(dependencies.slice(offset,offset+100),signal)); return results; }
   const data = object(await sourceJson(`${osvRoot}/querybatch`, signal, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ queries: dependencies.map((dependency) => ({ package: { name: dependency.name, ecosystem: dependency.ecosystem }, version: dependency.version })) }) }), 'OSV batch');
   if (!Array.isArray(data.results) || data.results.length !== dependencies.length) throw new Error('OSV did not return a result for every exact dependency.');
   return data.results.map((raw) => {
@@ -46,7 +48,9 @@ export async function selectPublishedSafeVersion(dependency: Dependency, signal?
 }
 
 export async function scanDependencies(repositoryId: string, inventory: Dependency[], signal?: AbortSignal): Promise<SupplyFinding[]> {
-  if (!repositoryId || repositoryId.length > 180 || inventory.length > 100) throw new Error('Repository scan identity or dependency count is invalid.');
+  const images=inventory.filter(dependency=>dependency.ecosystem==='Docker');
+  if(images.length) return [...await scanDependencies(repositoryId,inventory.filter(dependency=>dependency.ecosystem!=='Docker'),signal),...await scanContainerDependencies(repositoryId,images,signal)];
+  if (!repositoryId || repositoryId.length > 180 || inventory.length > 1000) throw new Error('Repository scan identity or dependency count is invalid.');
   const results = await queryBatch(inventory, signal);
   const ids = [...new Set(results.flat())];
   if (ids.length > 100) throw new Error('This scan has more than 100 distinct advisories; narrow repository scope.');

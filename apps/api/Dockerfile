@@ -12,6 +12,7 @@ COPY --from=dependencies --chown=node:node /app/apps/api/node_modules ./node_mod
 COPY --chown=node:node apps/api/src ./src
 COPY --chown=node:node apps/api/package.json ./package.json
 COPY --chown=node:node packages/contracts /app/packages/contracts
+COPY --chown=node:node scripts/verification /app/scripts/verification
 RUN mkdir -p /app/.data /app/output/live-runs && chown -R node:node /app/.data /app/output
 USER node
 EXPOSE 8787

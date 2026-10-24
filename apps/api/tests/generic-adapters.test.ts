@@ -36,7 +36,7 @@ test('nested exact dependency inventories preserve ecosystem and source provenan
 });
 
 test('inventory limits and unsafe paths fail instead of silently dropping dependencies', () => {
-  assert.throws(() => parseInventoryFiles({ 'requirements.txt': Array.from({ length: 101 }, (_, index) => `package${index}==1.0.0`).join('\n') }), /100 exact/);
+  assert.throws(() => parseInventoryFiles({ 'requirements.txt': Array.from({ length: 1001 }, (_, index) => `package${index}==1.0.0`).join('\n') }), /1000 exact/);
   assert.throws(() => parseInventoryFiles({ '../requirements.txt': 'requests==2.31.0' }), /unsafe path/);
   assert.throws(() => parseInventoryFiles({ 'requirements.txt': '#'.repeat(1_000_001) }), /one-megabyte/);
 });
@@ -116,6 +116,20 @@ test('OSV pagination and unavailable authoritative services fail explicitly', as
   await assert.rejects(scanDependencies('repo-unit', [dependency]), /paginated/);
   globalThis.fetch = async () => response({ error: 'unavailable' }, 503);
   await assert.rejects(scanDependencies('repo-unit', [dependency]), /503/);
+});
+
+test('OSV scans preserve all dependencies while splitting requests into batches of at most 100', async () => {
+  const batches: string[][] = [];
+  globalThis.fetch = async (input, init) => {
+    assert.equal(String(input), 'https://api.osv.dev/v1/querybatch');
+    const queries = JSON.parse(String(init?.body)).queries as {package: {name: string}}[];
+    batches.push(queries.map(query => query.package.name));
+    return response({results: queries.map(() => ({}))});
+  };
+  const inventory = Array.from({length: 205}, (_, index) => ({...dependency, name: `package${index}`}));
+  assert.deepEqual(await scanDependencies('repo-unit', inventory), []);
+  assert.deepEqual(batches.map(batch => batch.length), [100, 100, 5]);
+  assert.deepEqual(batches.flat(), inventory.map(item => item.name));
 });
 
 test('forum leads are unconfirmed, reject external links and refuse XML entity declarations', () => {

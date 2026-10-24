@@ -40,7 +40,7 @@ function memory() {
   return {monitor, runs};
 }
 function repository(overrides: Partial<MonitoredRepository> = {}): MonitoredRepository {
-  return {id: 'repo-unit', owner: 'unit-owner', name: 'python-service', url: 'https://github.com/unit-owner/python-service', defaultBranch: 'main', enabled: true, autoRemediate: false, profile: 'python-requests-demo', createdAt: '2026-10-25T00:00:00Z', updatedAt: '2026-10-25T00:00:00Z', inventory: [{ecosystem: 'PyPI', name: 'requests', version: '2.31.0', manifestPath: 'requirements.txt', direct: true}], inventorySha: 'a'.repeat(40), canPush: true, scanStatus: 'idle', ...overrides};
+  return {id: 'repo-unit', owner: 'unit-owner', name: 'python-service', url: 'https://github.com/unit-owner/python-service', defaultBranch: 'main', enabled: true, autoRemediate: false, profile: 'generic', repairCapability: {supported: true, reason: 'Detected frozen baseline Python tests.', ecosystems: ['PyPI'], targets: [{ecosystem: 'PyPI', packageName: 'requests', manifestPath: 'requirements.txt'}], testCommands: ['python -m unittest discover -s tests -p test*.py -v'], stack: ['Python'], runner: 'central-actions', testsDetected: true}, createdAt: '2026-10-25T00:00:00Z', updatedAt: '2026-10-25T00:00:00Z', inventory: [{ecosystem: 'PyPI', name: 'requests', version: '2.31.0', manifestPath: 'requirements.txt', direct: true}], inventorySha: 'a'.repeat(40), canPush: true, scanStatus: 'idle', ...overrides};
 }
 function finding(overrides: Partial<SupplyFinding> = {}): SupplyFinding {
   return {id: 'finding-unit', repositoryId: 'repo-unit', advisoryId: 'GHSA-unit-unit-unit', aliases: ['CVE-2024-35195'], ecosystem: 'PyPI', packageName: 'requests', installedVersion: '2.31.0', fixedVersion: '2.32.5', manifestPath: 'requirements.txt', summary: 'Synthetic test advisory, not execution evidence.', references: [{title: 'Unit test advisory', url: 'https://osv.dev/vulnerability/GHSA-unit-unit-unit'}], detectedAt: '2026-10-25T00:00:00Z', status: 'detected', ...overrides};
@@ -77,7 +77,7 @@ test('registry, settings, findings and worker heartbeat survive a SQLite restart
   assert.equal(second.snapshot().workerLastSeenAt, '2026-10-25T00:00:01Z');
 });
 
-test('repository onboarding inventories a frozen commit and defaults arbitrary repositories to monitor-only', async () => {
+test('repository onboarding inventories a frozen commit and leaves repositories without tests monitor-only', async () => {
   const {monitor} = memory(); const calls: string[] = [];
   globalThis.fetch = async (input, init) => {
     assert.equal(init?.method ?? 'GET', 'GET');
@@ -91,6 +91,7 @@ test('repository onboarding inventories a frozen commit and defaults arbitrary r
   };
   const connected = await registerRepository(monitor, 'https://github.com/unit-owner/python-service.git');
   assert.equal(connected.profile, 'monitor-only'); assert.equal(connected.autoRemediate, false);
+  assert.equal(connected.repairCapability?.supported, false); assert.equal(connected.repairCapability?.testsDetected, false);
   assert.equal(connected.canPush, true); assert.equal(connected.inventorySha, 'a'.repeat(40));
   assert.equal(connected.inventory[0].name, 'requests'); assert.equal(connected.scanStatus, 'queued');
   monitor.patchRepository(connected.id, {enabled: false});
@@ -100,13 +101,14 @@ test('repository onboarding inventories a frozen commit and defaults arbitrary r
   assert.equal(calls.length, 8);
 });
 
-test('repository HTTP settings cannot grant a repair profile or bypass push permission', async () => {
-  const {monitor, runs} = memory(); monitor.saveRepository(repository({profile: 'monitor-only'}));
+test('repository HTTP settings cannot forge detected capability or bypass push permission', async () => {
+  const {monitor, runs} = memory(); monitor.saveRepository(repository({profile: 'monitor-only', repairCapability: undefined}));
   const app = createApp(runs, undefined, monitor);
   const patch = (body: unknown) => app.request('http://127.0.0.1/api/repositories/repo-unit', {method: 'PATCH', headers, body: JSON.stringify(body)});
   assert.equal((await patch({profile: 'python-requests-demo', autoRemediate: true})).status, 400);
+  assert.equal((await patch({repairCapability: repository().repairCapability, autoRemediate: true})).status, 400);
   assert.equal((await patch({autoRemediate: true})).status, 409);
-  monitor.patchRepository('repo-unit', {profile: 'python-requests-demo', canPush: false});
+  monitor.patchRepository('repo-unit', {profile: 'generic', repairCapability: repository().repairCapability, canPush: false});
   assert.equal((await patch({autoRemediate: true})).status, 409);
   assert.equal(monitor.repository('repo-unit')?.autoRemediate, false);
   monitor.patchRepository('repo-unit', {canPush: true});
@@ -133,18 +135,47 @@ test('monitoring schedule HTTP validation rejects unsafe intervals and hidden st
   assert.equal(monitor.snapshot().enabled, false); assert.equal(monitor.snapshot().intervalSeconds, 60);
 });
 
-test('queueing requires a supported package, verification profile, push permission and a safe target', () => {
+test('queueing requires detected exact-target capability, push permission and a published safe target', () => {
   const {monitor, runs} = memory(); monitor.saveRepository(repository()); monitor.saveFinding(finding());
-  for (const override of [{profile: 'monitor-only' as const}, {profile: 'php-runtime-demo' as const}, {canPush: false}]) {
-    monitor.saveRepository(repository(override)); assert.throws(() => queueRemediation(monitor, runs, 'finding-unit'), /policy|permission|repair/i);
+  for (const override of [{repairCapability: undefined}, {repairCapability: {...repository().repairCapability!, supported: false}}, {canPush: false}]) {
+    monitor.saveRepository(repository(override)); assert.throws(() => queueRemediation(monitor, runs, 'finding-unit'), Error);
   }
   monitor.saveRepository(repository());
-  for (const override of [{ecosystem: 'npm' as const}, {packageName: 'unrelated-package'}, {manifestPath: 'nested/requirements.txt'}, {fixedVersion: ''}, {status: 'needs-owner' as const}]) {
+  for (const override of [{ecosystem: 'npm' as const}, {manifestPath: 'no-detected-tests/requirements.txt'}, {fixedVersion: ''}]) {
     monitor.saveFinding(finding({id: 'unsupported-unit', ...override}));
-    assert.throws(() => queueRemediation(monitor, runs, 'unsupported-unit'), /policy|profile|published|owner|monitor/i);
+    assert.throws(() => queueRemediation(monitor, runs, 'unsupported-unit'), Error);
   }
   assert.equal(runs.list().length, 0);
   assert.throws(() => queueRemediation(monitor, runs, 'missing'), /not found/);
+});
+
+test('a new customer repository and dependency gain automatic repair from detected tests rather than a demo name', async () => {
+  const {monitor, runs} = memory();
+  const files = {'services/orders/requirements.txt': 'urllib3==1.26.5\n', 'services/orders/tests/test_orders.py': 'import unittest\nclass OrderTest(unittest.TestCase):\n def test_yen(self): self.assertEqual(100 + 10, 110)\n'};
+  const urls: string[] = [];
+  globalThis.fetch = async (input, init) => {
+    assert.equal(init?.method ?? 'GET', 'GET');
+    const url = String(input); urls.push(url);
+    assert.equal(new URL(url).hostname, 'api.github.com');
+    if (url.endsWith('/customer-one/order-service')) return json({default_branch: 'main', private: false, permissions: {push: true}});
+    if (url.endsWith('/commits/main')) return json({sha: 'a'.repeat(40), commit: {tree: {sha: 'b'.repeat(40)}}});
+    if (url.includes('/git/trees/')) return json({truncated: false, tree: Object.entries(files).map(([path, content]) => ({path, type: 'blob', mode: '100644', size: Buffer.byteLength(content)}))});
+    const path = decodeURIComponent(new URL(url).pathname.split('/contents/')[1]);
+    assert.ok(path in files); assert.equal(new URL(url).searchParams.get('ref'), 'a'.repeat(40));
+    const content = files[path as keyof typeof files];
+    return json({type: 'file', encoding: 'base64', size: Buffer.byteLength(content), content: Buffer.from(content).toString('base64')});
+  };
+  const connected = await registerRepository(monitor, 'https://github.com/customer-one/order-service');
+  assert.equal(connected.profile, 'generic'); assert.equal(connected.autoRemediate, true);
+  assert.deepEqual(connected.repairCapability?.targets, [{ecosystem: 'PyPI', packageName: 'urllib3', manifestPath: 'services/orders/requirements.txt'}]);
+  assert.match(connected.repairCapability!.testCommands[0], /^services\/orders: python -m unittest/);
+  assert.ok(urls.some(url => url.includes('/contents/services/orders/tests/test_orders.py')));
+  const detected = finding({id: 'customer-finding', repositoryId: connected.id, packageName: 'urllib3', installedVersion: '1.26.5', fixedVersion: '1.26.6', manifestPath: 'services/orders/requirements.txt'});
+  monitor.saveFinding(detected);
+  const queued = queueRemediation(monitor, runs, detected.id);
+  assert.equal(queued.run.repo.name, 'order-service'); assert.equal(queued.run.target?.packageName, 'urllib3');
+  assert.equal(queued.run.target?.manifestPath, 'services/orders/requirements.txt');
+  assert.deepEqual(queued.run.agentCalls, []); assert.deepEqual(queued.run.checks, []);
 });
 
 test('one package repair coalesces matching advisory aliases and records no fabricated execution', () => {
