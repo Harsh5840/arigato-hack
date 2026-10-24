@@ -66,6 +66,16 @@ test('mismatched provider model and truncated completions fail closed', async ()
   await assert.rejects(analyzePackage(finding, []), /truncated or refused/);
 });
 
+test('provider rejection exposes only numeric HTTP status and never an echoed provider body', async () => {
+  globalThis.fetch = async input => String(input).endsWith('/models') ? json(catalog) : new Response(JSON.stringify({ error: { message: 'provider-sensitive-body and echoed-request-data' } }), { status: 400, headers: { 'content-type': 'application/json' } });
+  await assert.rejects(analyzePackage(finding, []), error => {
+    assert.ok(error instanceof Error);
+    assert.match(error.message, /HTTP 400/);
+    assert.doesNotMatch(error.message, /provider-sensitive-body|echoed-request-data|test-key-do-not-send/);
+    return true;
+  });
+});
+
 test('read-only forum scout cannot invent lead IDs or promote unconfirmed trust', async () => {
   const lead: AdvisoryLead = { id: 'forum-1', title: 'Requests vulnerability discussion', url: 'https://example.invalid/post', source: 'Mock forum', retrievedAt: new Date().toISOString(), trust: 'unconfirmed', aliases: [], summary: 'A report needs official corroboration.' };
   let selected = ['invented-id'];

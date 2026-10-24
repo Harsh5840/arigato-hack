@@ -121,16 +121,22 @@ export async function readRepositoryCandidateDiff(repo: RepositoryRef, baseSha: 
     const file = object(raw, 'Changed file');
     const path = string(file.filename, 'Changed path', 240);
     if (!safeRepositoryPath(path) || file.status !== 'modified' || !Number.isInteger(file.additions) || !Number.isInteger(file.deletions) || (file.additions as number) < 0 || (file.deletions as number) < 0) throw new Error('Candidate comparison contains an unsupported path, creation, deletion or rename.');
-    if (typeof file.patch !== 'string') truncated = true;
-    return { path, status: 'modified' as const, additions: file.additions as number, deletions: file.deletions as number, patch: typeof file.patch === 'string' ? string(file.patch, 'Candidate patch', 90_000) : '' };
+    // GitHub may omit or return a large lockfile patch. The display payload is
+    // optional; immutable identities and complete file metadata remain required.
+    const patch = typeof file.patch === 'string' && file.patch.length > 0 && Buffer.byteLength(file.patch, 'utf8') <= 90_000 ? file.patch : '';
+    if (!patch) truncated = true;
+    return { path, status: 'modified' as const, additions: file.additions as number, deletions: file.deletions as number, patch };
   });
   if (new Set(files.map((file) => file.path)).size !== files.length) throw new Error('Candidate comparison contains duplicate paths.');
   return { baseSha, candidateSha: headSha, compareUrl: `https://github.com/${repo.owner}/${repo.name}/compare/${baseSha}...${headSha}`, files, truncated };
 }
 type CandidateFile = { path: string; content: string };
+function candidateContentLimit(path: string): number {
+  return /(?:^|\/)(?:package-lock\.json|composer\.lock)$/.test(path) ? repositoryBytesLimit - 1 : 100_000;
+}
 export async function ensureRepositoryCandidate(repo: RepositoryRef, base: { sha: string; treeSha: string }, repair: { files: CandidateFile[] }, branch: string, signal?: AbortSignal, beforeWrite?: () => void): Promise<{ sha: string; branch: string }> {
   safeBranch(branch); identity(base.sha); identity(base.treeSha);
-  if (!repair.files.length || repair.files.length > 20 || new Set(repair.files.map((file) => file.path)).size !== repair.files.length || repair.files.some((file) => !safeRepositoryPath(file.path) || /(?:^|\/)(?:\.github|verification|\.git)(?:\/|$)/.test(file.path) || !file.content || Buffer.byteLength(file.content) > 100_000) || Buffer.byteLength(JSON.stringify(repair.files)) > repositoryBytesLimit) throw new Error('Candidate files exceed the allowed source/manifest repair scope. Trusted verifiers and workflows cannot be changed.');
+  if (!repair.files.length || repair.files.length > 20 || new Set(repair.files.map((file) => file.path)).size !== repair.files.length || repair.files.some((file) => !safeRepositoryPath(file.path) || /(?:^|\/)(?:\.github|verification|\.git)(?:\/|$)/.test(file.path) || !file.content || Buffer.byteLength(file.content) > candidateContentLimit(file.path)) || Buffer.byteLength(JSON.stringify(repair.files)) > repositoryBytesLimit) throw new Error('Candidate files exceed the allowed source/manifest repair scope. Trusted verifiers and workflows cannot be changed.');
   const existing = async (): Promise<{ sha: string; branch: string } | null> => {
     let ref: Record<string, unknown>;
     try { ref = object(await json(repo, `/git/ref/heads/${branch}`, { signal }), 'Candidate reference'); }

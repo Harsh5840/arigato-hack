@@ -1,8 +1,47 @@
 # Implementation handoff
 
-Updated **25 October 2026 (Asia/Calcutta)**. Current implementation: a repository registry and scheduled supply-chain watcher, actual LangGraph orchestration and LangChain ChatGroq roles, frozen hosted checks, and automatic draft publication in the owned Python and PHP demonstrations. One dashboard presents repository controls, source health, confirmed findings, the simple six-step journey, technical graph, live events, actual results and observed analytics.
+Updated **25 October 2026 (Asia/Calcutta)**. Current implementation: generic stack/test discovery, scheduled repository monitoring, actual LangGraph/LangChain Groq agents and a central exact-candidate verifier. Automatic repair is based on exact package/manifest capability and permissions, rather than repository owner or name. One dashboard retains the established visual flow with simpler labels, grouped advisory evidence, real tests, diffs and human PR handoff.
 
-## Executed LangGraph Python demonstration
+## Current generic repair architecture
+
+- Up to 20 registered GitHub repositories and 1,000 exact dependencies per inventory. OSV queries use batches of at most 100. Missing sources, unresolved declarations and truncated trees remain visible.
+- Any qualifying public repository name can use supported exact PyPI requirements, direct npm/Composer dependencies with locks, or official PHP/nginx Dockerfile/Compose image references. Baseline test discovery advertises exact ecosystem/package/manifest targets. A tested service does not grant capability to an untested manifest elsewhere in a monorepo.
+- New supported connections default to automatic draft preparation; existing settings survive reconnect. Read-only access, missing/empty suites, unknown stacks and private central checkout remain explicit boundaries. Private inventory may use granted server access, but generic repair currently requires anonymous public checkout.
+- The shared ten-node LangGraph uses actual `ChatGroq` supply, fixer and senior-review contexts. Scope, tests and publication remain deterministic controller decisions. A maximum of two candidate attempts, five repair role calls and 16 minutes bounds a run. Worker loss fails closed rather than replaying external writes automatically.
+- `.github/workflows/repository-repair.yml` in `arigato-hack` supplies the trusted verifier. Target repositories need no custom ProofPatch workflow. Central workflow SHA, target baseline/candidate SHA, graph attempt, Actions ID, verifier and artifact digests are bound together.
+- npm and Composer use two phases: the real package manager resolves a lock artifact without hooks/plugins, then final verification runs against the committed candidate. Models cannot invent lock integrity data. Application source is excluded during dependency downloads. Frozen application tests run in isolated, non-root, read-only containers without external network, credentials or a Docker socket.
+- Containers receive real Trivy scans of baseline and candidate plus supported vendor-CVE corroboration. The affected image is never executed. Selected CVEs still reported in the candidate block publication. Residual image findings and scanner coverage gaps remain visible for human review.
+- Final scope, frozen verifier, actual version, business-suite and advisory checks plus separate senior review precede an open draft at the verified head. Human merge, deployment and running-environment verification remain required. `mergeReady` and `findingClosed` remain false.
+
+## Three-repository central-runner acceptance
+
+| Target | Current recorded result |
+|---|---|
+| [Python](https://github.com/Harsh5840/arigato-python-demo) | Completed generic run `85a102f8-c69a-424d-8f0d-8a5b653bf816`, [central CI 40128567277](https://github.com/Harsh5840/arigato-hack/actions/runs/40128567277), candidate `2291e66959c292547792346e77c88b8d25c8685c`, [real draft PR #2](https://github.com/Harsh5840/arigato-python-demo/pull/2). Twelve actual Japanese business assertions passed. |
+| [Container YAML](https://github.com/Harsh5840/arigato-container-demo) | Completed generic run `1159357a-7e93-4c2d-ab11-efa91a56aa59`, [central CI 40128986019](https://github.com/Harsh5840/arigato-hack/actions/runs/40128986019), candidate `0300b01cedd3133c42e95176d0d5c8087e19cdcd`, [real draft PR #1](https://github.com/Harsh5840/arigato-container-demo/pull/1). Seven live HTTP assertions and 11 controller/runner gates passed. Three Groq calls reported 7,136 tokens. |
+| [PHP](https://github.com/Harsh5840/arigato-php-demo) | Completed generic run `00cd66dd-c269-4b93-83a3-c690fb8f8932`, [central CI 40129110636](https://github.com/Harsh5840/arigato-hack/actions/runs/40129110636), candidate `870aea9893c3d7c6341938c0b76541ee2125bad0`, [real draft PR #6](https://github.com/Harsh5840/arigato-php-demo/pull/6). PHP 8.3.36 passed 15 storefront assertions and 11 controller/runner gates. Three real Groq calls reported 6,210 tokens. |
+
+The container repository's baseline is `db7ecf6797233e222fa554139fb588bc156f0e32`. Its Compose `image:` reference is the judge-friendly diff. Explain it as “change one YAML image reference, test live HTTP, review the actual draft PR.” The generic PHP update changes the image only; INI, startup/web configuration and incident follow-up remain human tasks.
+
+The completed container diff selects `nginx:1.30.6@sha256:a7675fcee220f59b4a99f7098c06a0d5d999c2c0ee37c0211efb780536e5cb20` from nginx 1.26.0. Its frozen verifier is `2e6350b66f08e02ab2d8906c590dd667fe5173694f5192d6d4029fb601a88474`; the downloaded artifact digest is `1e9e32c47466ee9ca0a4e2d85b0f67d6be3cc37893adae0563ccba2f5c5f2f7f`. [The saved run](../output/live-runs/1159357a-7e93-4c2d-ab11-efa91a56aa59/run.json) preserves actual Trivy output: 831 baseline and 391 candidate findings across all severities. These are scanner entries, not unique CVE counts. Residuals remain for human review; the image is not declared clean.
+
+The completed PHP diff selects `php:8.3.36-cli-bookworm@sha256:cdb77e306d6bb99db40e513fbe036ecc6c53b575cbcb7e581387845fef26d755`. Its frozen verifier is `7533060350490af1a82ecf0fda5d19427dd76e81a68d6ef15d2dc1983942813c`; artifact digest `aaf18e908c2f03fca2efc908a2942f38679e08ee4cb0d396cfa1055665b20f54`. [The saved generic PHP run](../output/live-runs/00cd66dd-c269-4b93-83a3-c690fb8f8932/run.json) records an image-only Dockerfile change. This does not claim deployed INI/web configuration or incident response is complete.
+
+**PHP target CI remains red:** [Fixture evidence run 40129179437](https://github.com/Harsh5840/arigato-php-demo/actions/runs/40129179437) fails its legacy policy before building. Its `ci-candidate` policy expects the previous three-file runtime/configuration repair, while [central run 40129110636](https://github.com/Harsh5840/arigato-hack/actions/runs/40129110636) verifies the current image-only change and passed 15 assertions. These are separate results. Before merge, the human owner must reconcile that policy and the INI/web follow-ups. The failing check remains visible; all CI is not green.
+
+Initial central attempts that failed a tool-output or runtime-permission boundary remain stored as blocked records. They did not authorize PRs. Use actual final run IDs and output bundles when describing completed execution; a passing CI alone is not a completed senior-review/publication flow.
+
+## Current release verification status
+
+Final root tests and type checks passed: 125 API tests and 21 frontend tests, 146 total. The optimized Next production build passed after the final repair-strip label removal. The updated dev stack was restarted. Ten valid PNGs in `apps/web/.impeccable/review/generic-autofix` include the nine original desktop/mobile captures and mobile repair confirmation. Browser checks recorded zero errors, with only the standard reduced-motion informational warning. The fresh `generic-autofix/VERDICT.md` disposition is **SHIP**, scoped to the two scored corrections: stale design documentation and the removed repair-strip kicker. That visual verdict is not a scanner/security audit or a claim that PHP's legacy target CI is green.
+
+Use [LIVE-DEMO.md](LIVE-DEMO.md) for setup and [REPOSITORY-ONBOARDING.md](REPOSITORY-ONBOARDING.md) for coverage/access. API, worker and frontend are separate processes. No remote deployment, GitHub App install, tenant isolation, X connector, arbitrary code migration, universal exploit coverage or automatic merge/deployment is claimed.
+
+## Historical fixture-specific records
+
+The remaining sections preserve earlier implementation/evidence and their original limits. Their repair scope, runner identities and test totals do not describe the current central-runner release.
+
+## Earlier fixture-specific LangGraph Python demonstration
 
 The separate watcher inventoried the registered Python repository, corroborated three distinct Requests 2.31.0 advisory groups, selected published same-major Requests 2.34.2 and coalesced related findings into one automatic repair run. The complete graph used real Groq responses and real hosted Python execution to create [draft PR #1](https://github.com/Harsh5840/arigato-python-demo/pull/1).
 
@@ -30,7 +69,7 @@ The actual installed application inventory checked against OSV was Requests 2.34
 
 The main baseline remains deliberately affected and was not installed/executed. [Its initial static classification CI](https://github.com/Harsh5840/arigato-python-demo/actions/runs/40125768335) passed fixture setup checks, not application security. The automatic candidate changes only the Requests pin; application source is preserved.
 
-## Current implementation and coverage
+## Earlier implementation and coverage
 
 - Shared ten-node `StateGraph` with conditional repair/review routes, SQLite checkpoints and persisted events. Strategies provide work for the same edges. Worker loss fails expired leases closed; automatic crash replay is not implemented.
 - Actual `ChatGroq` calls with authenticated model discovery, strict structured output, usage recording and bounded inputs/time. Supply Chain uses `openai/gpt-oss-20b`; fixer/reviewer use separate contexts of `openai/gpt-oss-120b`. These are not Sonnet/Opus and do not constitute independent-model assurance.
@@ -42,7 +81,7 @@ The main baseline remains deliberately affected and was not installed/executed. 
 
 One public forum source currently returns HTTP 406: the GitHub advisory Atom endpoint. The Python Packaging feed and OSV have worked. The source-health panel reports the unavailable feed; no cached success is silently substituted. The scout's actual recorded summary found no lead directly establishing the Requests finding; OSV inventory corroboration established it independently. There is no X connector.
 
-## Verification boundaries
+## Earlier fixture verification boundaries
 
 Frozen Python paths are `verification/verify.mjs` and `verification/business.py`; their ordered path/content hashes bind the oracle identity. Candidate CI checks a direct-child commit, allowed changed paths and unchanged verifier, then validates the exact published pin. Only the candidate is built. Python executes without network, with read-only filesystem, non-root user, dropped capabilities, no forwarded model/GitHub credentials and resource bounds. The actual installed package inventory is queried against OSV by the trusted host verifier after container execution.
 
@@ -50,7 +89,7 @@ The five runner IDs are `scope`, `verifier`, `package_version`, `business_suite`
 
 Twelve business assertions cover Japanese UTF-8, integer JPY totals, query parameters, TLS, timeouts, environment trust, fractional-yen rejection, URL quoting and unauthorized responses using a fake service transport. This exercises actual installed Python/Requests and application behavior, not an exploit against a deployed service. The product does not claim universal pentest coverage or fault-proof security.
 
-## Runbook and ownership
+## Earlier runbook and ownership
 
 Follow [LIVE-DEMO.md](LIVE-DEMO.md): `npm run setup`, configure ignored credentials, then `npm run dev`. The frontend, API and worker must stay running. Select the Python repository and use its confirmed finding/automatic-fix control; the PHP action remains a separate advisory demo. Use [repository onboarding](REPOSITORY-ONBOARDING.md) for exact working API routes and company onboarding boundaries. [SEPARATE-SERVER-DEPLOYMENT.md](SEPARATE-SERVER-DEPLOYMENT.md) documents separate server configuration; no remote host deployment is claimed.
 

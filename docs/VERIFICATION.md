@@ -1,6 +1,38 @@
 # Verification record
 
-## Generic LangGraph service — 25 October 2026 (Asia/Calcutta)
+## Current generic central-verifier release — 25 October 2026 (Asia/Calcutta)
+
+The current code selects repair policy from repository manifests, exact package/manifest targets and baseline tests, without owner/name allowlists. Supported public repositories can update exact PyPI requirements, direct npm/Composer dependencies with committed locks and official PHP/nginx images in Dockerfiles or Compose YAML. Up to 1,000 dependencies are queried in OSV batches of at most 100. New supported connections default to automatic draft preparation. Read-only access, missing tests, unsupported stacks and private central checkout remain explicit boundaries.
+
+The trusted `.github/workflows/repository-repair.yml` runs in `arigato-hack`; no custom workflow is required in the target repository. npm/Composer preparation uses the real package manager to generate lock metadata, then a separate final pass verifies the committed exact candidate. The controller checks scope, frozen baseline test identity, actual version, business assertions, advisory evidence, central workflow/Actions identity and artifact hashes. Empty suites, changed tests and stale evidence cannot authorize a draft.
+
+Three registered judging repositories exercise the generic path:
+
+| Repository | Observed central-runner evidence |
+|---|---|
+| [Python](https://github.com/Harsh5840/arigato-python-demo) | Run `85a102f8-c69a-424d-8f0d-8a5b653bf816` completed. [Central CI 40128567277 passed](https://github.com/Harsh5840/arigato-hack/actions/runs/40128567277), 12 actual business assertions passed, and [draft PR #2](https://github.com/Harsh5840/arigato-python-demo/pull/2) was created at candidate `2291e66959c292547792346e77c88b8d25c8685c`. |
+| [Container YAML](https://github.com/Harsh5840/arigato-container-demo) | Run `1159357a-7e93-4c2d-ab11-efa91a56aa59` completed. [Central CI 40128986019 passed](https://github.com/Harsh5840/arigato-hack/actions/runs/40128986019), seven live HTTP assertions and 11 controller/runner gates passed, and [draft PR #1](https://github.com/Harsh5840/arigato-container-demo/pull/1) was created at `0300b01cedd3133c42e95176d0d5c8087e19cdcd`. Three real Groq role calls reported 7,136 tokens. |
+| [PHP](https://github.com/Harsh5840/arigato-php-demo) | Run `00cd66dd-c269-4b93-83a3-c690fb8f8932` completed. [Central CI 40129110636 passed](https://github.com/Harsh5840/arigato-hack/actions/runs/40129110636), PHP 8.3.36 passed 15 storefront assertions and 11 controller/runner gates, and [draft PR #6](https://github.com/Harsh5840/arigato-php-demo/pull/6) was created at `870aea9893c3d7c6341938c0b76541ee2125bad0`. Three real Groq role calls reported 6,210 tokens. |
+
+Real Trivy scans inspect both affected and candidate images. The affected baseline is never executed. Supported vendor advisories independently corroborate selected CVEs and replacement versions. A selected CVE remaining in the candidate blocks publication; other scanner findings and coverage gaps are retained for owner review. PHP image updates leave INI, deployed configuration and incident follow-up to the human owner.
+
+The successful container changes nginx 1.26.0 → 1.30.6 with digest `sha256:a7675fcee220f59b4a99f7098c06a0d5d999c2c0ee37c0211efb780536e5cb20` in `compose.yaml`. Actual Trivy output records 831 baseline and 391 candidate findings across all severities. These scanner-entry counts do not imply the image is clean or that all 391 residuals are exploitable. [The complete stored run](../output/live-runs/1159357a-7e93-4c2d-ab11-efa91a56aa59/run.json) retains the evidence and senior review.
+
+The successful PHP candidate changes the Dockerfile image to `php:8.3.36-cli-bookworm@sha256:cdb77e306d6bb99db40e513fbe036ecc6c53b575cbcb7e581387845fef26d755`. [Its stored run](../output/live-runs/00cd66dd-c269-4b93-83a3-c690fb8f8932/run.json) records the real senior approval and open draft. INI/startup/web configuration, deployment and incident tasks remain human follow-up; the CLI test result does not establish deployed exposure is resolved.
+
+**PHP's legacy target check is failing:** [Fixture evidence run 40129179437](https://github.com/Harsh5840/arigato-php-demo/actions/runs/40129179437) fails its policy gate before building. The target's old `ci-candidate` policy expects the earlier three-file configuration repair; current [central image-only verification 40129110636](https://github.com/Harsh5840/arigato-hack/actions/runs/40129110636) separately passed 15 storefront assertions. The owner must reconcile the legacy policy and INI/web follow-ups before merge. This record does not hide or skip the target check, and does not claim all CI is green.
+
+Read-only comparison confirmed that API-selected baseline context and runner full-tree discovery produced identical frozen hashes for all three fixture policies: PHP (five files), Python (two files) and container (eight files). The fixtures emit supported real assertion formats. Earlier failed central attempts remain blocked and do not count as successful repairs.
+
+GitHub readback confirmed all three new PRs are open, unmerged drafts at their verified candidate SHAs. Each changes only its intended file: Python `requirements.txt`, container `compose.yaml`, and PHP `Dockerfile`. A separate backend review found two lockfile-size compatibility inconsistencies; both were corrected without weakening candidate identity, exact-content reuse or aggregate limits. Regression tests cover large lockfiles, Unicode byte bounds, omitted oversized display patches and stale comparisons.
+
+Final root tests and type checks passed: 125 API and 21 frontend tests, 146 total. The optimized Next production build passed after the final repair-strip label removal. The updated dev stack was restarted. Ten valid PNGs in `apps/web/.impeccable/review/generic-autofix` include the nine original desktop/mobile captures and mobile repair confirmation. Browser checks recorded zero errors; the standard reduced-motion informational warning remains. The fresh `generic-autofix/VERDICT.md` disposition is **SHIP**, scoped to the two scored fixes: stale design documentation and the removed repair-strip kicker. It does not establish scanner/security correctness or clear the failing legacy PHP target check. Mocked unit tests remain separate from actual hosted execution.
+
+No remote service deployment, private central checkout credential, end-user login, tenant isolation, GitHub App install, X connector, universal pentesting, arbitrary code migration, automatic merge or automatic deployment is claimed. The main branches of the three demo repositories intentionally retain affected declarations and must not be deployed.
+
+## Historical fixture-specific LangGraph service — 25 October 2026 (Asia/Calcutta)
+
+This section describes the earlier verifier installed in the Python fixture, before the generic central workflow. Its scope and runner identity are historical.
 
 Actual scheduled monitoring inventoried Requests 2.31.0, corroborated three OSV advisory groups and coalesced them into one LangGraph repair. [Python draft PR #1](https://github.com/Harsh5840/arigato-python-demo/pull/1) was created automatically after [Actions40126005250 passed](https://github.com/Harsh5840/arigato-python-demo/actions/runs/40126005250). Run444cd3c2 preserves 11 passing controller/runner gates, 12 executed frozen Japanese business assertions, actual Python3.12.15/Requests2.34.2 and 6,230 reported role tokens. A separate read-only forum scout recorded4,556tokens. Eleven durable graph checkpoints were read back from SQLite after the worker stopped; external-write crash replay is deliberately unsupported.
 

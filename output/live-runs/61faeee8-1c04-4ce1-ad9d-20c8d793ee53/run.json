@@ -1,0 +1,448 @@
+{
+  "run": {
+    "id": "61faeee8-1c04-4ce1-ad9d-20c8d793ee53",
+    "status": "blocked",
+    "createdAt": "2026-10-24T20:06:24.048Z",
+    "updatedAt": "2026-10-24T20:07:08.591Z",
+    "sourceMode": "live",
+    "mode": "live-groq",
+    "repositoryId": "3dc4b2be848b7eaafd78",
+    "orchestrationEngine": "langgraph",
+    "repo": {
+      "owner": "Harsh5840",
+      "name": "arigato-python-demo",
+      "baseSha": "c0625047e22ec73c55db4d048c26823af412664d",
+      "candidateSha": "2b35fe3d78f3bbc6c1862dd7de406cd6b12cc7a1",
+      "branch": "proofpatch/package-61faeee8-a1"
+    },
+    "target": {
+      "repositoryId": "3dc4b2be848b7eaafd78",
+      "findingId": "finding-a3a3a4d89246776131a5d6b6",
+      "advisoryId": "GHSA-gc5v-m9x4-r6x2",
+      "ecosystem": "PyPI",
+      "packageName": "requests",
+      "installedVersion": "2.31.0",
+      "fixedVersion": "2.34.2",
+      "manifestPath": "requirements.txt",
+      "repairPolicyVersion": "generic-v1"
+    },
+    "agentCalls": [
+      {
+        "role": "supply",
+        "model": "openai/gpt-oss-20b",
+        "status": "completed",
+        "startedAt": "2026-10-24T20:06:34.999Z",
+        "summary": "The installed version 2.31.0 of the PyPI package \"requests\" is within the vulnerable range (0 to 2.33.0) identified by the advisory GHSA-gc5v-m9x4-r6x2 (CVE‑2026‑25645). Therefore the package is affected.",
+        "summaryJa": "PyPI パッケージ \"requests\" のインストール済みバージョン 2.31.0 は、GHSA-gc5v-m9x4-r6x2（CVE‑2026‑25645）で報告された脆弱性範囲（0 から 2.33.0）に該当します。したがって、このパッケージは影響を受けています。",
+        "usage": {
+          "promptTokens": 861,
+          "completionTokens": 233,
+          "totalTokens": 1094
+        },
+        "completedAt": "2026-10-24T20:06:35.973Z"
+      },
+      {
+        "role": "fixer",
+        "model": "openai/gpt-oss-120b",
+        "status": "completed",
+        "startedAt": "2026-10-24T20:06:39.006Z",
+        "summary": "Upgraded the 'requests' package in requirements.txt from version 2.31.0 to the fixed version 2.34.2 to address CVE-2026-25645.",
+        "summaryJa": "CVE-2026-25645 に対処するため、requirements.txt の 'requests' パッケージをバージョン 2.31.0 から修正済みの 2.34.2 にアップグレードしました。",
+        "usage": {
+          "promptTokens": 924,
+          "completionTokens": 281,
+          "totalTokens": 1205
+        },
+        "completedAt": "2026-10-24T20:06:40.030Z"
+      }
+    ],
+    "checks": [
+      {
+        "id": "affected_inventory",
+        "label": "Exact dependency and supported test stack confirmed",
+        "status": "passed",
+        "detail": "PyPI:requests@2.31.0; python verification/business.py"
+      },
+      {
+        "id": "frozen_baseline",
+        "label": "Baseline tests and central runner frozen before repair",
+        "status": "passed",
+        "detail": "2 files; python verification/business.py; verifier ac6bf4d9c41bbec23a427860dadba02df75be98939315715ed6763784db8db6d; runner afe9ec2aacc525678d44ba75470e238155ff02e7"
+      },
+      {
+        "id": "candidate_scope",
+        "label": "Dependency change matches the discovered repair policy",
+        "status": "passed",
+        "detail": "python: requirements.txt. Baseline tests, workflows and unrelated application code are protected."
+      },
+      {
+        "id": "evidence_identity",
+        "label": "Verified candidate, frozen oracle and workflow run match",
+        "status": "passed",
+        "detail": "Expected candidate 2b35fe3d78f3bbc6c1862dd7de406cd6b12cc7a1; base c0625047e22ec73c55db4d048c26823af412664d; Actions 40128323463."
+      },
+      {
+        "id": "evidence_schema",
+        "label": "Complete required verification assertions",
+        "status": "failed",
+        "detail": "Missing, duplicated, malformed or incomplete check assertions."
+      },
+      {
+        "id": "trusted_workflow",
+        "label": "Trusted hosted workflow completed",
+        "status": "failed",
+        "detail": "Actions completed; conclusion failure."
+      }
+    ],
+    "mergeReady": false,
+    "findingClosed": false,
+    "graph": {
+      "threadId": "61faeee8-1c04-4ce1-ad9d-20c8d793ee53",
+      "currentNode": "verify",
+      "completedNodes": [
+        "source",
+        "inventory",
+        "triage",
+        "baseline",
+        "repair"
+      ]
+    },
+    "advisory": {
+      "id": "GHSA-gc5v-m9x4-r6x2",
+      "titleEn": "requests 2.31.0: GHSA-gc5v-m9x4-r6x2",
+      "titleJa": "requests の依存関係の脆弱性",
+      "summary": "Requests has Insecure Temp File Reuse in its extract_zipped_paths() utility function",
+      "sources": [
+        {
+          "title": "OSV corroborated exact package version",
+          "url": "https://osv.dev/vulnerability/GHSA-gc5v-m9x4-r6x2",
+          "language": "en",
+          "retrievedAt": "2026-10-24T19:33:33.348Z"
+        },
+        {
+          "title": "WEB",
+          "url": "https://github.com/psf/requests/security/advisories/GHSA-gc5v-m9x4-r6x2",
+          "language": "en",
+          "retrievedAt": "2026-10-24T19:33:33.348Z"
+        },
+        {
+          "title": "ADVISORY",
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-25645",
+          "language": "en",
+          "retrievedAt": "2026-10-24T19:33:33.348Z"
+        },
+        {
+          "title": "WEB",
+          "url": "https://github.com/psf/requests/commit/66d21cb07bd6255b1280291c4fafb71803cdb3b7",
+          "language": "en",
+          "retrievedAt": "2026-10-24T19:33:33.348Z"
+        },
+        {
+          "title": "PACKAGE",
+          "url": "https://github.com/psf/requests",
+          "language": "en",
+          "retrievedAt": "2026-10-24T19:33:33.348Z"
+        },
+        {
+          "title": "WEB",
+          "url": "https://github.com/psf/requests/releases/tag/v2.33.0",
+          "language": "en",
+          "retrievedAt": "2026-10-24T19:33:33.348Z"
+        }
+      ],
+      "cves": [
+        "CVE-2026-25645",
+        "CVE-2024-35195",
+        "CVE-2024-47081"
+      ],
+      "fixedVersion": "2.34.2",
+      "ownerTasks": [
+        "Review and merge the draft in GitHub.",
+        "Deploy the reviewed build and verify the running service."
+      ]
+    },
+    "evidence": {
+      "policy": {
+        "target_repository": "Harsh5840/arigato-python-demo",
+        "run_id": "61faeee8-1c04-4ce1-ad9d-20c8d793ee53-a1",
+        "base_sha": "c0625047e22ec73c55db4d048c26823af412664d",
+        "candidate_sha": "2b35fe3d78f3bbc6c1862dd7de406cd6b12cc7a1",
+        "workflow_sha": "afe9ec2aacc525678d44ba75470e238155ff02e7",
+        "github_run_id": "40128323463",
+        "mode": "verify",
+        "checks": [
+          {
+            "id": "scope",
+            "label": "Only the discovered dependency manifest and resolved lockfile may change",
+            "pass": true,
+            "detail": "requirements.txt"
+          },
+          {
+            "id": "verifier",
+            "label": "Baseline test files are frozen before dependency installation",
+            "pass": true,
+            "detail": "ac6bf4d9c41bbec23a427860dadba02df75be98939315715ed6763784db8db6d"
+          },
+          {
+            "id": "no_known_advisories",
+            "label": "Exact repaired package has no current OSV advisory match",
+            "pass": true,
+            "detail": "PyPI:requests@2.34.2; other findings stay visible in monitoring."
+          },
+          {
+            "id": "runner_completion",
+            "label": "Trusted runner completed successfully",
+            "pass": false,
+            "detail": "docker failed: \n[notice] A new release of pip is available: 25.0.1 -> 26.2.2\n[notice] To update, run: pip install --upgrade pip\nERROR: Exception:\nTraceback (most recent call last):\n  File \"/usr/local/lib/python3.12/site-packages/pip/_internal/cli/base_command.py\", line 106, in _run_wrapper\n    status = _inner_run()\n             ^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/site-packages/pip/_internal/cli/base_command.py\", line 97, in _inner_run\n    return self.run(options, args)\n           ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/site-packages/pip/_internal/cli/req_command.py\", line 67, in wrapper\n    return func(self, options, args)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/site-packages/pip/_internal/commands/download.py\", line 87, in run\n    ensure_dir(options.download_dir)\n  File \"/usr/local/lib/python3.12/site-packages/pip/_internal/utils/misc.py\", line 105, in ensure_dir\n    os.makedirs(path)\n  File \"<frozen os>\", line 225, in makedirs\nPermissionError: [Errno 13] Permission denied: '/app/.proofpatch-wheels'\n"
+          }
+        ],
+        "verifier_sha256": "ac6bf4d9c41bbec23a427860dadba02df75be98939315715ed6763784db8db6d",
+        "policy": {
+          "version": "generic-repair-v1",
+          "kind": "python",
+          "root": "",
+          "manifestPath": "requirements.txt",
+          "allowedPaths": [
+            "requirements.txt"
+          ],
+          "testPaths": [
+            "verification/business.py",
+            "verification/verify.mjs"
+          ],
+          "testCommand": [
+            "python",
+            "verification/business.py"
+          ],
+          "runnerImage": "python:3.12-slim-bookworm@sha256:6a0e06f5ba0b373d051aabd3fffb9b873f27f9a2a3a14bcbe37dee6f0e3bbc70"
+        },
+        "failure": "docker failed: \n[notice] A new release of pip is available: 25.0.1 -> 26.2.2\n[notice] To update, run: pip install --upgrade pip\nERROR: Exception:\nTraceback (most recent call last):\n  File \"/usr/local/lib/python3.12/site-packages/pip/_internal/cli/base_command.py\", line 106, in _run_wrapper\n    status = _inner_run()\n             ^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/site-packages/pip/_internal/cli/base_command.py\", line 97, in _inner_run\n    return self.run(options, args)\n           ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/site-packages/pip/_internal/cli/req_command.py\", line 67, in wrapper\n    return func(self, options, args)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/site-packages/pip/_internal/commands/download.py\", line 87, in run\n    ensure_dir(options.download_dir)\n  File \"/usr/local/lib/python3.12/site-packages/pip/_internal/utils/misc.py\", line 105, in ensure_dir\n    os.makedirs(path)\n  File \"<frozen os>\", line 225, in makedirs\nPermissionError: [Errno 13] Permission denied: '/app/.proofpatch-wheels'\n"
+      },
+      "verifierSha256": "ac6bf4d9c41bbec23a427860dadba02df75be98939315715ed6763784db8db6d",
+      "artifactSha256": "085e9b8406547aa60b85b95a62401c5f38c8c32bd31afd945cec8d32e1d75208",
+      "rawFiles": {
+        "verification.json": "{\n  \"target_repository\": \"Harsh5840/arigato-python-demo\",\n  \"run_id\": \"61faeee8-1c04-4ce1-ad9d-20c8d793ee53-a1\",\n  \"base_sha\": \"c0625047e22ec73c55db4d048c26823af412664d\",\n  \"candidate_sha\": \"2b35fe3d78f3bbc6c1862dd7de406cd6b12cc7a1\",\n  \"workflow_sha\": \"afe9ec2aacc525678d44ba75470e238155ff02e7\",\n  \"github_run_id\": \"40128323463\",\n  \"mode\": \"verify\",\n  \"checks\": [\n    {\n      \"id\": \"scope\",\n      \"label\": \"Only the discovered dependency manifest and resolved lockfile may change\",\n      \"pass\": true,\n      \"detail\": \"requirements.txt\"\n    },\n    {\n      \"id\": \"verifier\",\n      \"label\": \"Baseline test files are frozen before dependency installation\",\n      \"pass\": true,\n      \"detail\": \"ac6bf4d9c41bbec23a427860dadba02df75be98939315715ed6763784db8db6d\"\n    },\n    {\n      \"id\": \"no_known_advisories\",\n      \"label\": \"Exact repaired package has no current OSV advisory match\",\n      \"pass\": true,\n      \"detail\": \"PyPI:requests@2.34.2; other findings stay visible in monitoring.\"\n    },\n    {\n      \"id\": \"runner_completion\",\n      \"label\": \"Trusted runner completed successfully\",\n      \"pass\": false,\n      \"detail\": \"docker failed: \\n[notice] A new release of pip is available: 25.0.1 -> 26.2.2\\n[notice] To update, run: pip install --upgrade pip\\nERROR: Exception:\\nTraceback (most recent call last):\\n  File \\\"/usr/local/lib/python3.12/site-packages/pip/_internal/cli/base_command.py\\\", line 106, in _run_wrapper\\n    status = _inner_run()\\n             ^^^^^^^^^^^^\\n  File \\\"/usr/local/lib/python3.12/site-packages/pip/_internal/cli/base_command.py\\\", line 97, in _inner_run\\n    return self.run(options, args)\\n           ^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\\"/usr/local/lib/python3.12/site-packages/pip/_internal/cli/req_command.py\\\", line 67, in wrapper\\n    return func(self, options, args)\\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\\"/usr/local/lib/python3.12/site-packages/pip/_internal/commands/download.py\\\", line 87, in run\\n    ensure_dir(options.download_dir)\\n  File \\\"/usr/local/lib/python3.12/site-packages/pip/_internal/utils/misc.py\\\", line 105, in ensure_dir\\n    os.makedirs(path)\\n  File \\\"<frozen os>\\\", line 225, in makedirs\\nPermissionError: [Errno 13] Permission denied: '/app/.proofpatch-wheels'\\n\"\n    }\n  ],\n  \"verifier_sha256\": \"ac6bf4d9c41bbec23a427860dadba02df75be98939315715ed6763784db8db6d\",\n  \"policy\": {\n    \"version\": \"generic-repair-v1\",\n    \"kind\": \"python\",\n    \"root\": \"\",\n    \"manifestPath\": \"requirements.txt\",\n    \"allowedPaths\": [\n      \"requirements.txt\"\n    ],\n    \"testPaths\": [\n      \"verification/business.py\",\n      \"verification/verify.mjs\"\n    ],\n    \"testCommand\": [\n      \"python\",\n      \"verification/business.py\"\n    ],\n    \"runnerImage\": \"python:3.12-slim-bookworm@sha256:6a0e06f5ba0b373d051aabd3fffb9b873f27f9a2a3a14bcbe37dee6f0e3bbc70\"\n  },\n  \"failure\": \"docker failed: \\n[notice] A new release of pip is available: 25.0.1 -> 26.2.2\\n[notice] To update, run: pip install --upgrade pip\\nERROR: Exception:\\nTraceback (most recent call last):\\n  File \\\"/usr/local/lib/python3.12/site-packages/pip/_internal/cli/base_command.py\\\", line 106, in _run_wrapper\\n    status = _inner_run()\\n             ^^^^^^^^^^^^\\n  File \\\"/usr/local/lib/python3.12/site-packages/pip/_internal/cli/base_command.py\\\", line 97, in _inner_run\\n    return self.run(options, args)\\n           ^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\\"/usr/local/lib/python3.12/site-packages/pip/_internal/cli/req_command.py\\\", line 67, in wrapper\\n    return func(self, options, args)\\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\\"/usr/local/lib/python3.12/site-packages/pip/_internal/commands/download.py\\\", line 87, in run\\n    ensure_dir(options.download_dir)\\n  File \\\"/usr/local/lib/python3.12/site-packages/pip/_internal/utils/misc.py\\\", line 105, in ensure_dir\\n    os.makedirs(path)\\n  File \\\"<frozen os>\\\", line 225, in makedirs\\nPermissionError: [Errno 13] Permission denied: '/app/.proofpatch-wheels'\\n\"\n}\n"
+      }
+    },
+    "ci": {
+      "id": 40128323463,
+      "url": "https://github.com/Harsh5840/arigato-hack/actions/runs/40128323463",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    "draftPRAllowed": false,
+    "failure": {
+      "code": "PACKAGE_RUN_BLOCKED",
+      "message": "Trusted verification failed, is missing, or does not match this exact candidate and frozen test suite."
+    }
+  },
+  "events": [
+    {
+      "id": 149,
+      "runId": "61faeee8-1c04-4ce1-ad9d-20c8d793ee53",
+      "at": "2026-10-24T20:06:24.048Z",
+      "node": "controller",
+      "kind": "queued",
+      "message": "Confirmed PyPI advisory GHSA-gc5v-m9x4-r6x2 queued for Harsh5840/arigato-python-demo."
+    },
+    {
+      "id": 161,
+      "runId": "61faeee8-1c04-4ce1-ad9d-20c8d793ee53",
+      "at": "2026-10-24T20:06:27.803Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered source."
+    },
+    {
+      "id": 162,
+      "runId": "61faeee8-1c04-4ce1-ad9d-20c8d793ee53",
+      "at": "2026-10-24T20:06:27.806Z",
+      "node": "supply-chain",
+      "kind": "source-fetching",
+      "message": "Read the verified PyPI advisory GHSA-gc5v-m9x4-r6x2. Forum text alone cannot authorize repair."
+    },
+    {
+      "id": 163,
+      "runId": "61faeee8-1c04-4ce1-ad9d-20c8d793ee53",
+      "at": "2026-10-24T20:06:27.808Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed source."
+    },
+    {
+      "id": 164,
+      "runId": "61faeee8-1c04-4ce1-ad9d-20c8d793ee53",
+      "at": "2026-10-24T20:06:27.814Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered inventory."
+    },
+    {
+      "id": 165,
+      "runId": "61faeee8-1c04-4ce1-ad9d-20c8d793ee53",
+      "at": "2026-10-24T20:06:27.818Z",
+      "node": "controller",
+      "kind": "matching",
+      "message": "Detect the stack in Harsh5840/arigato-python-demo at an immutable commit and match the exact installed dependency."
+    },
+    {
+      "id": 167,
+      "runId": "61faeee8-1c04-4ce1-ad9d-20c8d793ee53",
+      "at": "2026-10-24T20:06:34.985Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed inventory."
+    },
+    {
+      "id": 168,
+      "runId": "61faeee8-1c04-4ce1-ad9d-20c8d793ee53",
+      "at": "2026-10-24T20:06:34.993Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered triage."
+    },
+    {
+      "id": 169,
+      "runId": "61faeee8-1c04-4ce1-ad9d-20c8d793ee53",
+      "at": "2026-10-24T20:06:34.997Z",
+      "node": "supply-chain",
+      "kind": "triaging",
+      "message": "The Supply Chain Agent explains the corroborated match before a deterministic repair policy is selected."
+    },
+    {
+      "id": 170,
+      "runId": "61faeee8-1c04-4ce1-ad9d-20c8d793ee53",
+      "at": "2026-10-24T20:06:35.975Z",
+      "node": "supply-chain",
+      "kind": "agent-completed",
+      "message": "supply: openai/gpt-oss-20b; 1094 reported tokens. The installed version 2.31.0 of the PyPI package \"requests\" is within the vulnerable range (0 to 2.33.0) identified by the advisory GHSA-gc5v-m9x4-r6x2 (CVE‑2026‑25645). Therefore the package is affected."
+    },
+    {
+      "id": 171,
+      "runId": "61faeee8-1c04-4ce1-ad9d-20c8d793ee53",
+      "at": "2026-10-24T20:06:35.978Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed triage."
+    },
+    {
+      "id": 172,
+      "runId": "61faeee8-1c04-4ce1-ad9d-20c8d793ee53",
+      "at": "2026-10-24T20:06:35.986Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered baseline."
+    },
+    {
+      "id": 173,
+      "runId": "61faeee8-1c04-4ce1-ad9d-20c8d793ee53",
+      "at": "2026-10-24T20:06:35.989Z",
+      "node": "devsec",
+      "kind": "baseline",
+      "message": "Discover the relevant tests and freeze their baseline bytes before the fixer can edit a dependency manifest."
+    },
+    {
+      "id": 174,
+      "runId": "61faeee8-1c04-4ce1-ad9d-20c8d793ee53",
+      "at": "2026-10-24T20:06:38.997Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed baseline."
+    },
+    {
+      "id": 175,
+      "runId": "61faeee8-1c04-4ce1-ad9d-20c8d793ee53",
+      "at": "2026-10-24T20:06:39.002Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered repair."
+    },
+    {
+      "id": 176,
+      "runId": "61faeee8-1c04-4ce1-ad9d-20c8d793ee53",
+      "at": "2026-10-24T20:06:39.005Z",
+      "node": "remediation",
+      "kind": "patching",
+      "message": "The Fix Agent prepares candidate 1/2 for requests 2.34.2."
+    },
+    {
+      "id": 177,
+      "runId": "61faeee8-1c04-4ce1-ad9d-20c8d793ee53",
+      "at": "2026-10-24T20:06:40.031Z",
+      "node": "remediation",
+      "kind": "agent-completed",
+      "message": "fixer: openai/gpt-oss-120b; 1205 reported tokens. Upgraded the 'requests' package in requirements.txt from version 2.31.0 to the fixed version 2.34.2 to address CVE-2026-25645."
+    },
+    {
+      "id": 178,
+      "runId": "61faeee8-1c04-4ce1-ad9d-20c8d793ee53",
+      "at": "2026-10-24T20:06:42.754Z",
+      "node": "remediation",
+      "kind": "candidate-pushed",
+      "message": "Prepared baseline-child commit 2b35fe3d78f3bbc6c1862dd7de406cd6b12cc7a1 on proofpatch/package-61faeee8-a1."
+    },
+    {
+      "id": 179,
+      "runId": "61faeee8-1c04-4ce1-ad9d-20c8d793ee53",
+      "at": "2026-10-24T20:06:42.755Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed repair."
+    },
+    {
+      "id": 180,
+      "runId": "61faeee8-1c04-4ce1-ad9d-20c8d793ee53",
+      "at": "2026-10-24T20:06:42.762Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered verify."
+    },
+    {
+      "id": 181,
+      "runId": "61faeee8-1c04-4ce1-ad9d-20c8d793ee53",
+      "at": "2026-10-24T20:06:42.765Z",
+      "node": "devsec",
+      "kind": "verifying",
+      "message": "Run python verification/business.py against the exact candidate in the isolated central verifier."
+    },
+    {
+      "id": 182,
+      "runId": "61faeee8-1c04-4ce1-ad9d-20c8d793ee53",
+      "at": "2026-10-24T20:06:44.521Z",
+      "node": "devsec",
+      "kind": "ci-progress",
+      "message": "Waiting for the trusted repository verification workflow."
+    },
+    {
+      "id": 183,
+      "runId": "61faeee8-1c04-4ce1-ad9d-20c8d793ee53",
+      "at": "2026-10-24T20:06:51.826Z",
+      "node": "devsec",
+      "kind": "ci-progress",
+      "message": "Hosted verification: in_progress"
+    },
+    {
+      "id": 184,
+      "runId": "61faeee8-1c04-4ce1-ad9d-20c8d793ee53",
+      "at": "2026-10-24T20:06:58.866Z",
+      "node": "devsec",
+      "kind": "ci-progress",
+      "message": "Hosted verification: in_progress"
+    },
+    {
+      "id": 185,
+      "runId": "61faeee8-1c04-4ce1-ad9d-20c8d793ee53",
+      "at": "2026-10-24T20:07:05.850Z",
+      "node": "devsec",
+      "kind": "ci-progress",
+      "message": "Hosted verification: completed (failure)"
+    },
+    {
+      "id": 186,
+      "runId": "61faeee8-1c04-4ce1-ad9d-20c8d793ee53",
+      "at": "2026-10-24T20:07:08.591Z",
+      "node": "gate",
+      "kind": "blocked",
+      "message": "Trusted verification failed, is missing, or does not match this exact candidate and frozen test suite."
+    }
+  ]
+}

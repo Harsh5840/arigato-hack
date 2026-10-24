@@ -3,7 +3,7 @@ import { afterEach, beforeEach, test } from 'node:test';
 import { sha256 } from '../src/adapters/http.js';
 import { clearGitHubCredentialCacheForTests } from '../src/adapters/github.js';
 import { parseInventoryFiles } from '../src/adapters/inventory.js';
-import { ensureRepositoryCandidate, ensureRepositoryDraftPullRequest, parseRepository, parseRepositoryEvidence, readRepository, type RepositoryVerificationInput } from '../src/adapters/repository.js';
+import { ensureRepositoryCandidate, ensureRepositoryDraftPullRequest, parseRepository, parseRepositoryEvidence, readRepository, readRepositoryCandidateDiff, type RepositoryVerificationInput } from '../src/adapters/repository.js';
 import { fetchForumLeads, forumFeeds, parseForumFeed, scanDependencies, selectPublishedSafeVersion } from '../src/adapters/supply-sources.js';
 
 const originalFetch = globalThis.fetch;
@@ -178,4 +178,76 @@ test('draft publication refuses a candidate that moved after verification', asyn
   globalThis.fetch = async (_input, init) => { if (init?.method === 'POST') writes++; return response({ object: { sha: 'd'.repeat(40) } }); };
   await assert.rejects(ensureRepositoryDraftPullRequest(repo, { branch: 'proofpatch/unit-test', title: 'Fix dependency', body: 'Human review required.', expectedHeadSha: headSha }), /moved after verification/);
   assert.equal(writes, 0);
+});
+
+test('candidate writers accept bounded generated lockfiles larger than source files', async () => {
+  for (const path of ['package-lock.json', 'services/pay/composer.lock']) {
+    const writes: {path:string;body:Record<string,unknown>}[]=[];
+    globalThis.fetch=async(input,init)=>{
+      const url=String(input);
+      if(init?.method!=='POST')return response({message:'Not Found'},404);
+      writes.push({path:url,body:JSON.parse(String(init.body))});
+      if(url.endsWith('/git/blobs'))return response({sha:'d'.repeat(40)});
+      if(url.endsWith('/git/trees'))return response({sha:treeSha});
+      if(url.endsWith('/git/commits'))return response({sha:headSha});
+      assert.ok(url.endsWith('/git/refs'));return response({ref:'refs/heads/proofpatch/big-lock'});
+    };
+    const content=JSON.stringify({lockfileVersion:3,padding:'a'.repeat(250_000)});
+    const result=await ensureRepositoryCandidate(repo,{sha:baseSha,treeSha},{files:[{path,content}]},'proofpatch/big-lock');
+    assert.equal(result.sha,headSha);
+    assert.equal(writes.find(write=>write.path.endsWith('/git/blobs'))?.body.content,content);
+    assert.equal(writes.length,4);
+  }
+});
+
+test('large non-lock files, UTF-8 byte overflow, unsafe lock paths and aggregate overflow fail before network', async()=>{
+  globalThis.fetch=async()=>{throw new Error('Network must not run for rejected candidate scope.');};
+  const rejected=[
+    [{path:'src/service.ts',content:'a'.repeat(100_001)}],
+    [{path:'package-lock.json.backup',content:'a'.repeat(100_001)}],
+    [{path:'src/service.ts',content:'東'.repeat(40_000)}],
+    [{path:'../package-lock.json',content:'a'.repeat(250_000)}],
+    [{path:'package-lock.json',content:'a'.repeat(1_000_000)}],
+    [{path:'package-lock.json',content:'a'.repeat(600_000)},{path:'services/pay/composer.lock',content:'b'.repeat(450_000)}],
+  ];
+  for(const files of rejected)await assert.rejects(ensureRepositoryCandidate(repo,{sha:baseSha,treeSha},{files},'proofpatch/reject-size'),/allowed source\/manifest repair scope/);
+});
+
+function comparison(overrides:Record<string,unknown>={}){
+  return {base_commit:{sha:baseSha},merge_base_commit:{sha:baseSha},total_commits:1,commits:[{sha:headSha}],files:[{filename:'package-lock.json',status:'modified',additions:1200,deletions:1150,patch:'+'.repeat(100_000)}],...overrides};
+}
+test('large displayed lock patches are omitted while immutable comparison validation stays mandatory',async()=>{
+  globalThis.fetch=async()=>response(comparison());
+  const diff=await readRepositoryCandidateDiff(repo,baseSha,headSha);
+  assert.equal(diff.truncated,true);assert.equal(diff.files[0].patch,'');
+  assert.equal(diff.files[0].additions,1200);assert.equal(diff.baseSha,baseSha);assert.equal(diff.candidateSha,headSha);
+  const invalid=[
+    {base_commit:{sha:'d'.repeat(40)}},
+    {merge_base_commit:{sha:'d'.repeat(40)}},
+    {total_commits:2},
+    {commits:[{sha:'d'.repeat(40)}]},
+    {files:[{filename:'../package-lock.json',status:'modified',additions:1,deletions:0,patch:'+'.repeat(100_000)}]},
+    {files:[{filename:'package-lock.json',status:'renamed',additions:1,deletions:0,patch:'+'.repeat(100_000)}]},
+    {files:[{filename:'package-lock.json',status:'modified',additions:-1,deletions:0,patch:'+'.repeat(100_000)}]},
+  ];
+  for(const value of invalid){globalThis.fetch=async()=>response(comparison(value));await assert.rejects(readRepositoryCandidateDiff(repo,baseSha,headSha));}
+});
+
+test('large-patch candidate branch reuse still verifies exact lockfile bytes without force-pushing',async()=>{
+  const content=JSON.stringify({lockfileVersion:3,padding:'a'.repeat(250_000)});
+  let currentContent=content,writes=0;
+  globalThis.fetch=async(input,init)=>{
+    if(init?.method==='POST'){writes++;throw new Error('Existing candidate must not be mutated.');}
+    const url=String(input);
+    if(url.includes('/git/ref/heads/'))return response({object:{sha:headSha}});
+    if(url.includes('/git/commits/'))return response({parents:[{sha:baseSha}]});
+    if(url.includes('/compare/'))return response(comparison());
+    assert.ok(url.endsWith(`/contents/package-lock.json?ref=${headSha}`));
+    return response({type:'file',encoding:'base64',size:Buffer.byteLength(currentContent),content:Buffer.from(currentContent).toString('base64')});
+  };
+  const repair={files:[{path:'package-lock.json',content}]};
+  assert.equal((await ensureRepositoryCandidate(repo,{sha:baseSha,treeSha},repair,'proofpatch/reused-lock')).sha,headSha);
+  currentContent=content.replace('lockfileVersion', 'lockfileVersioN');
+  await assert.rejects(ensureRepositoryCandidate(repo,{sha:baseSha,treeSha},repair,'proofpatch/reused-lock'),/content differs/);
+  assert.equal(writes,0);
 });

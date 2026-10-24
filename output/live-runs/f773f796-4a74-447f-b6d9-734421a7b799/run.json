@@ -1,0 +1,366 @@
+{
+  "run": {
+    "id": "f773f796-4a74-447f-b6d9-734421a7b799",
+    "status": "blocked",
+    "createdAt": "2026-10-24T20:06:10.243Z",
+    "updatedAt": "2026-10-24T20:06:27.763Z",
+    "sourceMode": "live",
+    "mode": "live-groq",
+    "repositoryId": "57ecbdbdfc9225e368a7",
+    "orchestrationEngine": "langgraph",
+    "repo": {
+      "owner": "Harsh5840",
+      "name": "arigato-container-demo",
+      "baseSha": "db7ecf6797233e222fa554139fb588bc156f0e32"
+    },
+    "target": {
+      "repositoryId": "57ecbdbdfc9225e368a7",
+      "findingId": "finding-1a09bc7a8543c3e22ad7eec9",
+      "advisoryId": "CVE-2024-7347",
+      "ecosystem": "Docker",
+      "packageName": "library/nginx",
+      "installedVersion": "1.26.0",
+      "fixedVersion": "1.30.6",
+      "manifestPath": "compose.yaml",
+      "imageRef": "nginx:1.26.0",
+      "fixedImageRef": "nginx:1.30.6@sha256:a7675fcee220f59b4a99f7098c06a0d5d999c2c0ee37c0211efb780536e5cb20",
+      "fixedDigest": "sha256:a7675fcee220f59b4a99f7098c06a0d5d999c2c0ee37c0211efb780536e5cb20",
+      "repairPolicyVersion": "generic-v1"
+    },
+    "agentCalls": [
+      {
+        "role": "supply",
+        "model": "openai/gpt-oss-20b",
+        "status": "completed",
+        "startedAt": "2026-10-24T20:06:18.385Z",
+        "summary": "The Docker image nginx:1.26.0 is affected by CVE‑2024‑7347, a buffer overread in the ngx_http_mp4_module. The advisory confirms that version 1.26.0 falls within the vendor‑affected range, and a fixed image is available at nginx:1.30.6. The vulnerability is specific to the upstream nginx binary and does not imply that all OS packages in the image are vulnerable.",
+        "summaryJa": "Dockerイメージnginx:1.26.0は、ngx_http_mp4_moduleのバッファオーバーリード脆弱性CVE‑2024‑7347の対象です。アドバイザリは、バージョン1.26.0が影響範囲に含まれると確認しており、固定イメージはnginx:1.30.6にあります。この脆弱性は上流のnginxバイナリに限定され、イメージ内のOSパッケージ全体が影響を受けるわけではありません。",
+        "usage": {
+          "promptTokens": 894,
+          "completionTokens": 297,
+          "totalTokens": 1191
+        },
+        "completedAt": "2026-10-24T20:06:19.965Z"
+      },
+      {
+        "role": "fixer",
+        "model": "openai/gpt-oss-120b",
+        "status": "completed",
+        "startedAt": "2026-10-24T20:06:24.831Z",
+        "summary": "Replaced vulnerable nginx:1.26.0 with the fixed nginx:1.30.6 image (pinned by digest) in compose.yaml.",
+        "summaryJa": "脆弱な nginx:1.26.0 を、修正済みの nginx:1.30.6（ダイジェストで固定）に compose.yaml で置き換えました。",
+        "usage": {
+          "promptTokens": 1169,
+          "completionTokens": 536,
+          "totalTokens": 1705
+        },
+        "completedAt": "2026-10-24T20:06:26.277Z"
+      },
+      {
+        "role": "fixer",
+        "model": "openai/gpt-oss-120b",
+        "status": "completed",
+        "startedAt": "2026-10-24T20:06:26.295Z",
+        "summary": "Updated compose.yaml to use the fixed nginx version 1.30.6, addressing CVE-2024-7347 while preserving all other configuration.",
+        "summaryJa": "compose.yaml の nginx イメージを 1.30.6 に更新し、CVE-2024-7347 に対処しました。その他の設定はそのまま保持しています。",
+        "usage": {
+          "promptTokens": 1183,
+          "completionTokens": 442,
+          "totalTokens": 1625
+        },
+        "completedAt": "2026-10-24T20:06:27.741Z"
+      }
+    ],
+    "checks": [
+      {
+        "id": "affected_inventory",
+        "label": "Exact dependency and supported test stack confirmed",
+        "status": "passed",
+        "detail": "Docker:library/nginx@1.26.0; sh /oracle/tests/runtime-check.sh"
+      },
+      {
+        "id": "frozen_baseline",
+        "label": "Baseline tests and central runner frozen before repair",
+        "status": "passed",
+        "detail": "8 files; sh /oracle/tests/runtime-check.sh; verifier 2e6350b66f08e02ab2d8906c590dd667fe5173694f5192d6d4029fb601a88474; runner afe9ec2aacc525678d44ba75470e238155ff02e7"
+      }
+    ],
+    "mergeReady": false,
+    "findingClosed": false,
+    "graph": {
+      "threadId": "f773f796-4a74-447f-b6d9-734421a7b799",
+      "currentNode": "blocked",
+      "completedNodes": [
+        "source",
+        "inventory",
+        "triage",
+        "baseline",
+        "repair"
+      ]
+    },
+    "advisory": {
+      "id": "CVE-2024-7347",
+      "titleEn": "library/nginx 1.26.0: CVE-2024-7347",
+      "titleJa": "library/nginx の依存関係の脆弱性",
+      "summary": "Buffer overread in the ngx_http_mp4_module (low). nginx 1.26.0 is in the vendor-affected range. Exploitability depends on enabled modules and configuration. This finding covers upstream nginx, not all image OS packages.",
+      "sources": [
+        {
+          "title": "nginx official security advisories and affected releases",
+          "url": "https://nginx.org/en/security_advisories.html",
+          "language": "en",
+          "retrievedAt": "2026-10-24T20:06:10.238Z"
+        },
+        {
+          "title": "Upstream vendor advisory",
+          "url": "https://mailman.nginx.org/pipermail/nginx-announce/2024/UUOCLLONPR6244YQYU65PO5LB7JDYCWM.html",
+          "language": "en",
+          "retrievedAt": "2026-10-24T20:06:10.238Z"
+        },
+        {
+          "title": "Docker Official nginx image",
+          "url": "https://hub.docker.com/_/nginx",
+          "language": "en",
+          "retrievedAt": "2026-10-24T20:06:10.238Z"
+        }
+      ],
+      "cves": [
+        "CVE-2024-7347",
+        "CVE-2026-97629",
+        "CVE-2026-97205",
+        "CVE-2026-95101",
+        "CVE-2026-9256",
+        "CVE-2026-60005",
+        "CVE-2026-56434",
+        "CVE-2026-48142",
+        "CVE-2026-42946",
+        "CVE-2026-42945",
+        "CVE-2026-42934",
+        "CVE-2026-42533",
+        "CVE-2026-42055",
+        "CVE-2026-40701",
+        "CVE-2026-40460",
+        "CVE-2026-32647",
+        "CVE-2026-28753",
+        "CVE-2026-27784",
+        "CVE-2026-27654",
+        "CVE-2026-27651",
+        "CVE-2026-1642",
+        "CVE-2026-15176",
+        "CVE-2025-53859",
+        "CVE-2025-23419",
+        "CVE-2024-35200",
+        "CVE-2024-34161",
+        "CVE-2024-32760",
+        "CVE-2024-31079"
+      ],
+      "fixedVersion": "1.30.6",
+      "ownerTasks": [
+        "Review and merge the draft in GitHub.",
+        "Deploy the reviewed build and verify the running service.",
+        "Review remaining scanner findings, module/configuration exposure and incident guidance."
+      ]
+    },
+    "evidence": {
+      "verifierSha256": "2e6350b66f08e02ab2d8906c590dd667fe5173694f5192d6d4029fb601a88474"
+    },
+    "draftPRAllowed": false,
+    "failure": {
+      "code": "PACKAGE_RUN_BLOCKED",
+      "message": "Container repair must change only the selected image reference and preserve every other byte."
+    }
+  },
+  "events": [
+    {
+      "id": 136,
+      "runId": "f773f796-4a74-447f-b6d9-734421a7b799",
+      "at": "2026-10-24T20:06:10.243Z",
+      "node": "controller",
+      "kind": "queued",
+      "message": "Confirmed Docker advisory CVE-2024-7347 queued for Harsh5840/arigato-container-demo."
+    },
+    {
+      "id": 137,
+      "runId": "f773f796-4a74-447f-b6d9-734421a7b799",
+      "at": "2026-10-24T20:06:10.579Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered source."
+    },
+    {
+      "id": 138,
+      "runId": "f773f796-4a74-447f-b6d9-734421a7b799",
+      "at": "2026-10-24T20:06:10.582Z",
+      "node": "supply-chain",
+      "kind": "source-fetching",
+      "message": "Read the verified Docker advisory CVE-2024-7347. Forum text alone cannot authorize repair."
+    },
+    {
+      "id": 139,
+      "runId": "f773f796-4a74-447f-b6d9-734421a7b799",
+      "at": "2026-10-24T20:06:10.586Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed source."
+    },
+    {
+      "id": 140,
+      "runId": "f773f796-4a74-447f-b6d9-734421a7b799",
+      "at": "2026-10-24T20:06:10.594Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered inventory."
+    },
+    {
+      "id": 141,
+      "runId": "f773f796-4a74-447f-b6d9-734421a7b799",
+      "at": "2026-10-24T20:06:10.598Z",
+      "node": "controller",
+      "kind": "matching",
+      "message": "Detect the stack in Harsh5840/arigato-container-demo at an immutable commit and match the exact installed dependency."
+    },
+    {
+      "id": 142,
+      "runId": "f773f796-4a74-447f-b6d9-734421a7b799",
+      "at": "2026-10-24T20:06:18.369Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed inventory."
+    },
+    {
+      "id": 143,
+      "runId": "f773f796-4a74-447f-b6d9-734421a7b799",
+      "at": "2026-10-24T20:06:18.378Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered triage."
+    },
+    {
+      "id": 144,
+      "runId": "f773f796-4a74-447f-b6d9-734421a7b799",
+      "at": "2026-10-24T20:06:18.383Z",
+      "node": "supply-chain",
+      "kind": "triaging",
+      "message": "The Supply Chain Agent explains the corroborated match before a deterministic repair policy is selected."
+    },
+    {
+      "id": 145,
+      "runId": "f773f796-4a74-447f-b6d9-734421a7b799",
+      "at": "2026-10-24T20:06:19.966Z",
+      "node": "supply-chain",
+      "kind": "agent-completed",
+      "message": "supply: openai/gpt-oss-20b; 1191 reported tokens. The Docker image nginx:1.26.0 is affected by CVE‑2024‑7347, a buffer overread in the ngx_http_mp4_module. The advisory confirms that version 1.26.0 falls within the vendor‑affected range, and a fixed image is available at nginx:1.30.6. The vulnerability is specific to the upstream nginx binary and does not imply that all OS packages in the image are vulnerable."
+    },
+    {
+      "id": 146,
+      "runId": "f773f796-4a74-447f-b6d9-734421a7b799",
+      "at": "2026-10-24T20:06:19.968Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed triage."
+    },
+    {
+      "id": 147,
+      "runId": "f773f796-4a74-447f-b6d9-734421a7b799",
+      "at": "2026-10-24T20:06:19.976Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered baseline."
+    },
+    {
+      "id": 148,
+      "runId": "f773f796-4a74-447f-b6d9-734421a7b799",
+      "at": "2026-10-24T20:06:19.978Z",
+      "node": "devsec",
+      "kind": "baseline",
+      "message": "Discover the relevant tests and freeze their baseline bytes before the fixer can edit a dependency manifest."
+    },
+    {
+      "id": 150,
+      "runId": "f773f796-4a74-447f-b6d9-734421a7b799",
+      "at": "2026-10-24T20:06:24.822Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed baseline."
+    },
+    {
+      "id": 151,
+      "runId": "f773f796-4a74-447f-b6d9-734421a7b799",
+      "at": "2026-10-24T20:06:24.827Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered repair."
+    },
+    {
+      "id": 152,
+      "runId": "f773f796-4a74-447f-b6d9-734421a7b799",
+      "at": "2026-10-24T20:06:24.830Z",
+      "node": "remediation",
+      "kind": "patching",
+      "message": "The Fix Agent prepares candidate 1/2 for library/nginx 1.30.6."
+    },
+    {
+      "id": 153,
+      "runId": "f773f796-4a74-447f-b6d9-734421a7b799",
+      "at": "2026-10-24T20:06:26.279Z",
+      "node": "remediation",
+      "kind": "agent-completed",
+      "message": "fixer: openai/gpt-oss-120b; 1705 reported tokens. Replaced vulnerable nginx:1.26.0 with the fixed nginx:1.30.6 image (pinned by digest) in compose.yaml."
+    },
+    {
+      "id": 154,
+      "runId": "f773f796-4a74-447f-b6d9-734421a7b799",
+      "at": "2026-10-24T20:06:26.282Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed repair."
+    },
+    {
+      "id": 155,
+      "runId": "f773f796-4a74-447f-b6d9-734421a7b799",
+      "at": "2026-10-24T20:06:26.290Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered repair."
+    },
+    {
+      "id": 156,
+      "runId": "f773f796-4a74-447f-b6d9-734421a7b799",
+      "at": "2026-10-24T20:06:26.293Z",
+      "node": "remediation",
+      "kind": "patching",
+      "message": "The Fix Agent prepares candidate 2/2 for library/nginx 1.30.6."
+    },
+    {
+      "id": 157,
+      "runId": "f773f796-4a74-447f-b6d9-734421a7b799",
+      "at": "2026-10-24T20:06:27.742Z",
+      "node": "remediation",
+      "kind": "agent-completed",
+      "message": "fixer: openai/gpt-oss-120b; 1625 reported tokens. Updated compose.yaml to use the fixed nginx version 1.30.6, addressing CVE-2024-7347 while preserving all other configuration."
+    },
+    {
+      "id": 158,
+      "runId": "f773f796-4a74-447f-b6d9-734421a7b799",
+      "at": "2026-10-24T20:06:27.744Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed repair."
+    },
+    {
+      "id": 159,
+      "runId": "f773f796-4a74-447f-b6d9-734421a7b799",
+      "at": "2026-10-24T20:06:27.754Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered blocked."
+    },
+    {
+      "id": 160,
+      "runId": "f773f796-4a74-447f-b6d9-734421a7b799",
+      "at": "2026-10-24T20:06:27.763Z",
+      "node": "gate",
+      "kind": "blocked",
+      "message": "Container repair must change only the selected image reference and preserve every other byte."
+    }
+  ]
+}

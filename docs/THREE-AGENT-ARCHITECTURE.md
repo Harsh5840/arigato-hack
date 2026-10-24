@@ -1,80 +1,99 @@
-# Three agents, one LangGraph workflow
+# Three agents, one generic LangGraph workflow
 
-Implementation status: **25 October 2026 (Asia/Calcutta)**. These are actual server-side LangChain/Groq roles and LangGraph transitions, visualized in the single dashboard. Earlier synthetic prototype traces remain historical assets.
+Implementation status: **25 October 2026 (Asia/Calcutta)**. The service detects each repository's supported stack and tests. Repository owner/name allowlists do not select the repair policy. A single dashboard explains the journey and exposes actual LangChain/Groq calls, LangGraph state, checks, diffs and draft PRs.
 
-| Role | Actual responsibility | Model and authority |
+| Agent | Responsibility | Model and authority |
 |---|---|---|
-| Supply Chain Agent | Triage new unconfirmed forum leads; explain corroborated advisory/package/version matches for registered repositories | `openai/gpt-oss-20b` through `ChatGroq`; read-only structured responses. Cannot establish a confirmed finding from a post alone. |
-| Remediation Agent | Propose complete file contents inside a maintainer-approved repair policy, explain compatibility/rollback/owner tasks | `openai/gpt-oss-120b`; controller validates output before candidate writes. Cannot change trusted tests/workflows or merge. |
-| Senior Review / DevSec Agent | Review the actual candidate diff and observed frozen-check evidence; approve a draft review packet or request changes | Separate `openai/gpt-oss-120b` context; cannot override failed deterministic checks. This is not independent-model assurance. |
+| Supply Chain | Triage new unconfirmed forum leads and explain corroborated package/image matches | `openai/gpt-oss-20b` through `ChatGroq`. Read-only structured output. A post alone cannot establish a confirmed finding. |
+| Fix | Propose the selected dependency or image update inside the discovered deterministic policy | `openai/gpt-oss-120b`. The controller validates edits before branch writes. The agent cannot change tests/workflows or invent lock integrity metadata. |
+| Senior Review / DevSec | Review the actual candidate change and observed test evidence in a separate context | `openai/gpt-oss-120b`. Can request changes or approve a draft packet, but cannot override failed checks. |
 
-The deterministic controller owns network/GitHub adapters, scope, budgets, cancellation, evidence validation and publication. The GitHub-hosted runner executes frozen checks. The human owns merge and deployment. These are separate authorities, not additional model agents.
+The controller owns adapters, scope, budgets, cancellation, provenance and publication. The central GitHub Actions runner executes checks. A human owns merge and deployment. These are separate authorities, not extra model agents. Using the same larger model in two contexts is not independent-model assurance.
 
-## Repository watch before orchestration
+## Detect the stack and exact repair capability
 
-A separate worker checks approved feeds and registered repository inventories every 300 seconds by default. New forum leads receive bounded read-only Groq triage; triaged IDs are persisted so unchanged leads do not repeatedly invoke the model. Posts remain unconfirmed. Exact ecosystem/package/version OSV queries establish findings independently of the scout's opinion. Source errors and unsupported inventory remain visible.
+The registry reads immutable default-branch manifests, repository permissions and baseline test inputs. It advertises supported targets as exact ecosystem/package/manifest triples. A tested Python service in a monorepo does not grant permission to repair an untested Python manifest elsewhere.
 
-Inventory adapters currently support exact PyPI requirements, npm package-lock and Packagist Composer lock entries, including nested manifests. Published candidate releases are checked against registry metadata, restricted to the installed major, and queried against OSV again. A missing supported fix becomes owner work. This selection does not prove application compatibility; the approved runner and human review address that separately.
+| Adapter | Detected inputs | Permitted changes and execution |
+|---|---|---|
+| PyPI | Stable exact requirements pins and conventional unittest/pytest tests, or the existing business-check script | Change the selected exact pin. Download binary wheels without application source, then run frozen tests against the candidate package. |
+| npm | Direct dependency in package.json, committed package-lock.json and meaningful test files/script | Change the direct constraint. Resolve the lock with the real package manager without install hooks. Verify the final committed lock and frozen tests. |
+| Composer | Direct dependency, composer.json/composer.lock and a supported PHP test suite | Change the direct constraint. Resolve the lock without plugins/scripts, then verify installed version and baseline tests. |
+| Containers | Official nginx/PHP image references in Dockerfile or Compose YAML, supported vendor evidence and runtime oracles | Replace only the matching image reference with a verified version and digest. Scan images and run the fixed image's relevant behavior checks. |
 
-Registered repositories normally remain monitor-only. The owned Python Requests fixture has an enabled repair policy. Several corroborated advisories for the same package/version/target share one run and draft. The PHP fixture retains its separate manually initiated Japanese runtime-advisory policy.
+New supported public connections enable automatic draft preparation by default. Existing settings survive reconnect. Unknown stacks, missing/empty suites, unsupported requirements, transitive-only package changes and unsupported image smoke policies remain explicit boundaries. Private generic repair is unavailable because the central runner currently checks out public code anonymously. A separately configured isolated checkout credential is required before that boundary can change.
 
-## The actual ten-node graph
+## Watch sources independently of repair jobs
 
-`apps/api/src/graphs/security-graph.ts` compiles a real `StateGraph`, with profile-specific node implementations supplying work while sharing the graph edges.
+A separate worker checks enabled repositories every 300 seconds by default. Manual scans queue work immediately. Up to 1,000 exact dependencies are inventoried per repository, with OSV query batches of at most 100. Tree, file and verification-context reads are bounded. Truncation and source errors cannot become clean scan results.
+
+Allowlisted forum leads receive bounded read-only Groq triage. Triaged IDs persist so unchanged posts do not repeatedly invoke the model. The leads remain unconfirmed. Package findings use exact OSV matches and published registry metadata, followed by another OSV query of candidate versions. Supported image findings use vendor-version mappings and published Docker image digests. A missing verified target becomes owner work.
+
+Findings for the same repository, package/image, manifest, installed version and exact replacement share a repair run and PR. Image digest identity is part of that grouping. The UI keeps every advisory match in an expandable evidence list.
+
+## Traverse the actual ten-node graph
+
+`apps/api/src/graphs/security-graph.ts` compiles the shared `StateGraph`.
 
 ```mermaid
 flowchart LR
-  S[Source] --> I[Inventory]
-  I --> T[Supply triage]
-  T -->|Confirmed| B[Freeze baseline checks]
+  S[Corroborated source] --> I[Exact inventory and stack]
+  I --> T[Supply Agent triage]
+  T -->|Confirmed| B[Freeze baseline tests]
   T -->|Uncertain| X[Blocked]
-  B --> R[Remediation]
-  R -->|Valid scope| V[Hosted verification]
-  R -->|Policy rejected: budget remains| R
-  R -->|Budget exhausted| X
-  V --> W[Senior review]
+  B --> R[Fix Agent]
+  R -->|Scoped candidate| V[Central exact-SHA verification]
+  R -->|Rejected scope; budget remains| R
+  V --> W[Senior Review Agent]
   W --> G{Deterministic gate}
-  G -->|Changes requested: budget remains| R
-  G -->|Checks and review pass| P[Publish draft PR]
+  G -->|Changes requested; budget remains| R
+  G -->|Checks and review pass| P[Real draft PR]
   G -->|Missing evidence or exhausted budget| X
   P --> H[Human reviews and merges]
 ```
 
-The ten nodes are `source`, `inventory`, `triage`, `baseline`, `repair`, `verify`, `review`, `gate`, `publish`, `blocked`. Verification exceptions fail closed; a green model response cannot manufacture passing execution. The repair policy and senior-review routes allow at most two candidates and five role calls per run. The overall limit is 16 minutes. Monitoring scout calls are separate from that repair budget.
+The nodes are `source`, `inventory`, `triage`, `baseline`, `repair`, `verify`, `review`, `gate`, `publish` and `blocked`. The controller permits at most two candidate attempts, five role calls and 16 minutes per run. Verification exceptions fail closed. A model cannot turn missing execution into a pass.
 
-SQLite checkpoints preserve graph state/history and correlate a graph thread with the persisted run/events. Current worker-loss behavior fails an expired lease closed. Automatic crash resume and replay of GitHub side effects are not implemented merely because a checkpointer exists.
+SQLite checkpoints correlate graph history with run/events. Expired worker leases fail closed. Checkpoints do not currently provide automatic crash resume or side-effect replay.
 
-## Typed boundaries and evidence
+## Use the central verifier without installing target workflows
 
-Shared contracts live in `packages/contracts/src/live.ts` and `monitoring.ts`.
+The trusted workflow is `.github/workflows/repository-repair.yml` in `Harsh5840/arigato-hack`. Target repositories need no custom ProofPatch workflow. The controller freezes the central runner SHA separately from the target's base and candidate SHA.
 
-| Record | Important identities and meaning |
+For npm and Composer, a preparation dispatch resolves the lockfile with the package manager. Its artifact binds generated lock bytes to the preparation run, target repository, base/candidate/central-workflow identities and frozen test digest. The controller commits the validated lock, then dispatches full verification for the final candidate SHA. A successful preparation pass does not authorize a PR.
+
+The five required final runner gates are `scope`, `verifier`, `package_version`, `business_suite` and `no_known_advisories`. The controller also checks artifact schema, trusted-workflow success and exact evidence identity. Empty tests cannot pass. Package downloads do not receive application source, hooks or credentials. Application tests run in a non-root, read-only, resource-bounded container without external network or a Docker socket.
+
+Container verification performs real Trivy scans of the affected image and digest-pinned candidate. The affected image is never executed. Supported vendor sources independently corroborate the selected CVEs and replacement version. Selected CVEs still reported in the candidate block publication. Residual OS/package findings and scanner coverage gaps remain visible for the owner; the system does not claim an image has no vulnerabilities.
+
+## Bind evidence to publication
+
+Shared contracts are in `packages/contracts/src/live.ts` and `monitoring.ts`.
+
+| Record | Bound identities |
 |---|---|
-| Registered repository | Server-verified owner/name/default branch, immutable inventory SHA, supported dependencies, push capability, watch toggle and policy profile |
-| Unconfirmed lead | Approved feed, URL, title, retrieval/publication times, aliases and unconfirmed trust label |
-| Corroborated finding | Repository, exact ecosystem/name/version/manifest, advisory ID/aliases, registry-verified target and source links |
-| Candidate | Direct parent baseline, candidate SHA, controlled branch and scoped complete file contents |
-| Frozen verification | Unchanged oracle SHA256, exact base/candidate/workflow/run identities, actual check assertions and runtime/business output |
-| Draft handoff | Same verified candidate head, actual CI link, bilingual rationale/review, rollback notes and human tasks |
+| Repository capability | Verified access, inventory SHA, stack, test command and exact supported package/manifest targets |
+| Finding | Repository, ecosystem/name/version/manifest, advisory aliases, published target and optional image digest |
+| Candidate | Direct baseline parent, scoped modified files, candidate SHA and controlled branch |
+| Final verification | Target repository, base/candidate/central-workflow SHA, run ID, Actions ID, frozen verifier hash and artifact digest |
+| Draft PR | Same verified branch/head, actual CI link, source evidence, bilingual rationale, rollback and owner tasks |
 
-Candidate branches are never force-pushed. Existing writes are reconciled only when identities/content agree. Publication checks both the branch and returned PR head against the verified SHA. A changed main, malformed artifact, failed/missing required check, cancellation or exhausted budget prevents successful promotion. An external write already in flight cannot be atomically revoked; its returned state remains auditable.
+Branches are never force-pushed. Existing writes are reused only when identity and content agree. A changed default branch, moved candidate, failing/missing assertion, malformed artifact or cancellation prevents successful promotion. External writes already in flight cannot be atomically revoked; their returned state stays recorded. Draft creation leaves `mergeReady` and `findingClosed` false.
 
-## Current repair policies
+## Demonstrate three repositories
 
-**Python Requests:** `Harsh5840/arigato-python-demo` deliberately declares affected Requests 2.31.0. The controller selects a published same-major OSV-clean release, 2.34.2 at the current scan. The reviewed policy changes only its exact pin and preserves `service/client.py`; code compatibility edits need a future approved policy. Frozen CI checks scope, unchanged verifier, actual package/Python version, 12 Japanese business assertions and OSV matches for actual installed application dependencies. It runs only the candidate, isolated from network and credentials.
+- [PHP storefront](https://github.com/Harsh5840/arigato-php-demo): generic PHP Docker image update and 15 frozen Japanese storefront assertions. INI, startup/web configuration and incident follow-up remain mandatory human tasks. Earlier multi-file runtime/configuration repairs retain their historical provenance.
+- [Python service](https://github.com/Harsh5840/arigato-python-demo): Requests pin update and 12 business assertions for Japanese content, JPY totals and client behavior.
+- [Container service](https://github.com/Harsh5840/arigato-container-demo): one Compose YAML image reference update and seven live HTTP smoke checks of the Japanese storefront.
 
-**Japanese PHP runtime:** `Harsh5840/arigato-php-demo` deliberately declares PHP 8.3.35. Its retained policy corroborates the Japanese/vendor notices, updates the reviewed 8.3.36 image/digest, Composer PHP floor and startup upload-progress mitigation. Frozen hosted checks cover runtime/configuration and 15 Japanese storefront business assertions. This runtime-advisory policy differs from Composer package matching; it is not a generic PHP-discovery adapter.
+The generic central path completed Python run `85a102f8-c69a-424d-8f0d-8a5b653bf816`, creating [PR #2](https://github.com/Harsh5840/arigato-python-demo/pull/2) after [12 business assertions passed](https://github.com/Harsh5840/arigato-hack/actions/runs/40128567277). Container run `1159357a-7e93-4c2d-ab11-efa91a56aa59` created [PR #1](https://github.com/Harsh5840/arigato-container-demo/pull/1) after [seven live HTTP assertions and 11 controller/runner gates passed](https://github.com/Harsh5840/arigato-hack/actions/runs/40128986019). PHP run `00cd66dd-c269-4b93-83a3-c690fb8f8932` created [PR #6](https://github.com/Harsh5840/arigato-php-demo/pull/6) after [15 storefront assertions and 11 controller/runner gates passed](https://github.com/Harsh5840/arigato-hack/actions/runs/40129110636) with runtime PHP 8.3.36. The PHP change updates the Dockerfile image only and retains configuration/deployment/incident follow-up. Historical fixture-specific PRs retain their own provenance.
 
-Both baselines are classified statically, never installed/executed as part of the demo. A manifest advisory match establishes affected inventory, not exploit reproduction or deployed exposure. Passing behavior is not proof of complete security. Draft publication leaves `mergeReady` and `findingClosed` false.
+The Compose change upgrades nginx 1.26.0 → 1.30.6 with a digest. Trivy retained 391 candidate findings across all severities, compared with 831 baseline findings. These residuals remain human follow-up rather than a clean-image claim.
 
-## What the dashboard explains
+The primary visual explanation is **Connect & inspect → Watch for alerts → Confirm the risk → Prepare the update → Test & review → You review the PR**. Technical React Flow handoffs, model calls, checks and events remain expandable on that same screen.
 
-The plain-language journey is **Connect repository → Watch security news → Find affected package → Prepare a fix → Test & senior review → Draft PR → human**. The expanded React Flow shows technical handoffs, actual stage state and model calls. Repository controls, source health, findings, real diff/checks, events and observed analytics share the same screen. No invented posture score or synthetic organization metrics are required.
+## Keep extension claims bounded
 
-## Extension path
+A new ecosystem needs exact inventory/source adapters, deterministic edit scope, real package resolution and relevant frozen tests. Arbitrary code migration and exploit reproduction require more work than a generic graph. Local-file pentesting, GitHub App onboarding, tenant identity, signed webhook ingestion, horizontal workers, private runner checkout and automatic crash recovery remain future work. No X connector or fault-proof guarantee is claimed.
 
-Add an exact inventory adapter and trusted source mapping for a new ecosystem. Add a maintainer-approved repair profile defining allowed edits, compatibility expectations, frozen verifier, runner isolation and required evidence IDs. Supply those operations to the shared graph rather than copying a new orchestration engine. Framework migration and lockfile/code rewriting require policy and tests; a generic graph alone does not implement every language's repair semantics.
-
-Local Git/file-triggered pentesting, arbitrary code edits, exploit reproduction, GitHub App onboarding, multi-tenant identity, webhook ingestion, horizontal workers and automatic crash recovery remain later work. No X connector is installed. Do not call the product fault-proof.
-
-Framework references: [LangGraph overview](https://docs.langchain.com/oss/javascript/langgraph/overview), [LangChain ChatGroq](https://docs.langchain.com/oss/javascript/integrations/chat/groq), [OSV API](https://google.github.io/osv.dev/api/). These document the underlying libraries/services; ProofPatch's specific execution claims require the linked actual run evidence in [the handoff](IMPLEMENTATION-HANDOFF.md).
+Framework references: [LangGraph](https://docs.langchain.com/oss/javascript/langgraph/overview), [LangChain ChatGroq](https://docs.langchain.com/oss/javascript/integrations/chat/groq), [OSV API](https://google.github.io/osv.dev/api/). These describe underlying libraries/services. ProofPatch execution claims require actual run evidence in [the demo guide](LIVE-DEMO.md).

@@ -1,0 +1,1977 @@
+{
+  "run": {
+    "id": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+    "status": "blocked",
+    "createdAt": "2026-10-24T20:09:49.341Z",
+    "updatedAt": "2026-10-24T20:12:19.233Z",
+    "sourceMode": "live",
+    "mode": "live-groq",
+    "repositoryId": "57ecbdbdfc9225e368a7",
+    "orchestrationEngine": "langgraph",
+    "repo": {
+      "owner": "Harsh5840",
+      "name": "arigato-container-demo",
+      "baseSha": "db7ecf6797233e222fa554139fb588bc156f0e32",
+      "candidateSha": "200f1195152607cfa73944be8bc6df2814b36f31",
+      "branch": "proofpatch/package-78dd7564-a1"
+    },
+    "target": {
+      "repositoryId": "57ecbdbdfc9225e368a7",
+      "findingId": "finding-eaf1b654e9553d229907d044",
+      "advisoryId": "CVE-2026-97629",
+      "ecosystem": "Docker",
+      "packageName": "library/nginx",
+      "installedVersion": "1.26.0",
+      "fixedVersion": "1.30.6",
+      "manifestPath": "compose.yaml",
+      "imageRef": "nginx:1.26.0",
+      "fixedImageRef": "nginx:1.30.6@sha256:a7675fcee220f59b4a99f7098c06a0d5d999c2c0ee37c0211efb780536e5cb20",
+      "fixedDigest": "sha256:a7675fcee220f59b4a99f7098c06a0d5d999c2c0ee37c0211efb780536e5cb20",
+      "repairPolicyVersion": "generic-v1"
+    },
+    "agentCalls": [
+      {
+        "role": "supply",
+        "model": "openai/gpt-oss-20b",
+        "status": "completed",
+        "startedAt": "2026-10-24T20:10:54.455Z",
+        "summary": "The Docker image library/nginx:1.26.0 is affected by CVE-2026-97629, a session‑forgery vulnerability in TLS session tickets. The advisory specifies that version 1.26.0 falls within the affected range, and the fixed release is 1.30.6. Therefore the inventory item is vulnerable and should be upgraded to at least 1.30.6.",
+        "summaryJa": "Dockerイメージ library/nginx:1.26.0 は CVE-2026-97629（TLS セッションチケットによるセッション偽造）に影響を受けます。アドバイザリでは 1.26.0 が影響範囲に含まれ、修正リリースは 1.30.6 です。したがって、インベントリ項目は脆弱であり、少なくとも 1.30.6 へアップグレードする必要があります。",
+        "usage": {
+          "promptTokens": 862,
+          "completionTokens": 283,
+          "totalTokens": 1145
+        },
+        "completedAt": "2026-10-24T20:10:55.362Z"
+      },
+      {
+        "role": "fixer",
+        "model": "openai/gpt-oss-120b",
+        "status": "completed",
+        "startedAt": "2026-10-24T20:10:59.191Z",
+        "summary": "Updated compose.yaml to use nginx:1.30.6, addressing CVE-2026-97629 (session forgery via TLS tickets).",
+        "summaryJa": "compose.yaml の nginx イメージを 1.30.6 に更新し、CVE-2026-97629（TLS セッションチケットによるセッション偽装）を修正しました。",
+        "usage": {
+          "promptTokens": 1137,
+          "completionTokens": 424,
+          "totalTokens": 1561
+        },
+        "completedAt": "2026-10-24T20:11:00.272Z"
+      },
+      {
+        "role": "reviewer",
+        "model": "openai/gpt-oss-120b",
+        "status": "failed",
+        "startedAt": "2026-10-24T20:12:18.737Z",
+        "completedAt": "2026-10-24T20:12:19.228Z"
+      }
+    ],
+    "checks": [
+      {
+        "id": "affected_inventory",
+        "label": "Exact dependency and supported test stack confirmed",
+        "status": "passed",
+        "detail": "Docker:library/nginx@1.26.0; sh /oracle/tests/runtime-check.sh"
+      },
+      {
+        "id": "frozen_baseline",
+        "label": "Baseline tests and central runner frozen before repair",
+        "status": "passed",
+        "detail": "8 files; sh /oracle/tests/runtime-check.sh; verifier 2e6350b66f08e02ab2d8906c590dd667fe5173694f5192d6d4029fb601a88474; runner 224e2dabef6c71db4d21e9d1090179f7c4f8e160"
+      },
+      {
+        "id": "candidate_scope",
+        "label": "Dependency change matches the discovered repair policy",
+        "status": "passed",
+        "detail": "container: compose.yaml. Baseline tests, workflows and unrelated application code are protected."
+      },
+      {
+        "id": "evidence_identity",
+        "label": "Verified candidate, frozen oracle and workflow run match",
+        "status": "passed",
+        "detail": "Expected candidate 200f1195152607cfa73944be8bc6df2814b36f31; base db7ecf6797233e222fa554139fb588bc156f0e32; Actions 40128643896."
+      },
+      {
+        "id": "evidence_schema",
+        "label": "Complete required verification assertions",
+        "status": "passed",
+        "detail": "5 distinct frozen assertions recorded."
+      },
+      {
+        "id": "runner_scope",
+        "label": "Only the discovered dependency manifest and resolved lockfile may change",
+        "status": "passed",
+        "detail": "compose.yaml"
+      },
+      {
+        "id": "runner_verifier",
+        "label": "Baseline test files are frozen before dependency installation",
+        "status": "passed",
+        "detail": "2e6350b66f08e02ab2d8906c590dd667fe5173694f5192d6d4029fb601a88474"
+      },
+      {
+        "id": "runner_no_known_advisories",
+        "label": "Selected vendor advisories no longer affect the updated image version",
+        "status": "passed",
+        "detail": "nginx independently confirms CVE-2026-97629, CVE-2026-97205, CVE-2026-95101, CVE-2026-9256, CVE-2026-60005, CVE-2026-56434, CVE-2026-48142, CVE-2026-42946, CVE-2026-42945, CVE-2026-42934, CVE-2026-42533, CVE-2026-42055, CVE-2026-40701, CVE-2026-40460, CVE-2026-32647, CVE-2026-28753, CVE-2026-27784, CVE-2026-27654, CVE-2026-27651, CVE-2026-1642, CVE-2026-15176, CVE-2025-53859, CVE-2025-23419, CVE-2024-35200, CVE-2024-34161, CVE-2024-32760, CVE-2024-31079, CVE-2024-7347 affect 1.26.0 and do not affect 1.30.6. Actual Trivy selected coverage: 0 baseline / 0 candidate; 391 total candidate findings retained for human review. Vendor coverage gaps are recorded, not reported as scanner detection. Baseline never executed."
+      },
+      {
+        "id": "runner_package_version",
+        "label": "Actual fixed container reports the selected runtime version",
+        "status": "passed",
+        "detail": "nginx version: nginx/1.30.6"
+      },
+      {
+        "id": "runner_business_suite",
+        "label": "Frozen application smoke tests pass in the fixed container",
+        "status": "passed",
+        "detail": "7 observed assertions. Runtime had no external network, host ports, credentials or Docker socket."
+      },
+      {
+        "id": "trusted_workflow",
+        "label": "Trusted hosted workflow completed",
+        "status": "passed",
+        "detail": "Actions completed; conclusion success."
+      }
+    ],
+    "mergeReady": false,
+    "findingClosed": false,
+    "graph": {
+      "threadId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "currentNode": "review",
+      "completedNodes": [
+        "source",
+        "inventory",
+        "triage",
+        "baseline",
+        "repair",
+        "verify"
+      ]
+    },
+    "advisory": {
+      "id": "CVE-2026-97629",
+      "titleEn": "library/nginx 1.26.0: CVE-2026-97629",
+      "titleJa": "library/nginx の依存関係の脆弱性",
+      "summary": "Session forgery when using TLS session tickets (medium). nginx 1.26.0 is in the vendor-affected range. Exploitability depends on enabled modules and configuration. This finding covers upstream nginx, not all image OS packages.",
+      "sources": [
+        {
+          "title": "nginx official security advisories and affected releases",
+          "url": "https://nginx.org/en/security_advisories.html",
+          "language": "en",
+          "retrievedAt": "2026-10-24T20:06:10.239Z"
+        },
+        {
+          "title": "Upstream vendor advisory",
+          "url": "https://my.f5.com/manage/s/article/K000162606",
+          "language": "en",
+          "retrievedAt": "2026-10-24T20:06:10.239Z"
+        },
+        {
+          "title": "Docker Official nginx image",
+          "url": "https://hub.docker.com/_/nginx",
+          "language": "en",
+          "retrievedAt": "2026-10-24T20:06:10.239Z"
+        }
+      ],
+      "cves": [
+        "CVE-2026-97629",
+        "CVE-2026-97205",
+        "CVE-2026-95101",
+        "CVE-2026-9256",
+        "CVE-2026-60005",
+        "CVE-2026-56434",
+        "CVE-2026-48142",
+        "CVE-2026-42946",
+        "CVE-2026-42945",
+        "CVE-2026-42934",
+        "CVE-2026-42533",
+        "CVE-2026-42055",
+        "CVE-2026-40701",
+        "CVE-2026-40460",
+        "CVE-2026-32647",
+        "CVE-2026-28753",
+        "CVE-2026-27784",
+        "CVE-2026-27654",
+        "CVE-2026-27651",
+        "CVE-2026-1642",
+        "CVE-2026-15176",
+        "CVE-2025-53859",
+        "CVE-2025-23419",
+        "CVE-2024-35200",
+        "CVE-2024-34161",
+        "CVE-2024-32760",
+        "CVE-2024-31079",
+        "CVE-2024-7347"
+      ],
+      "fixedVersion": "1.30.6",
+      "ownerTasks": [
+        "Review and merge the draft in GitHub.",
+        "Deploy the reviewed build and verify the running service.",
+        "Review remaining scanner findings, module/configuration exposure and incident guidance."
+      ]
+    },
+    "evidence": {
+      "runtime": {
+        "baselineImage": "nginx:1.26.0",
+        "fixedImage": "nginx:1.30.6@sha256:a7675fcee220f59b4a99f7098c06a0d5d999c2c0ee37c0211efb780536e5cb20",
+        "baselineScannerFindings": 831,
+        "candidateScannerFindings": 391,
+        "baselineExecuted": false,
+        "vendorEvidence": {
+          "vendor": "nginx",
+          "baselineAffectedIds": [
+            "CVE-2026-15176",
+            "CVE-2026-95101",
+            "CVE-2026-97629",
+            "CVE-2026-97205",
+            "CVE-2026-42533",
+            "CVE-2026-60005",
+            "CVE-2026-56434",
+            "CVE-2026-42055",
+            "CVE-2026-48142",
+            "CVE-2026-9256",
+            "CVE-2026-42945",
+            "CVE-2026-42946",
+            "CVE-2026-42934",
+            "CVE-2026-40460",
+            "CVE-2026-40701",
+            "CVE-2026-27654",
+            "CVE-2026-27784",
+            "CVE-2026-32647",
+            "CVE-2026-27651",
+            "CVE-2026-28753",
+            "CVE-2026-1642",
+            "CVE-2025-53859",
+            "CVE-2025-23419",
+            "CVE-2024-7347",
+            "CVE-2024-32760",
+            "CVE-2024-31079",
+            "CVE-2024-35200",
+            "CVE-2024-34161"
+          ],
+          "candidateAffectedIds": [],
+          "selectedIds": [
+            "CVE-2026-97629",
+            "CVE-2026-97205",
+            "CVE-2026-95101",
+            "CVE-2026-9256",
+            "CVE-2026-60005",
+            "CVE-2026-56434",
+            "CVE-2026-48142",
+            "CVE-2026-42946",
+            "CVE-2026-42945",
+            "CVE-2026-42934",
+            "CVE-2026-42533",
+            "CVE-2026-42055",
+            "CVE-2026-40701",
+            "CVE-2026-40460",
+            "CVE-2026-32647",
+            "CVE-2026-28753",
+            "CVE-2026-27784",
+            "CVE-2026-27654",
+            "CVE-2026-27651",
+            "CVE-2026-1642",
+            "CVE-2026-15176",
+            "CVE-2025-53859",
+            "CVE-2025-23419",
+            "CVE-2024-35200",
+            "CVE-2024-34161",
+            "CVE-2024-32760",
+            "CVE-2024-31079",
+            "CVE-2024-7347"
+          ],
+          "sources": [
+            {
+              "url": "https://nginx.org/en/security_advisories.html",
+              "sha256": "081fe69ffd23db9b040f647a41d3110e62c8dcaff505713c8c0db0342d3517ac"
+            }
+          ]
+        },
+        "scannerSelectedBaselineFindings": 0,
+        "scannerSelectedCandidateFindings": 0,
+        "scannerCoverageGap": [
+          "CVE-2026-97629",
+          "CVE-2026-97205",
+          "CVE-2026-95101",
+          "CVE-2026-9256",
+          "CVE-2026-60005",
+          "CVE-2026-56434",
+          "CVE-2026-48142",
+          "CVE-2026-42946",
+          "CVE-2026-42945",
+          "CVE-2026-42934",
+          "CVE-2026-42533",
+          "CVE-2026-42055",
+          "CVE-2026-40701",
+          "CVE-2026-40460",
+          "CVE-2026-32647",
+          "CVE-2026-28753",
+          "CVE-2026-27784",
+          "CVE-2026-27654",
+          "CVE-2026-27651",
+          "CVE-2026-1642",
+          "CVE-2026-15176",
+          "CVE-2025-53859",
+          "CVE-2025-23419",
+          "CVE-2024-35200",
+          "CVE-2024-34161",
+          "CVE-2024-32760",
+          "CVE-2024-31079",
+          "CVE-2024-7347"
+        ],
+        "remainingImageFindings": [
+          {
+            "id": "CVE-2011-3374",
+            "package": "apt",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "TEMP-0841856-B18BAF",
+            "package": "bash",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-76642",
+            "package": "bsdutils",
+            "severity": "HIGH",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-78408",
+            "package": "bsdutils",
+            "severity": "HIGH",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-78409",
+            "package": "bsdutils",
+            "severity": "HIGH",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-78410",
+            "package": "bsdutils",
+            "severity": "HIGH",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-3184",
+            "package": "bsdutils",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2022-0563",
+            "package": "bsdutils",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2017-18018",
+            "package": "coreutils",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2025-5278",
+            "package": "coreutils",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-56391",
+            "package": "coreutils",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-56392",
+            "package": "coreutils",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-12064",
+            "package": "curl",
+            "severity": "HIGH",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-8458",
+            "package": "curl",
+            "severity": "HIGH",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-10536",
+            "package": "curl",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-11856",
+            "package": "curl",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-19931",
+            "package": "curl",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-8926",
+            "package": "curl",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-8932",
+            "package": "curl",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-9079",
+            "package": "curl",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-9080",
+            "package": "curl",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-92388",
+            "package": "curl",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-9545",
+            "package": "curl",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2025-10966",
+            "package": "curl",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2025-14017",
+            "package": "curl",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2025-15079",
+            "package": "curl",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2025-15224",
+            "package": "curl",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-107928",
+            "package": "curl",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-107929",
+            "package": "curl",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-13608",
+            "package": "curl",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-18924",
+            "package": "curl",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-80229",
+            "package": "curl",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-80230",
+            "package": "curl",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-80255",
+            "package": "curl",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-82208",
+            "package": "curl",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-82209",
+            "package": "curl",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-86409",
+            "package": "curl",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-86410",
+            "package": "curl",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-86414",
+            "package": "curl",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-87862",
+            "package": "curl",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-87863",
+            "package": "curl",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-87864",
+            "package": "curl",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-87865",
+            "package": "curl",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-87866",
+            "package": "curl",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-92386",
+            "package": "curl",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-92387",
+            "package": "curl",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-92389",
+            "package": "curl",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-92390",
+            "package": "curl",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-92391",
+            "package": "curl",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-94266",
+            "package": "curl",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-9547",
+            "package": "curl",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-102473",
+            "package": "dash",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-102474",
+            "package": "dash",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-53910",
+            "package": "diffutils",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-102010",
+            "package": "gcc-14-base",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-95619",
+            "package": "gcc-14-base",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-54369",
+            "package": "libacl1",
+            "severity": "HIGH",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-54370",
+            "package": "libacl1",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2011-3374",
+            "package": "libapt-pkg7.0",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-54371",
+            "package": "libattr1",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-76642",
+            "package": "libblkid1",
+            "severity": "HIGH",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-78408",
+            "package": "libblkid1",
+            "severity": "HIGH",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-78409",
+            "package": "libblkid1",
+            "severity": "HIGH",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-78410",
+            "package": "libblkid1",
+            "severity": "HIGH",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-3184",
+            "package": "libblkid1",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2022-0563",
+            "package": "libblkid1",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-111497",
+            "package": "libbrotli1",
+            "severity": "HIGH",
+            "fixedVersion": "1.1.0-2+deb13u1"
+          },
+          {
+            "id": "CVE-2026-42250",
+            "package": "libbz2-1.0",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-18374",
+            "package": "libc-bin",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-19499",
+            "package": "libc-bin",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-19542",
+            "package": "libc-bin",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-5435",
+            "package": "libc-bin",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-6238",
+            "package": "libc-bin",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-6368",
+            "package": "libc-bin",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-6791",
+            "package": "libc-bin",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-77117",
+            "package": "libc-bin",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-80489",
+            "package": "libc-bin",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-8674",
+            "package": "libc-bin",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-86805",
+            "package": "libc-bin",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-89092",
+            "package": "libc-bin",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-95818",
+            "package": "libc-bin",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2010-4756",
+            "package": "libc-bin",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2018-20796",
+            "package": "libc-bin",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2019-1010022",
+            "package": "libc-bin",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2019-1010023",
+            "package": "libc-bin",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2019-1010024",
+            "package": "libc-bin",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2019-1010025",
+            "package": "libc-bin",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2019-9192",
+            "package": "libc-bin",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-97399",
+            "package": "libc-bin",
+            "severity": "LOW",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-18374",
+            "package": "libc6",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-19499",
+            "package": "libc6",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-19542",
+            "package": "libc6",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-5435",
+            "package": "libc6",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-6238",
+            "package": "libc6",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-6368",
+            "package": "libc6",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-6791",
+            "package": "libc6",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-77117",
+            "package": "libc6",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-80489",
+            "package": "libc6",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-8674",
+            "package": "libc6",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          },
+          {
+            "id": "CVE-2026-86805",
+            "package": "libc6",
+            "severity": "MEDIUM",
+            "fixedVersion": null
+          }
+        ],
+        "remainingImageFindingsTruncated": true,
+        "version": "nginx version: nginx/1.30.6",
+        "observedAssertions": 7
+      },
+      "businessLog": "PASS: Japanese storefront returns HTTP 200 and UTF-8 text\nPASS: health endpoint returns ok\nPASS: catalog currency remains JPY\nPASS: Japanese product names survive HTTP transport\nPASS: stylesheet is available\nPASS: missing paths retain HTTP 404 behavior\nPASS: security response header is retained\n",
+      "policy": {
+        "target_repository": "Harsh5840/arigato-container-demo",
+        "run_id": "78dd7564-e8b9-4441-93bb-8051ca9e2db5-a1",
+        "base_sha": "db7ecf6797233e222fa554139fb588bc156f0e32",
+        "candidate_sha": "200f1195152607cfa73944be8bc6df2814b36f31",
+        "workflow_sha": "224e2dabef6c71db4d21e9d1090179f7c4f8e160",
+        "github_run_id": "40128643896",
+        "mode": "verify",
+        "checks": [
+          {
+            "id": "scope",
+            "label": "Only the discovered dependency manifest and resolved lockfile may change",
+            "pass": true,
+            "detail": "compose.yaml"
+          },
+          {
+            "id": "verifier",
+            "label": "Baseline test files are frozen before dependency installation",
+            "pass": true,
+            "detail": "2e6350b66f08e02ab2d8906c590dd667fe5173694f5192d6d4029fb601a88474"
+          },
+          {
+            "id": "no_known_advisories",
+            "label": "Selected vendor advisories no longer affect the updated image version",
+            "pass": true,
+            "detail": "nginx independently confirms CVE-2026-97629, CVE-2026-97205, CVE-2026-95101, CVE-2026-9256, CVE-2026-60005, CVE-2026-56434, CVE-2026-48142, CVE-2026-42946, CVE-2026-42945, CVE-2026-42934, CVE-2026-42533, CVE-2026-42055, CVE-2026-40701, CVE-2026-40460, CVE-2026-32647, CVE-2026-28753, CVE-2026-27784, CVE-2026-27654, CVE-2026-27651, CVE-2026-1642, CVE-2026-15176, CVE-2025-53859, CVE-2025-23419, CVE-2024-35200, CVE-2024-34161, CVE-2024-32760, CVE-2024-31079, CVE-2024-7347 affect 1.26.0 and do not affect 1.30.6. Actual Trivy selected coverage: 0 baseline / 0 candidate; 391 total candidate findings retained for human review. Vendor coverage gaps are recorded, not reported as scanner detection. Baseline never executed."
+          },
+          {
+            "id": "package_version",
+            "label": "Actual fixed container reports the selected runtime version",
+            "pass": true,
+            "detail": "nginx version: nginx/1.30.6"
+          },
+          {
+            "id": "business_suite",
+            "label": "Frozen application smoke tests pass in the fixed container",
+            "pass": true,
+            "detail": "7 observed assertions. Runtime had no external network, host ports, credentials or Docker socket."
+          }
+        ],
+        "verifier_sha256": "2e6350b66f08e02ab2d8906c590dd667fe5173694f5192d6d4029fb601a88474",
+        "policy": {
+          "version": "generic-repair-v1",
+          "kind": "container",
+          "root": "",
+          "manifestPath": "compose.yaml",
+          "allowedPaths": [
+            "compose.yaml"
+          ],
+          "testPaths": [
+            "config/nginx.conf",
+            "public/catalog.json",
+            "public/health.txt",
+            "public/index.html",
+            "public/style.css",
+            "tests/runtime-check.sh",
+            "tests/smoke.mjs",
+            "tests/static.test.mjs"
+          ],
+          "testCommand": [
+            "sh",
+            "/oracle/tests/runtime-check.sh"
+          ],
+          "runnerImage": ""
+        },
+        "runtime": {
+          "baselineImage": "nginx:1.26.0",
+          "fixedImage": "nginx:1.30.6@sha256:a7675fcee220f59b4a99f7098c06a0d5d999c2c0ee37c0211efb780536e5cb20",
+          "baselineScannerFindings": 831,
+          "candidateScannerFindings": 391,
+          "baselineExecuted": false,
+          "vendorEvidence": {
+            "vendor": "nginx",
+            "baselineAffectedIds": [
+              "CVE-2026-15176",
+              "CVE-2026-95101",
+              "CVE-2026-97629",
+              "CVE-2026-97205",
+              "CVE-2026-42533",
+              "CVE-2026-60005",
+              "CVE-2026-56434",
+              "CVE-2026-42055",
+              "CVE-2026-48142",
+              "CVE-2026-9256",
+              "CVE-2026-42945",
+              "CVE-2026-42946",
+              "CVE-2026-42934",
+              "CVE-2026-40460",
+              "CVE-2026-40701",
+              "CVE-2026-27654",
+              "CVE-2026-27784",
+              "CVE-2026-32647",
+              "CVE-2026-27651",
+              "CVE-2026-28753",
+              "CVE-2026-1642",
+              "CVE-2025-53859",
+              "CVE-2025-23419",
+              "CVE-2024-7347",
+              "CVE-2024-32760",
+              "CVE-2024-31079",
+              "CVE-2024-35200",
+              "CVE-2024-34161"
+            ],
+            "candidateAffectedIds": [],
+            "selectedIds": [
+              "CVE-2026-97629",
+              "CVE-2026-97205",
+              "CVE-2026-95101",
+              "CVE-2026-9256",
+              "CVE-2026-60005",
+              "CVE-2026-56434",
+              "CVE-2026-48142",
+              "CVE-2026-42946",
+              "CVE-2026-42945",
+              "CVE-2026-42934",
+              "CVE-2026-42533",
+              "CVE-2026-42055",
+              "CVE-2026-40701",
+              "CVE-2026-40460",
+              "CVE-2026-32647",
+              "CVE-2026-28753",
+              "CVE-2026-27784",
+              "CVE-2026-27654",
+              "CVE-2026-27651",
+              "CVE-2026-1642",
+              "CVE-2026-15176",
+              "CVE-2025-53859",
+              "CVE-2025-23419",
+              "CVE-2024-35200",
+              "CVE-2024-34161",
+              "CVE-2024-32760",
+              "CVE-2024-31079",
+              "CVE-2024-7347"
+            ],
+            "sources": [
+              {
+                "url": "https://nginx.org/en/security_advisories.html",
+                "sha256": "081fe69ffd23db9b040f647a41d3110e62c8dcaff505713c8c0db0342d3517ac"
+              }
+            ]
+          },
+          "scannerSelectedBaselineFindings": 0,
+          "scannerSelectedCandidateFindings": 0,
+          "scannerCoverageGap": [
+            "CVE-2026-97629",
+            "CVE-2026-97205",
+            "CVE-2026-95101",
+            "CVE-2026-9256",
+            "CVE-2026-60005",
+            "CVE-2026-56434",
+            "CVE-2026-48142",
+            "CVE-2026-42946",
+            "CVE-2026-42945",
+            "CVE-2026-42934",
+            "CVE-2026-42533",
+            "CVE-2026-42055",
+            "CVE-2026-40701",
+            "CVE-2026-40460",
+            "CVE-2026-32647",
+            "CVE-2026-28753",
+            "CVE-2026-27784",
+            "CVE-2026-27654",
+            "CVE-2026-27651",
+            "CVE-2026-1642",
+            "CVE-2026-15176",
+            "CVE-2025-53859",
+            "CVE-2025-23419",
+            "CVE-2024-35200",
+            "CVE-2024-34161",
+            "CVE-2024-32760",
+            "CVE-2024-31079",
+            "CVE-2024-7347"
+          ],
+          "remainingImageFindings": [
+            {
+              "id": "CVE-2011-3374",
+              "package": "apt",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "TEMP-0841856-B18BAF",
+              "package": "bash",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-76642",
+              "package": "bsdutils",
+              "severity": "HIGH",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-78408",
+              "package": "bsdutils",
+              "severity": "HIGH",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-78409",
+              "package": "bsdutils",
+              "severity": "HIGH",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-78410",
+              "package": "bsdutils",
+              "severity": "HIGH",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-3184",
+              "package": "bsdutils",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2022-0563",
+              "package": "bsdutils",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2017-18018",
+              "package": "coreutils",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2025-5278",
+              "package": "coreutils",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-56391",
+              "package": "coreutils",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-56392",
+              "package": "coreutils",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-12064",
+              "package": "curl",
+              "severity": "HIGH",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-8458",
+              "package": "curl",
+              "severity": "HIGH",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-10536",
+              "package": "curl",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-11856",
+              "package": "curl",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-19931",
+              "package": "curl",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-8926",
+              "package": "curl",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-8932",
+              "package": "curl",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-9079",
+              "package": "curl",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-9080",
+              "package": "curl",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-92388",
+              "package": "curl",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-9545",
+              "package": "curl",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2025-10966",
+              "package": "curl",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2025-14017",
+              "package": "curl",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2025-15079",
+              "package": "curl",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2025-15224",
+              "package": "curl",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-107928",
+              "package": "curl",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-107929",
+              "package": "curl",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-13608",
+              "package": "curl",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-18924",
+              "package": "curl",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-80229",
+              "package": "curl",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-80230",
+              "package": "curl",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-80255",
+              "package": "curl",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-82208",
+              "package": "curl",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-82209",
+              "package": "curl",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-86409",
+              "package": "curl",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-86410",
+              "package": "curl",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-86414",
+              "package": "curl",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-87862",
+              "package": "curl",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-87863",
+              "package": "curl",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-87864",
+              "package": "curl",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-87865",
+              "package": "curl",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-87866",
+              "package": "curl",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-92386",
+              "package": "curl",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-92387",
+              "package": "curl",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-92389",
+              "package": "curl",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-92390",
+              "package": "curl",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-92391",
+              "package": "curl",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-94266",
+              "package": "curl",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-9547",
+              "package": "curl",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-102473",
+              "package": "dash",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-102474",
+              "package": "dash",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-53910",
+              "package": "diffutils",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-102010",
+              "package": "gcc-14-base",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-95619",
+              "package": "gcc-14-base",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-54369",
+              "package": "libacl1",
+              "severity": "HIGH",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-54370",
+              "package": "libacl1",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2011-3374",
+              "package": "libapt-pkg7.0",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-54371",
+              "package": "libattr1",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-76642",
+              "package": "libblkid1",
+              "severity": "HIGH",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-78408",
+              "package": "libblkid1",
+              "severity": "HIGH",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-78409",
+              "package": "libblkid1",
+              "severity": "HIGH",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-78410",
+              "package": "libblkid1",
+              "severity": "HIGH",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-3184",
+              "package": "libblkid1",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2022-0563",
+              "package": "libblkid1",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-111497",
+              "package": "libbrotli1",
+              "severity": "HIGH",
+              "fixedVersion": "1.1.0-2+deb13u1"
+            },
+            {
+              "id": "CVE-2026-42250",
+              "package": "libbz2-1.0",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-18374",
+              "package": "libc-bin",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-19499",
+              "package": "libc-bin",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-19542",
+              "package": "libc-bin",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-5435",
+              "package": "libc-bin",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-6238",
+              "package": "libc-bin",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-6368",
+              "package": "libc-bin",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-6791",
+              "package": "libc-bin",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-77117",
+              "package": "libc-bin",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-80489",
+              "package": "libc-bin",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-8674",
+              "package": "libc-bin",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-86805",
+              "package": "libc-bin",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-89092",
+              "package": "libc-bin",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-95818",
+              "package": "libc-bin",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2010-4756",
+              "package": "libc-bin",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2018-20796",
+              "package": "libc-bin",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2019-1010022",
+              "package": "libc-bin",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2019-1010023",
+              "package": "libc-bin",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2019-1010024",
+              "package": "libc-bin",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2019-1010025",
+              "package": "libc-bin",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2019-9192",
+              "package": "libc-bin",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-97399",
+              "package": "libc-bin",
+              "severity": "LOW",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-18374",
+              "package": "libc6",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-19499",
+              "package": "libc6",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-19542",
+              "package": "libc6",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-5435",
+              "package": "libc6",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-6238",
+              "package": "libc6",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-6368",
+              "package": "libc6",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-6791",
+              "package": "libc6",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-77117",
+              "package": "libc6",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-80489",
+              "package": "libc6",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-8674",
+              "package": "libc6",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            },
+            {
+              "id": "CVE-2026-86805",
+              "package": "libc6",
+              "severity": "MEDIUM",
+              "fixedVersion": null
+            }
+          ],
+          "remainingImageFindingsTruncated": true,
+          "version": "nginx version: nginx/1.30.6",
+          "observedAssertions": 7
+        },
+        "scan_artifact": {
+          "name": "proofpatch-scans-78dd7564-e8b9-4441-93bb-8051ca9e2db5-a1",
+          "workflow_sha": "224e2dabef6c71db4d21e9d1090179f7c4f8e160",
+          "github_run_id": "40128643896",
+          "baseline_sha256": "60776ff36f66ea7922bc48de0c8c5950b4f85c90c3ff51bbe023ff9ed141c798",
+          "candidate_sha256": "3673d0e166f2ea39287774ec2c42d065ab4c2fae13940e2ffb2e05117d369bb0"
+        },
+        "businessLog": "PASS: Japanese storefront returns HTTP 200 and UTF-8 text\nPASS: health endpoint returns ok\nPASS: catalog currency remains JPY\nPASS: Japanese product names survive HTTP transport\nPASS: stylesheet is available\nPASS: missing paths retain HTTP 404 behavior\nPASS: security response header is retained\n"
+      },
+      "verifierSha256": "2e6350b66f08e02ab2d8906c590dd667fe5173694f5192d6d4029fb601a88474",
+      "artifactSha256": "1d89f90870a8b38d2cda06b70ea4b42613bcb0f325630adf42c05617cf66b191",
+      "rawFiles": {
+        "verification.json": "{\n  \"target_repository\": \"Harsh5840/arigato-container-demo\",\n  \"run_id\": \"78dd7564-e8b9-4441-93bb-8051ca9e2db5-a1\",\n  \"base_sha\": \"db7ecf6797233e222fa554139fb588bc156f0e32\",\n  \"candidate_sha\": \"200f1195152607cfa73944be8bc6df2814b36f31\",\n  \"workflow_sha\": \"224e2dabef6c71db4d21e9d1090179f7c4f8e160\",\n  \"github_run_id\": \"40128643896\",\n  \"mode\": \"verify\",\n  \"checks\": [\n    {\n      \"id\": \"scope\",\n      \"label\": \"Only the discovered dependency manifest and resolved lockfile may change\",\n      \"pass\": true,\n      \"detail\": \"compose.yaml\"\n    },\n    {\n      \"id\": \"verifier\",\n      \"label\": \"Baseline test files are frozen before dependency installation\",\n      \"pass\": true,\n      \"detail\": \"2e6350b66f08e02ab2d8906c590dd667fe5173694f5192d6d4029fb601a88474\"\n    },\n    {\n      \"id\": \"no_known_advisories\",\n      \"label\": \"Selected vendor advisories no longer affect the updated image version\",\n      \"pass\": true,\n      \"detail\": \"nginx independently confirms CVE-2026-97629, CVE-2026-97205, CVE-2026-95101, CVE-2026-9256, CVE-2026-60005, CVE-2026-56434, CVE-2026-48142, CVE-2026-42946, CVE-2026-42945, CVE-2026-42934, CVE-2026-42533, CVE-2026-42055, CVE-2026-40701, CVE-2026-40460, CVE-2026-32647, CVE-2026-28753, CVE-2026-27784, CVE-2026-27654, CVE-2026-27651, CVE-2026-1642, CVE-2026-15176, CVE-2025-53859, CVE-2025-23419, CVE-2024-35200, CVE-2024-34161, CVE-2024-32760, CVE-2024-31079, CVE-2024-7347 affect 1.26.0 and do not affect 1.30.6. Actual Trivy selected coverage: 0 baseline / 0 candidate; 391 total candidate findings retained for human review. Vendor coverage gaps are recorded, not reported as scanner detection. Baseline never executed.\"\n    },\n    {\n      \"id\": \"package_version\",\n      \"label\": \"Actual fixed container reports the selected runtime version\",\n      \"pass\": true,\n      \"detail\": \"nginx version: nginx/1.30.6\"\n    },\n    {\n      \"id\": \"business_suite\",\n      \"label\": \"Frozen application smoke tests pass in the fixed container\",\n      \"pass\": true,\n      \"detail\": \"7 observed assertions. Runtime had no external network, host ports, credentials or Docker socket.\"\n    }\n  ],\n  \"verifier_sha256\": \"2e6350b66f08e02ab2d8906c590dd667fe5173694f5192d6d4029fb601a88474\",\n  \"policy\": {\n    \"version\": \"generic-repair-v1\",\n    \"kind\": \"container\",\n    \"root\": \"\",\n    \"manifestPath\": \"compose.yaml\",\n    \"allowedPaths\": [\n      \"compose.yaml\"\n    ],\n    \"testPaths\": [\n      \"config/nginx.conf\",\n      \"public/catalog.json\",\n      \"public/health.txt\",\n      \"public/index.html\",\n      \"public/style.css\",\n      \"tests/runtime-check.sh\",\n      \"tests/smoke.mjs\",\n      \"tests/static.test.mjs\"\n    ],\n    \"testCommand\": [\n      \"sh\",\n      \"/oracle/tests/runtime-check.sh\"\n    ],\n    \"runnerImage\": \"\"\n  },\n  \"runtime\": {\n    \"baselineImage\": \"nginx:1.26.0\",\n    \"fixedImage\": \"nginx:1.30.6@sha256:a7675fcee220f59b4a99f7098c06a0d5d999c2c0ee37c0211efb780536e5cb20\",\n    \"baselineScannerFindings\": 831,\n    \"candidateScannerFindings\": 391,\n    \"baselineExecuted\": false,\n    \"vendorEvidence\": {\n      \"vendor\": \"nginx\",\n      \"baselineAffectedIds\": [\n        \"CVE-2026-15176\",\n        \"CVE-2026-95101\",\n        \"CVE-2026-97629\",\n        \"CVE-2026-97205\",\n        \"CVE-2026-42533\",\n        \"CVE-2026-60005\",\n        \"CVE-2026-56434\",\n        \"CVE-2026-42055\",\n        \"CVE-2026-48142\",\n        \"CVE-2026-9256\",\n        \"CVE-2026-42945\",\n        \"CVE-2026-42946\",\n        \"CVE-2026-42934\",\n        \"CVE-2026-40460\",\n        \"CVE-2026-40701\",\n        \"CVE-2026-27654\",\n        \"CVE-2026-27784\",\n        \"CVE-2026-32647\",\n        \"CVE-2026-27651\",\n        \"CVE-2026-28753\",\n        \"CVE-2026-1642\",\n        \"CVE-2025-53859\",\n        \"CVE-2025-23419\",\n        \"CVE-2024-7347\",\n        \"CVE-2024-32760\",\n        \"CVE-2024-31079\",\n        \"CVE-2024-35200\",\n        \"CVE-2024-34161\"\n      ],\n      \"candidateAffectedIds\": [],\n      \"selectedIds\": [\n        \"CVE-2026-97629\",\n        \"CVE-2026-97205\",\n        \"CVE-2026-95101\",\n        \"CVE-2026-9256\",\n        \"CVE-2026-60005\",\n        \"CVE-2026-56434\",\n        \"CVE-2026-48142\",\n        \"CVE-2026-42946\",\n        \"CVE-2026-42945\",\n        \"CVE-2026-42934\",\n        \"CVE-2026-42533\",\n        \"CVE-2026-42055\",\n        \"CVE-2026-40701\",\n        \"CVE-2026-40460\",\n        \"CVE-2026-32647\",\n        \"CVE-2026-28753\",\n        \"CVE-2026-27784\",\n        \"CVE-2026-27654\",\n        \"CVE-2026-27651\",\n        \"CVE-2026-1642\",\n        \"CVE-2026-15176\",\n        \"CVE-2025-53859\",\n        \"CVE-2025-23419\",\n        \"CVE-2024-35200\",\n        \"CVE-2024-34161\",\n        \"CVE-2024-32760\",\n        \"CVE-2024-31079\",\n        \"CVE-2024-7347\"\n      ],\n      \"sources\": [\n        {\n          \"url\": \"https://nginx.org/en/security_advisories.html\",\n          \"sha256\": \"081fe69ffd23db9b040f647a41d3110e62c8dcaff505713c8c0db0342d3517ac\"\n        }\n      ]\n    },\n    \"scannerSelectedBaselineFindings\": 0,\n    \"scannerSelectedCandidateFindings\": 0,\n    \"scannerCoverageGap\": [\n      \"CVE-2026-97629\",\n      \"CVE-2026-97205\",\n      \"CVE-2026-95101\",\n      \"CVE-2026-9256\",\n      \"CVE-2026-60005\",\n      \"CVE-2026-56434\",\n      \"CVE-2026-48142\",\n      \"CVE-2026-42946\",\n      \"CVE-2026-42945\",\n      \"CVE-2026-42934\",\n      \"CVE-2026-42533\",\n      \"CVE-2026-42055\",\n      \"CVE-2026-40701\",\n      \"CVE-2026-40460\",\n      \"CVE-2026-32647\",\n      \"CVE-2026-28753\",\n      \"CVE-2026-27784\",\n      \"CVE-2026-27654\",\n      \"CVE-2026-27651\",\n      \"CVE-2026-1642\",\n      \"CVE-2026-15176\",\n      \"CVE-2025-53859\",\n      \"CVE-2025-23419\",\n      \"CVE-2024-35200\",\n      \"CVE-2024-34161\",\n      \"CVE-2024-32760\",\n      \"CVE-2024-31079\",\n      \"CVE-2024-7347\"\n    ],\n    \"remainingImageFindings\": [\n      {\n        \"id\": \"CVE-2011-3374\",\n        \"package\": \"apt\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"TEMP-0841856-B18BAF\",\n        \"package\": \"bash\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-76642\",\n        \"package\": \"bsdutils\",\n        \"severity\": \"HIGH\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-78408\",\n        \"package\": \"bsdutils\",\n        \"severity\": \"HIGH\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-78409\",\n        \"package\": \"bsdutils\",\n        \"severity\": \"HIGH\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-78410\",\n        \"package\": \"bsdutils\",\n        \"severity\": \"HIGH\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-3184\",\n        \"package\": \"bsdutils\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2022-0563\",\n        \"package\": \"bsdutils\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2017-18018\",\n        \"package\": \"coreutils\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2025-5278\",\n        \"package\": \"coreutils\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-56391\",\n        \"package\": \"coreutils\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-56392\",\n        \"package\": \"coreutils\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-12064\",\n        \"package\": \"curl\",\n        \"severity\": \"HIGH\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-8458\",\n        \"package\": \"curl\",\n        \"severity\": \"HIGH\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-10536\",\n        \"package\": \"curl\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-11856\",\n        \"package\": \"curl\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-19931\",\n        \"package\": \"curl\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-8926\",\n        \"package\": \"curl\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-8932\",\n        \"package\": \"curl\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-9079\",\n        \"package\": \"curl\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-9080\",\n        \"package\": \"curl\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-92388\",\n        \"package\": \"curl\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-9545\",\n        \"package\": \"curl\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2025-10966\",\n        \"package\": \"curl\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2025-14017\",\n        \"package\": \"curl\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2025-15079\",\n        \"package\": \"curl\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2025-15224\",\n        \"package\": \"curl\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-107928\",\n        \"package\": \"curl\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-107929\",\n        \"package\": \"curl\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-13608\",\n        \"package\": \"curl\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-18924\",\n        \"package\": \"curl\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-80229\",\n        \"package\": \"curl\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-80230\",\n        \"package\": \"curl\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-80255\",\n        \"package\": \"curl\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-82208\",\n        \"package\": \"curl\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-82209\",\n        \"package\": \"curl\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-86409\",\n        \"package\": \"curl\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-86410\",\n        \"package\": \"curl\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-86414\",\n        \"package\": \"curl\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-87862\",\n        \"package\": \"curl\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-87863\",\n        \"package\": \"curl\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-87864\",\n        \"package\": \"curl\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-87865\",\n        \"package\": \"curl\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-87866\",\n        \"package\": \"curl\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-92386\",\n        \"package\": \"curl\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-92387\",\n        \"package\": \"curl\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-92389\",\n        \"package\": \"curl\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-92390\",\n        \"package\": \"curl\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-92391\",\n        \"package\": \"curl\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-94266\",\n        \"package\": \"curl\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-9547\",\n        \"package\": \"curl\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-102473\",\n        \"package\": \"dash\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-102474\",\n        \"package\": \"dash\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-53910\",\n        \"package\": \"diffutils\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-102010\",\n        \"package\": \"gcc-14-base\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-95619\",\n        \"package\": \"gcc-14-base\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-54369\",\n        \"package\": \"libacl1\",\n        \"severity\": \"HIGH\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-54370\",\n        \"package\": \"libacl1\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2011-3374\",\n        \"package\": \"libapt-pkg7.0\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-54371\",\n        \"package\": \"libattr1\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-76642\",\n        \"package\": \"libblkid1\",\n        \"severity\": \"HIGH\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-78408\",\n        \"package\": \"libblkid1\",\n        \"severity\": \"HIGH\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-78409\",\n        \"package\": \"libblkid1\",\n        \"severity\": \"HIGH\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-78410\",\n        \"package\": \"libblkid1\",\n        \"severity\": \"HIGH\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-3184\",\n        \"package\": \"libblkid1\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2022-0563\",\n        \"package\": \"libblkid1\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-111497\",\n        \"package\": \"libbrotli1\",\n        \"severity\": \"HIGH\",\n        \"fixedVersion\": \"1.1.0-2+deb13u1\"\n      },\n      {\n        \"id\": \"CVE-2026-42250\",\n        \"package\": \"libbz2-1.0\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-18374\",\n        \"package\": \"libc-bin\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-19499\",\n        \"package\": \"libc-bin\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-19542\",\n        \"package\": \"libc-bin\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-5435\",\n        \"package\": \"libc-bin\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-6238\",\n        \"package\": \"libc-bin\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-6368\",\n        \"package\": \"libc-bin\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-6791\",\n        \"package\": \"libc-bin\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-77117\",\n        \"package\": \"libc-bin\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-80489\",\n        \"package\": \"libc-bin\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-8674\",\n        \"package\": \"libc-bin\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-86805\",\n        \"package\": \"libc-bin\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-89092\",\n        \"package\": \"libc-bin\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-95818\",\n        \"package\": \"libc-bin\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2010-4756\",\n        \"package\": \"libc-bin\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2018-20796\",\n        \"package\": \"libc-bin\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2019-1010022\",\n        \"package\": \"libc-bin\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2019-1010023\",\n        \"package\": \"libc-bin\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2019-1010024\",\n        \"package\": \"libc-bin\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2019-1010025\",\n        \"package\": \"libc-bin\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2019-9192\",\n        \"package\": \"libc-bin\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-97399\",\n        \"package\": \"libc-bin\",\n        \"severity\": \"LOW\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-18374\",\n        \"package\": \"libc6\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-19499\",\n        \"package\": \"libc6\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-19542\",\n        \"package\": \"libc6\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-5435\",\n        \"package\": \"libc6\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-6238\",\n        \"package\": \"libc6\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-6368\",\n        \"package\": \"libc6\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-6791\",\n        \"package\": \"libc6\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-77117\",\n        \"package\": \"libc6\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-80489\",\n        \"package\": \"libc6\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-8674\",\n        \"package\": \"libc6\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      },\n      {\n        \"id\": \"CVE-2026-86805\",\n        \"package\": \"libc6\",\n        \"severity\": \"MEDIUM\",\n        \"fixedVersion\": null\n      }\n    ],\n    \"remainingImageFindingsTruncated\": true,\n    \"version\": \"nginx version: nginx/1.30.6\",\n    \"observedAssertions\": 7\n  },\n  \"scan_artifact\": {\n    \"name\": \"proofpatch-scans-78dd7564-e8b9-4441-93bb-8051ca9e2db5-a1\",\n    \"workflow_sha\": \"224e2dabef6c71db4d21e9d1090179f7c4f8e160\",\n    \"github_run_id\": \"40128643896\",\n    \"baseline_sha256\": \"60776ff36f66ea7922bc48de0c8c5950b4f85c90c3ff51bbe023ff9ed141c798\",\n    \"candidate_sha256\": \"3673d0e166f2ea39287774ec2c42d065ab4c2fae13940e2ffb2e05117d369bb0\"\n  },\n  \"businessLog\": \"PASS: Japanese storefront returns HTTP 200 and UTF-8 text\\nPASS: health endpoint returns ok\\nPASS: catalog currency remains JPY\\nPASS: Japanese product names survive HTTP transport\\nPASS: stylesheet is available\\nPASS: missing paths retain HTTP 404 behavior\\nPASS: security response header is retained\\n\"\n}\n"
+      }
+    },
+    "ci": {
+      "id": 40128643896,
+      "url": "https://github.com/Harsh5840/arigato-hack/actions/runs/40128643896",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "draftPRAllowed": false,
+    "failure": {
+      "code": "PACKAGE_RUN_BLOCKED",
+      "message": "LangChain Groq call failed or timed out. Check provider availability and structured-output compatibility. Provider bodies are omitted to protect secrets."
+    }
+  },
+  "events": [
+    {
+      "id": 211,
+      "runId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "at": "2026-10-24T20:09:49.341Z",
+      "node": "controller",
+      "kind": "queued",
+      "message": "Confirmed Docker advisory CVE-2026-97629 queued for Harsh5840/arigato-container-demo."
+    },
+    {
+      "id": 249,
+      "runId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "at": "2026-10-24T20:10:44.636Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered source."
+    },
+    {
+      "id": 250,
+      "runId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "at": "2026-10-24T20:10:44.641Z",
+      "node": "supply-chain",
+      "kind": "source-fetching",
+      "message": "Read the verified Docker advisory CVE-2026-97629. Forum text alone cannot authorize repair."
+    },
+    {
+      "id": 251,
+      "runId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "at": "2026-10-24T20:10:44.644Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed source."
+    },
+    {
+      "id": 252,
+      "runId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "at": "2026-10-24T20:10:44.649Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered inventory."
+    },
+    {
+      "id": 253,
+      "runId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "at": "2026-10-24T20:10:44.654Z",
+      "node": "controller",
+      "kind": "matching",
+      "message": "Detect the stack in Harsh5840/arigato-container-demo at an immutable commit and match the exact installed dependency."
+    },
+    {
+      "id": 254,
+      "runId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "at": "2026-10-24T20:10:54.444Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed inventory."
+    },
+    {
+      "id": 255,
+      "runId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "at": "2026-10-24T20:10:54.450Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered triage."
+    },
+    {
+      "id": 256,
+      "runId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "at": "2026-10-24T20:10:54.453Z",
+      "node": "supply-chain",
+      "kind": "triaging",
+      "message": "The Supply Chain Agent explains the corroborated match before a deterministic repair policy is selected."
+    },
+    {
+      "id": 257,
+      "runId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "at": "2026-10-24T20:10:55.364Z",
+      "node": "supply-chain",
+      "kind": "agent-completed",
+      "message": "supply: openai/gpt-oss-20b; 1145 reported tokens. The Docker image library/nginx:1.26.0 is affected by CVE-2026-97629, a session‑forgery vulnerability in TLS session tickets. The advisory specifies that version 1.26.0 falls within the affected range, and the fixed release is 1.30.6. Therefore the inventory item is vulnerable and should be upgraded to at least 1.30.6."
+    },
+    {
+      "id": 258,
+      "runId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "at": "2026-10-24T20:10:55.366Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed triage."
+    },
+    {
+      "id": 259,
+      "runId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "at": "2026-10-24T20:10:55.374Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered baseline."
+    },
+    {
+      "id": 260,
+      "runId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "at": "2026-10-24T20:10:55.377Z",
+      "node": "devsec",
+      "kind": "baseline",
+      "message": "Discover the relevant tests and freeze their baseline bytes before the fixer can edit a dependency manifest."
+    },
+    {
+      "id": 261,
+      "runId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "at": "2026-10-24T20:10:59.180Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed baseline."
+    },
+    {
+      "id": 262,
+      "runId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "at": "2026-10-24T20:10:59.186Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered repair."
+    },
+    {
+      "id": 263,
+      "runId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "at": "2026-10-24T20:10:59.190Z",
+      "node": "remediation",
+      "kind": "patching",
+      "message": "The Fix Agent prepares candidate 1/2 for library/nginx 1.30.6."
+    },
+    {
+      "id": 264,
+      "runId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "at": "2026-10-24T20:11:00.273Z",
+      "node": "remediation",
+      "kind": "agent-completed",
+      "message": "fixer: openai/gpt-oss-120b; 1561 reported tokens. Updated compose.yaml to use nginx:1.30.6, addressing CVE-2026-97629 (session forgery via TLS tickets)."
+    },
+    {
+      "id": 265,
+      "runId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "at": "2026-10-24T20:11:00.274Z",
+      "node": "remediation",
+      "kind": "mechanical-image-patch",
+      "message": "The Fix Agent planned the update. The image-edit tool applied the verified tag/digest while preserving comments, quotes, whitespace, commands and mounts."
+    },
+    {
+      "id": 266,
+      "runId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "at": "2026-10-24T20:11:03.134Z",
+      "node": "remediation",
+      "kind": "candidate-pushed",
+      "message": "Prepared baseline-child commit 200f1195152607cfa73944be8bc6df2814b36f31 on proofpatch/package-78dd7564-a1."
+    },
+    {
+      "id": 267,
+      "runId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "at": "2026-10-24T20:11:03.137Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed repair."
+    },
+    {
+      "id": 268,
+      "runId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "at": "2026-10-24T20:11:03.145Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered verify."
+    },
+    {
+      "id": 269,
+      "runId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "at": "2026-10-24T20:11:03.151Z",
+      "node": "devsec",
+      "kind": "verifying",
+      "message": "Run sh /oracle/tests/runtime-check.sh against the exact candidate in the isolated central verifier."
+    },
+    {
+      "id": 270,
+      "runId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "at": "2026-10-24T20:11:05.078Z",
+      "node": "devsec",
+      "kind": "ci-progress",
+      "message": "Waiting for the trusted repository verification workflow."
+    },
+    {
+      "id": 271,
+      "runId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "at": "2026-10-24T20:11:12.347Z",
+      "node": "devsec",
+      "kind": "ci-progress",
+      "message": "Hosted verification: in_progress"
+    },
+    {
+      "id": 272,
+      "runId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "at": "2026-10-24T20:12:08.524Z",
+      "node": "devsec",
+      "kind": "ci-progress",
+      "message": "Hosted verification: in_progress"
+    },
+    {
+      "id": 273,
+      "runId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "at": "2026-10-24T20:12:15.675Z",
+      "node": "devsec",
+      "kind": "ci-progress",
+      "message": "Hosted verification: completed (success)"
+    },
+    {
+      "id": 274,
+      "runId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "at": "2026-10-24T20:12:18.720Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed verify."
+    },
+    {
+      "id": 275,
+      "runId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "at": "2026-10-24T20:12:18.729Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered review."
+    },
+    {
+      "id": 276,
+      "runId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "at": "2026-10-24T20:12:18.735Z",
+      "node": "devsec",
+      "kind": "reviewing",
+      "message": "The Senior Review Agent inspects the actual dependency diff, frozen test evidence and remaining owner tasks in a separate model context."
+    },
+    {
+      "id": 277,
+      "runId": "78dd7564-e8b9-4441-93bb-8051ca9e2db5",
+      "at": "2026-10-24T20:12:19.234Z",
+      "node": "gate",
+      "kind": "blocked",
+      "message": "LangChain Groq call failed or timed out. Check provider availability and structured-output compatibility. Provider bodies are omitted to protect secrets."
+    }
+  ]
+}

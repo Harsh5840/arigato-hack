@@ -1,0 +1,618 @@
+{
+  "run": {
+    "id": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+    "status": "completed",
+    "createdAt": "2026-10-24T20:09:49.301Z",
+    "updatedAt": "2026-10-24T20:10:44.611Z",
+    "sourceMode": "live",
+    "mode": "live-groq",
+    "repositoryId": "3dc4b2be848b7eaafd78",
+    "orchestrationEngine": "langgraph",
+    "repo": {
+      "owner": "Harsh5840",
+      "name": "arigato-python-demo",
+      "baseSha": "c0625047e22ec73c55db4d048c26823af412664d",
+      "candidateSha": "2291e66959c292547792346e77c88b8d25c8685c",
+      "branch": "proofpatch/package-85a102f8-a1"
+    },
+    "target": {
+      "repositoryId": "3dc4b2be848b7eaafd78",
+      "findingId": "finding-a3a3a4d89246776131a5d6b6",
+      "advisoryId": "GHSA-gc5v-m9x4-r6x2",
+      "ecosystem": "PyPI",
+      "packageName": "requests",
+      "installedVersion": "2.31.0",
+      "fixedVersion": "2.34.2",
+      "manifestPath": "requirements.txt",
+      "repairPolicyVersion": "generic-v1"
+    },
+    "agentCalls": [
+      {
+        "role": "supply",
+        "model": "openai/gpt-oss-20b",
+        "status": "completed",
+        "startedAt": "2026-10-24T20:09:57.958Z",
+        "summary": "The installed version of the Python package \"requests\" (2.31.0) is within the vulnerable range specified by the advisory (0 to 2.33.0). Therefore the package is affected.",
+        "summaryJa": "Pythonパッケージ \"requests\" のインストール済みバージョン（2.31.0）は、アドバイザリで示された脆弱性範囲（0 から 2.33.0）に該当します。したがって、パッケージは影響を受けています。",
+        "usage": {
+          "promptTokens": 862,
+          "completionTokens": 202,
+          "totalTokens": 1064
+        },
+        "completedAt": "2026-10-24T20:09:59.004Z"
+      },
+      {
+        "role": "fixer",
+        "model": "openai/gpt-oss-120b",
+        "status": "completed",
+        "startedAt": "2026-10-24T20:10:00.839Z",
+        "summary": "Upgraded the 'requests' package in requirements.txt from version 2.31.0 to the fixed version 2.34.2 to address CVE-2026-25645.",
+        "summaryJa": "CVE-2026-25645 に対処するため、requirements.txt の 'requests' パッケージをバージョン 2.31.0 から修正済みの 2.34.2 にアップグレードしました。",
+        "usage": {
+          "promptTokens": 925,
+          "completionTokens": 299,
+          "totalTokens": 1224
+        },
+        "completedAt": "2026-10-24T20:10:02.132Z"
+      },
+      {
+        "role": "reviewer",
+        "model": "openai/gpt-oss-120b",
+        "status": "completed",
+        "startedAt": "2026-10-24T20:10:38.114Z",
+        "summary": "The PR updates requests from 2.31.0 to 2.34.2, fixing CVE-2026-25645. All required verifier checks passed, the manifest change is scoped to requirements.txt, the installed package matches the fixed version, and the business test suite passes. No outstanding concerns.",
+        "summaryJa": "このPRは requests を 2.31.0 から 2.34.2 に更新し、CVE-2026-25645 を修正しています。要求されたすべての検証チェックが合格し、変更は requirements.txt のみで、インストールされたパッケージは修正版と一致し、ビジネステストも成功しています。懸念事項はありません。",
+        "usage": {
+          "promptTokens": 2703,
+          "completionTokens": 230,
+          "totalTokens": 2933
+        },
+        "completedAt": "2026-10-24T20:10:39.191Z"
+      }
+    ],
+    "checks": [
+      {
+        "id": "affected_inventory",
+        "label": "Exact dependency and supported test stack confirmed",
+        "status": "passed",
+        "detail": "PyPI:requests@2.31.0; python verification/business.py"
+      },
+      {
+        "id": "frozen_baseline",
+        "label": "Baseline tests and central runner frozen before repair",
+        "status": "passed",
+        "detail": "2 files; python verification/business.py; verifier ac6bf4d9c41bbec23a427860dadba02df75be98939315715ed6763784db8db6d; runner 224e2dabef6c71db4d21e9d1090179f7c4f8e160"
+      },
+      {
+        "id": "candidate_scope",
+        "label": "Dependency change matches the discovered repair policy",
+        "status": "passed",
+        "detail": "python: requirements.txt. Baseline tests, workflows and unrelated application code are protected."
+      },
+      {
+        "id": "evidence_identity",
+        "label": "Verified candidate, frozen oracle and workflow run match",
+        "status": "passed",
+        "detail": "Expected candidate 2291e66959c292547792346e77c88b8d25c8685c; base c0625047e22ec73c55db4d048c26823af412664d; Actions 40128567277."
+      },
+      {
+        "id": "evidence_schema",
+        "label": "Complete required verification assertions",
+        "status": "passed",
+        "detail": "5 distinct frozen assertions recorded."
+      },
+      {
+        "id": "runner_scope",
+        "label": "Only the discovered dependency manifest and resolved lockfile may change",
+        "status": "passed",
+        "detail": "requirements.txt"
+      },
+      {
+        "id": "runner_verifier",
+        "label": "Baseline test files are frozen before dependency installation",
+        "status": "passed",
+        "detail": "ac6bf4d9c41bbec23a427860dadba02df75be98939315715ed6763784db8db6d"
+      },
+      {
+        "id": "runner_no_known_advisories",
+        "label": "Exact repaired package has no current OSV advisory match",
+        "status": "passed",
+        "detail": "PyPI:requests@2.34.2; other findings stay visible in monitoring."
+      },
+      {
+        "id": "runner_package_version",
+        "label": "Installed runtime package equals the selected published version",
+        "status": "passed",
+        "detail": "2.34.2"
+      },
+      {
+        "id": "runner_business_suite",
+        "label": "Frozen baseline application suite passes against candidate dependencies",
+        "status": "passed",
+        "detail": "12 observed tests; exit 0. No test suite is reported as a pass when it is missing or empty."
+      },
+      {
+        "id": "trusted_workflow",
+        "label": "Trusted hosted workflow completed",
+        "status": "passed",
+        "detail": "Actions completed; conclusion success."
+      }
+    ],
+    "mergeReady": false,
+    "findingClosed": false,
+    "graph": {
+      "threadId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "currentNode": "publish",
+      "completedNodes": [
+        "source",
+        "inventory",
+        "triage",
+        "baseline",
+        "repair",
+        "verify",
+        "review",
+        "gate",
+        "publish"
+      ]
+    },
+    "advisory": {
+      "id": "GHSA-gc5v-m9x4-r6x2",
+      "titleEn": "requests 2.31.0: GHSA-gc5v-m9x4-r6x2",
+      "titleJa": "requests の依存関係の脆弱性",
+      "summary": "Requests has Insecure Temp File Reuse in its extract_zipped_paths() utility function",
+      "sources": [
+        {
+          "title": "OSV corroborated exact package version",
+          "url": "https://osv.dev/vulnerability/GHSA-gc5v-m9x4-r6x2",
+          "language": "en",
+          "retrievedAt": "2026-10-24T19:33:33.348Z"
+        },
+        {
+          "title": "WEB",
+          "url": "https://github.com/psf/requests/security/advisories/GHSA-gc5v-m9x4-r6x2",
+          "language": "en",
+          "retrievedAt": "2026-10-24T19:33:33.348Z"
+        },
+        {
+          "title": "ADVISORY",
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-25645",
+          "language": "en",
+          "retrievedAt": "2026-10-24T19:33:33.348Z"
+        },
+        {
+          "title": "WEB",
+          "url": "https://github.com/psf/requests/commit/66d21cb07bd6255b1280291c4fafb71803cdb3b7",
+          "language": "en",
+          "retrievedAt": "2026-10-24T19:33:33.348Z"
+        },
+        {
+          "title": "PACKAGE",
+          "url": "https://github.com/psf/requests",
+          "language": "en",
+          "retrievedAt": "2026-10-24T19:33:33.348Z"
+        },
+        {
+          "title": "WEB",
+          "url": "https://github.com/psf/requests/releases/tag/v2.33.0",
+          "language": "en",
+          "retrievedAt": "2026-10-24T19:33:33.348Z"
+        }
+      ],
+      "cves": [
+        "CVE-2026-25645",
+        "CVE-2024-35195",
+        "CVE-2024-47081"
+      ],
+      "fixedVersion": "2.34.2",
+      "ownerTasks": [
+        "Review and merge the draft in GitHub.",
+        "Deploy the reviewed build and verify the running service."
+      ]
+    },
+    "evidence": {
+      "runtime": {
+        "kind": "python",
+        "package": "requests",
+        "version": "2.34.2",
+        "observedAssertions": 12
+      },
+      "businessLog": "{\"python_version\": \"3.12.15\", \"requests_version\": \"2.34.2\", \"expected_version\": \"2.34.2\", \"checks\": [\"Japanese catalog text survives JSON decoding\", \"Catalog reports integer JPY prices\", \"Prefecture is passed as a query parameter\", \"TLS verification remains enabled\", \"Connect and read timeouts remain bounded\", \"Environment credentials and proxies are not implicitly trusted\", \"Integer yen totals retain order semantics\", \"Fractional-yen input is rejected\", \"Order keeps Japanese identifier and JPY total\", \"Order identifiers cannot become URL path segments\", \"Unauthorized order responses remain rejected\", \"Plaintext service endpoints are rejected\"], \"dependencies\": [{\"name\": \"requests\", \"version\": \"2.34.2\"}, {\"name\": \"certifi\", \"version\": \"2026.10.23\"}, {\"name\": \"charset-normalizer\", \"version\": \"3.5.2\"}, {\"name\": \"idna\", \"version\": \"3.20\"}, {\"name\": \"urllib3\", \"version\": \"2.8.0\"}]}\nPASS: Japanese catalog text survives JSON decoding\nPASS: Catalog reports integer JPY prices\nPASS: Prefecture is passed as a query parameter\nPASS: TLS verification remains enabled\nPASS: Connect and read timeouts remain bounded\nPASS: Environment credentials and proxies are not implicitly trusted\nPASS: Integer yen totals retain order semantics\nPASS: Fractional-yen input is rejected\nPASS: Order keeps Japanese identifier and JPY total\nPASS: Order identifiers cannot become URL path segments\nPASS: Unauthorized order responses remain rejected\nPASS: Plaintext service endpoints are rejected\n",
+      "policy": {
+        "target_repository": "Harsh5840/arigato-python-demo",
+        "run_id": "85a102f8-c69a-424d-8f0d-8a5b653bf816-a1",
+        "base_sha": "c0625047e22ec73c55db4d048c26823af412664d",
+        "candidate_sha": "2291e66959c292547792346e77c88b8d25c8685c",
+        "workflow_sha": "224e2dabef6c71db4d21e9d1090179f7c4f8e160",
+        "github_run_id": "40128567277",
+        "mode": "verify",
+        "checks": [
+          {
+            "id": "scope",
+            "label": "Only the discovered dependency manifest and resolved lockfile may change",
+            "pass": true,
+            "detail": "requirements.txt"
+          },
+          {
+            "id": "verifier",
+            "label": "Baseline test files are frozen before dependency installation",
+            "pass": true,
+            "detail": "ac6bf4d9c41bbec23a427860dadba02df75be98939315715ed6763784db8db6d"
+          },
+          {
+            "id": "no_known_advisories",
+            "label": "Exact repaired package has no current OSV advisory match",
+            "pass": true,
+            "detail": "PyPI:requests@2.34.2; other findings stay visible in monitoring."
+          },
+          {
+            "id": "package_version",
+            "label": "Installed runtime package equals the selected published version",
+            "pass": true,
+            "detail": "2.34.2"
+          },
+          {
+            "id": "business_suite",
+            "label": "Frozen baseline application suite passes against candidate dependencies",
+            "pass": true,
+            "detail": "12 observed tests; exit 0. No test suite is reported as a pass when it is missing or empty."
+          }
+        ],
+        "verifier_sha256": "ac6bf4d9c41bbec23a427860dadba02df75be98939315715ed6763784db8db6d",
+        "policy": {
+          "version": "generic-repair-v1",
+          "kind": "python",
+          "root": "",
+          "manifestPath": "requirements.txt",
+          "allowedPaths": [
+            "requirements.txt"
+          ],
+          "testPaths": [
+            "verification/business.py",
+            "verification/verify.mjs"
+          ],
+          "testCommand": [
+            "python",
+            "verification/business.py"
+          ],
+          "runnerImage": "python:3.12-slim-bookworm@sha256:6a0e06f5ba0b373d051aabd3fffb9b873f27f9a2a3a14bcbe37dee6f0e3bbc70"
+        },
+        "runtime": {
+          "kind": "python",
+          "package": "requests",
+          "version": "2.34.2",
+          "observedAssertions": 12
+        },
+        "businessLog": "{\"python_version\": \"3.12.15\", \"requests_version\": \"2.34.2\", \"expected_version\": \"2.34.2\", \"checks\": [\"Japanese catalog text survives JSON decoding\", \"Catalog reports integer JPY prices\", \"Prefecture is passed as a query parameter\", \"TLS verification remains enabled\", \"Connect and read timeouts remain bounded\", \"Environment credentials and proxies are not implicitly trusted\", \"Integer yen totals retain order semantics\", \"Fractional-yen input is rejected\", \"Order keeps Japanese identifier and JPY total\", \"Order identifiers cannot become URL path segments\", \"Unauthorized order responses remain rejected\", \"Plaintext service endpoints are rejected\"], \"dependencies\": [{\"name\": \"requests\", \"version\": \"2.34.2\"}, {\"name\": \"certifi\", \"version\": \"2026.10.23\"}, {\"name\": \"charset-normalizer\", \"version\": \"3.5.2\"}, {\"name\": \"idna\", \"version\": \"3.20\"}, {\"name\": \"urllib3\", \"version\": \"2.8.0\"}]}\nPASS: Japanese catalog text survives JSON decoding\nPASS: Catalog reports integer JPY prices\nPASS: Prefecture is passed as a query parameter\nPASS: TLS verification remains enabled\nPASS: Connect and read timeouts remain bounded\nPASS: Environment credentials and proxies are not implicitly trusted\nPASS: Integer yen totals retain order semantics\nPASS: Fractional-yen input is rejected\nPASS: Order keeps Japanese identifier and JPY total\nPASS: Order identifiers cannot become URL path segments\nPASS: Unauthorized order responses remain rejected\nPASS: Plaintext service endpoints are rejected\n"
+      },
+      "verifierSha256": "ac6bf4d9c41bbec23a427860dadba02df75be98939315715ed6763784db8db6d",
+      "artifactSha256": "a9138f2bbe58f82ab1867626ae683351b4c2368da87d0c79e24c56944dbfe1a3",
+      "rawFiles": {
+        "verification.json": "{\n  \"target_repository\": \"Harsh5840/arigato-python-demo\",\n  \"run_id\": \"85a102f8-c69a-424d-8f0d-8a5b653bf816-a1\",\n  \"base_sha\": \"c0625047e22ec73c55db4d048c26823af412664d\",\n  \"candidate_sha\": \"2291e66959c292547792346e77c88b8d25c8685c\",\n  \"workflow_sha\": \"224e2dabef6c71db4d21e9d1090179f7c4f8e160\",\n  \"github_run_id\": \"40128567277\",\n  \"mode\": \"verify\",\n  \"checks\": [\n    {\n      \"id\": \"scope\",\n      \"label\": \"Only the discovered dependency manifest and resolved lockfile may change\",\n      \"pass\": true,\n      \"detail\": \"requirements.txt\"\n    },\n    {\n      \"id\": \"verifier\",\n      \"label\": \"Baseline test files are frozen before dependency installation\",\n      \"pass\": true,\n      \"detail\": \"ac6bf4d9c41bbec23a427860dadba02df75be98939315715ed6763784db8db6d\"\n    },\n    {\n      \"id\": \"no_known_advisories\",\n      \"label\": \"Exact repaired package has no current OSV advisory match\",\n      \"pass\": true,\n      \"detail\": \"PyPI:requests@2.34.2; other findings stay visible in monitoring.\"\n    },\n    {\n      \"id\": \"package_version\",\n      \"label\": \"Installed runtime package equals the selected published version\",\n      \"pass\": true,\n      \"detail\": \"2.34.2\"\n    },\n    {\n      \"id\": \"business_suite\",\n      \"label\": \"Frozen baseline application suite passes against candidate dependencies\",\n      \"pass\": true,\n      \"detail\": \"12 observed tests; exit 0. No test suite is reported as a pass when it is missing or empty.\"\n    }\n  ],\n  \"verifier_sha256\": \"ac6bf4d9c41bbec23a427860dadba02df75be98939315715ed6763784db8db6d\",\n  \"policy\": {\n    \"version\": \"generic-repair-v1\",\n    \"kind\": \"python\",\n    \"root\": \"\",\n    \"manifestPath\": \"requirements.txt\",\n    \"allowedPaths\": [\n      \"requirements.txt\"\n    ],\n    \"testPaths\": [\n      \"verification/business.py\",\n      \"verification/verify.mjs\"\n    ],\n    \"testCommand\": [\n      \"python\",\n      \"verification/business.py\"\n    ],\n    \"runnerImage\": \"python:3.12-slim-bookworm@sha256:6a0e06f5ba0b373d051aabd3fffb9b873f27f9a2a3a14bcbe37dee6f0e3bbc70\"\n  },\n  \"runtime\": {\n    \"kind\": \"python\",\n    \"package\": \"requests\",\n    \"version\": \"2.34.2\",\n    \"observedAssertions\": 12\n  },\n  \"businessLog\": \"{\\\"python_version\\\": \\\"3.12.15\\\", \\\"requests_version\\\": \\\"2.34.2\\\", \\\"expected_version\\\": \\\"2.34.2\\\", \\\"checks\\\": [\\\"Japanese catalog text survives JSON decoding\\\", \\\"Catalog reports integer JPY prices\\\", \\\"Prefecture is passed as a query parameter\\\", \\\"TLS verification remains enabled\\\", \\\"Connect and read timeouts remain bounded\\\", \\\"Environment credentials and proxies are not implicitly trusted\\\", \\\"Integer yen totals retain order semantics\\\", \\\"Fractional-yen input is rejected\\\", \\\"Order keeps Japanese identifier and JPY total\\\", \\\"Order identifiers cannot become URL path segments\\\", \\\"Unauthorized order responses remain rejected\\\", \\\"Plaintext service endpoints are rejected\\\"], \\\"dependencies\\\": [{\\\"name\\\": \\\"requests\\\", \\\"version\\\": \\\"2.34.2\\\"}, {\\\"name\\\": \\\"certifi\\\", \\\"version\\\": \\\"2026.10.23\\\"}, {\\\"name\\\": \\\"charset-normalizer\\\", \\\"version\\\": \\\"3.5.2\\\"}, {\\\"name\\\": \\\"idna\\\", \\\"version\\\": \\\"3.20\\\"}, {\\\"name\\\": \\\"urllib3\\\", \\\"version\\\": \\\"2.8.0\\\"}]}\\nPASS: Japanese catalog text survives JSON decoding\\nPASS: Catalog reports integer JPY prices\\nPASS: Prefecture is passed as a query parameter\\nPASS: TLS verification remains enabled\\nPASS: Connect and read timeouts remain bounded\\nPASS: Environment credentials and proxies are not implicitly trusted\\nPASS: Integer yen totals retain order semantics\\nPASS: Fractional-yen input is rejected\\nPASS: Order keeps Japanese identifier and JPY total\\nPASS: Order identifiers cannot become URL path segments\\nPASS: Unauthorized order responses remain rejected\\nPASS: Plaintext service endpoints are rejected\\n\"\n}\n"
+      }
+    },
+    "ci": {
+      "id": 40128567277,
+      "url": "https://github.com/Harsh5840/arigato-hack/actions/runs/40128567277",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "review": {
+      "decision": "approve",
+      "summaryEn": "The PR updates requests from 2.31.0 to 2.34.2, fixing CVE-2026-25645. All required verifier checks passed, the manifest change is scoped to requirements.txt, the installed package matches the fixed version, and the business test suite passes. No outstanding concerns.",
+      "summaryJa": "このPRは requests を 2.31.0 から 2.34.2 に更新し、CVE-2026-25645 を修正しています。要求されたすべての検証チェックが合格し、変更は requirements.txt のみで、インストールされたパッケージは修正版と一致し、ビジネステストも成功しています。懸念事項はありません。",
+      "concerns": [],
+      "ownerTasks": [],
+      "usage": {
+        "promptTokens": 2703,
+        "completionTokens": 230,
+        "totalTokens": 2933
+      },
+      "model": "openai/gpt-oss-120b"
+    },
+    "draftPRAllowed": true,
+    "pullRequest": {
+      "url": "https://github.com/Harsh5840/arigato-python-demo/pull/2",
+      "number": 2,
+      "draft": true,
+      "reused": false
+    }
+  },
+  "events": [
+    {
+      "id": 210,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:09:49.302Z",
+      "node": "controller",
+      "kind": "queued",
+      "message": "Confirmed PyPI advisory GHSA-gc5v-m9x4-r6x2 queued for Harsh5840/arigato-python-demo."
+    },
+    {
+      "id": 213,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:09:49.800Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered source."
+    },
+    {
+      "id": 214,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:09:49.804Z",
+      "node": "supply-chain",
+      "kind": "source-fetching",
+      "message": "Read the verified PyPI advisory GHSA-gc5v-m9x4-r6x2. Forum text alone cannot authorize repair."
+    },
+    {
+      "id": 215,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:09:49.807Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed source."
+    },
+    {
+      "id": 216,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:09:49.818Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered inventory."
+    },
+    {
+      "id": 217,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:09:49.822Z",
+      "node": "controller",
+      "kind": "matching",
+      "message": "Detect the stack in Harsh5840/arigato-python-demo at an immutable commit and match the exact installed dependency."
+    },
+    {
+      "id": 218,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:09:57.946Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed inventory."
+    },
+    {
+      "id": 219,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:09:57.953Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered triage."
+    },
+    {
+      "id": 220,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:09:57.956Z",
+      "node": "supply-chain",
+      "kind": "triaging",
+      "message": "The Supply Chain Agent explains the corroborated match before a deterministic repair policy is selected."
+    },
+    {
+      "id": 221,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:09:59.005Z",
+      "node": "supply-chain",
+      "kind": "agent-completed",
+      "message": "supply: openai/gpt-oss-20b; 1064 reported tokens. The installed version of the Python package \"requests\" (2.31.0) is within the vulnerable range specified by the advisory (0 to 2.33.0). Therefore the package is affected."
+    },
+    {
+      "id": 222,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:09:59.007Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed triage."
+    },
+    {
+      "id": 223,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:09:59.015Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered baseline."
+    },
+    {
+      "id": 224,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:09:59.018Z",
+      "node": "devsec",
+      "kind": "baseline",
+      "message": "Discover the relevant tests and freeze their baseline bytes before the fixer can edit a dependency manifest."
+    },
+    {
+      "id": 225,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:10:00.826Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed baseline."
+    },
+    {
+      "id": 226,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:10:00.833Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered repair."
+    },
+    {
+      "id": 227,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:10:00.837Z",
+      "node": "remediation",
+      "kind": "patching",
+      "message": "The Fix Agent prepares candidate 1/2 for requests 2.34.2."
+    },
+    {
+      "id": 228,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:10:02.134Z",
+      "node": "remediation",
+      "kind": "agent-completed",
+      "message": "fixer: openai/gpt-oss-120b; 1224 reported tokens. Upgraded the 'requests' package in requirements.txt from version 2.31.0 to the fixed version 2.34.2 to address CVE-2026-25645."
+    },
+    {
+      "id": 229,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:10:05.110Z",
+      "node": "remediation",
+      "kind": "candidate-pushed",
+      "message": "Prepared baseline-child commit 2291e66959c292547792346e77c88b8d25c8685c on proofpatch/package-85a102f8-a1."
+    },
+    {
+      "id": 230,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:10:05.112Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed repair."
+    },
+    {
+      "id": 231,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:10:05.120Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered verify."
+    },
+    {
+      "id": 232,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:10:05.123Z",
+      "node": "devsec",
+      "kind": "verifying",
+      "message": "Run python verification/business.py against the exact candidate in the isolated central verifier."
+    },
+    {
+      "id": 233,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:10:07.025Z",
+      "node": "devsec",
+      "kind": "ci-progress",
+      "message": "Waiting for the trusted repository verification workflow."
+    },
+    {
+      "id": 234,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:10:14.210Z",
+      "node": "devsec",
+      "kind": "ci-progress",
+      "message": "Hosted verification: in_progress"
+    },
+    {
+      "id": 235,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:10:21.278Z",
+      "node": "devsec",
+      "kind": "ci-progress",
+      "message": "Hosted verification: in_progress"
+    },
+    {
+      "id": 236,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:10:28.323Z",
+      "node": "devsec",
+      "kind": "ci-progress",
+      "message": "Hosted verification: in_progress"
+    },
+    {
+      "id": 237,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:10:35.359Z",
+      "node": "devsec",
+      "kind": "ci-progress",
+      "message": "Hosted verification: completed (success)"
+    },
+    {
+      "id": 238,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:10:38.101Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed verify."
+    },
+    {
+      "id": 239,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:10:38.108Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered review."
+    },
+    {
+      "id": 240,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:10:38.113Z",
+      "node": "devsec",
+      "kind": "reviewing",
+      "message": "The Senior Review Agent inspects the actual dependency diff, frozen test evidence and remaining owner tasks in a separate model context."
+    },
+    {
+      "id": 241,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:10:39.192Z",
+      "node": "devsec",
+      "kind": "agent-completed",
+      "message": "reviewer: openai/gpt-oss-120b; 2933 reported tokens. The PR updates requests from 2.31.0 to 2.34.2, fixing CVE-2026-25645. All required verifier checks passed, the manifest change is scoped to requirements.txt, the installed package matches the fixed version, and the business test suite passes. No outstanding concerns."
+    },
+    {
+      "id": 242,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:10:39.196Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed review."
+    },
+    {
+      "id": 243,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:10:39.206Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered gate."
+    },
+    {
+      "id": 244,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:10:41.782Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed gate."
+    },
+    {
+      "id": 245,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:10:41.793Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered publish."
+    },
+    {
+      "id": 246,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:10:41.796Z",
+      "node": "gate",
+      "kind": "publishing",
+      "message": "Tests and senior review passed. Raise a real draft PR for human review and merge."
+    },
+    {
+      "id": 247,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:10:44.610Z",
+      "node": "review",
+      "kind": "completed",
+      "message": "Draft PR #2 created: https://github.com/Harsh5840/arigato-python-demo/pull/2. A human owns merge and deployment."
+    },
+    {
+      "id": 248,
+      "runId": "85a102f8-c69a-424d-8f0d-8a5b653bf816",
+      "at": "2026-10-24T20:10:44.612Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed publish."
+    }
+  ]
+}
