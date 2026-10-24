@@ -17,6 +17,7 @@ export interface SupplyFinding {
   imageRef?: string; fixedImageRef?: string; fixedDigest?: string;
   affectedRanges?: { type: string; events: Record<string, string>[] }[];
   detectedAt: string; status: 'detected' | 'queued' | 'draft-created' | 'needs-owner' | 'dismissed'; runId?: string;
+  pullRequest?: {url: string; number: number; draft: boolean};
 }
 export interface MonitoringSnapshot {
   enabled: boolean; intervalSeconds: number; workerLastSeenAt?: string;

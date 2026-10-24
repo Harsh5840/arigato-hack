@@ -20,6 +20,7 @@ export async function registerRepository(monitor: MonitoringStore, url: string, 
 
 export function queueRemediation(monitor: MonitoringStore, runs: RunStore, findingId: string) {
   const finding = monitor.finding(findingId); if (!finding) throw new Error('Finding not found.');
+  if (finding.status === 'draft-created' || finding.pullRequest) throw new Error('A draft PR already exists for this finding. Review that PR instead of creating a duplicate.');
   const repo = monitor.repository(finding.repositoryId); if (!repo) throw new Error('Repository not found.');
   if (!repo.canPush || !repo.repairCapability?.supported || !repo.repairCapability.ecosystems.includes(finding.ecosystem)) throw new Error(repo.repairCapability?.reason || 'Automatic repair needs write access, a supported exact manifest and detected baseline tests.');
   if (repo.repairCapability.targets && !repo.repairCapability.targets.some(target=>target.ecosystem===finding.ecosystem&&target.packageName===finding.packageName&&target.manifestPath===finding.manifestPath)) throw new Error('This package and manifest do not have a detected baseline test policy. Monitoring remains available.');

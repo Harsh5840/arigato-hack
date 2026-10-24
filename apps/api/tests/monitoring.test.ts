@@ -1,12 +1,13 @@
 import assert from 'node:assert/strict';
 import { afterEach, beforeEach, test } from 'node:test';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { createApp } from '../src/app.js';
 import { RunStore } from '../src/db/client.js';
 import { MonitoringStore } from '../src/db/monitoring.js';
 import { queueRemediation, registerRepository } from '../src/services/monitoring.js';
+import {recoverDraftLinks} from '../src/services/draft-link-recovery.js';
 import { frozenPackageDigest, validatePackageRepair } from '../src/services/package-orchestrator.js';
 import { clearGitHubCredentialCacheForTests } from '../src/adapters/github.js';
 import type { MonitoredRepository, SupplyFinding } from '../../../packages/contracts/src/monitoring.js';
@@ -102,6 +103,28 @@ test('saved-run deletion refuses active work, then clears history without reopen
   assert.equal(monitor.finding('queued-alias')?.status, 'detected');
   assert.equal(monitor.finding('queued-alias')?.runId, undefined);
   assert.equal((await (await remove()).json()).deleted, 0);
+});
+
+test('an archived real draft PR stays linked to the exact finding after run history is cleared', () => {
+  const {monitor, runs} = memory();
+  const repo = repository(); monitor.saveRepository(repo);
+  monitor.saveFinding(finding({status: 'draft-created'}));
+  const {run} = runs.createForFinding(repo, finding());
+  const pr = {url: 'https://github.com/unit-owner/python-service/pull/7', number: 7, draft: true};
+  const directory = mkdtempSync(resolve(tmpdir(), 'proofpatch-monitoring-')); temporaryDirectories.push(directory);
+  const exportDirectory = resolve(directory, 'output/live-runs', run.id);
+  mkdirSync(exportDirectory, {recursive: true});
+  writeFileSync(resolve(exportDirectory, 'run.json'), JSON.stringify({run: {...run, status: 'completed', pullRequest: pr}}));
+  assert.equal(recoverDraftLinks(monitor, directory), 1);
+  assert.deepEqual(monitor.finding('finding-unit')?.pullRequest, pr);
+  monitor.saveFinding(finding());
+  assert.equal(monitor.finding('finding-unit')?.status, 'draft-created');
+  assert.deepEqual(monitor.finding('finding-unit')?.pullRequest, pr);
+  monitor.patchFinding('finding-unit', {runId: run.id});
+  monitor.clearRunLinks([run.id]);
+  assert.equal(monitor.finding('finding-unit')?.runId, undefined);
+  assert.deepEqual(monitor.finding('finding-unit')?.pullRequest, pr);
+  assert.throws(() => queueRemediation(monitor, runs, 'finding-unit'), /draft PR already exists/);
 });
 
 test('repository onboarding inventories a frozen commit and leaves repositories without tests monitor-only', async () => {

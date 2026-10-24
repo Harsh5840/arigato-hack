@@ -82,7 +82,7 @@ export async function executePackageRun(store: RunStore, monitor: MonitoringStor
   const target = current().target;
   const repo = target ? monitor.repository(target.repositoryId) : undefined;
   const finding = target ? monitor.finding(target.findingId) : undefined;
-  const updateRelatedFindings = (status: SupplyFinding['status']) => { if (target) for (const related of monitor.findings(target.repositoryId).filter(item => item.runId === id)) monitor.patchFinding(related.id, { status, runId: id }); };
+  const updateRelatedFindings = (status: SupplyFinding['status']) => { if (target) for (const related of monitor.findings(target.repositoryId).filter(item => item.runId === id)) monitor.patchFinding(related.id, { status, runId: id, ...(status === 'draft-created' && current().pullRequest ? {pullRequest: current().pullRequest} : {}) }); };
   const saver = new SqliteGraphSaver(resolve(projectRoot, '.data/graph-checkpoints.sqlite'));
   const check = (value: Check) => store.update(id, { checks: [...current().checks.filter(item => item.id !== value.id), value] });
   const stage = (status: Run['status'], node: 'controller' | 'supply-chain' | 'remediation' | 'devsec' | 'gate' | 'review', message: string) => { assertActive(); store.transition(id, status, node, message); };
