@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-10-24T16:27:24.9904382Z",
+  "product_repository": "https://github.com/Harsh5840/arigato-hack",
+  "target_repository": "https://github.com/Harsh5840/arigato-php-demo",
+  "pull_request": "https://github.com/Harsh5840/arigato-php-demo/pull/1",
+  "ci_run": "https://github.com/Harsh5840/arigato-php-demo/actions/runs/40111416786",
+  "artifact_id": 12566692770,
+  "ci_conclusion": "success",
+  "base_sha": "78d4958740c08fc55380469133876f89141d4d8a",
+  "candidate_sha": "04f139929f4ae068620c346c786db00b72c1b3e6",
+  "verifier_sha256": "1273fbfe1bab9b71594dfa7d3cc3434b9958bbb590737c56fb77e9f97daa0f30",
+  "execution_origin": "prepared_fixture_repair",
+  "models_executed": false,
+  "product_orchestrator_executed": false,
+  "runtime_execution": "GitHub Actions Docker candidate container",
+  "observed_php_version": "8.3.36",
+  "business_checks_passed": 15,
+  "exploit_executed": false,
+  "deployed": false,
+  "merge_ready": false,
+  "finding_closed": false,
+  "files": [
+    {
+      "name": "built-image-id.txt",
+      "sha256": "aed5a5b3109cbc46ee6726ae49e7ae3465ae9bd2fc62682cfa949954f5d80c9e"
+    },
+    {
+      "name": "business-checks.txt",
+      "sha256": "2c106add40ab8cfc25acd9991ee20bbe5155dcbb49005a4dfcbd3f5275ead83d"
+    },
+    {
+      "name": "candidate-policy.json",
+      "sha256": "fbce8f52bd44d59fb47395415b23392da7c2e26f297653819e64ea834636e944"
+    },
+    {
+      "name": "runtime-probe.json",
+      "sha256": "321b38d390c7163cc99103264fde858e8bcc62077e1d58b2362ccd162e4c4278"
+    }
+  ]
+}

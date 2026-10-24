@@ -1,12 +1,12 @@
 # ProofPatch end-to-end hackathon plan
 
-Status: DRAFT for system-design discussion, 24 October 2026. This document proposes the next implementation. It does not mean that backend agents, live feeds, PHP execution, or PR creation already work.
+Status: DRAFT for system-design discussion, 24 October 2026. This document proposes the automated service. A separate prepared fixture PR and its hosted PHP checks now work; backend agents, product feed ingestion and automatic PR orchestration are not implemented. See [current evidence](IMPLEMENTATION-HANDOFF.md).
 
 ## The output judges can inspect
 
 The proposed demo follows a Japanese advisory into a fictional Japanese SME's repository and ends with a real draft pull request. SakuraShop uses PHP 8.3.35. ProofPatch finds the affected runtime, proposes PHP 8.3.36, runs scoped checks, and presents the evidence for human review. A separate configuration follow-up remains open.
 
-The product repository is `Harsh5840/arigato-hack`. The intended demonstration target is a separately owned `Harsh5840/arigato-php-demo` repository. Creation and access must be verified. Keep demo application code separate from the orchestration product so judges can inspect the PR as a customer's artifact.
+The product repository is `Harsh5840/arigato-hack`. The separate demonstration target `Harsh5840/arigato-php-demo` has now been created, with a [prepared draft repair PR](https://github.com/Harsh5840/arigato-php-demo/pull/1). That foundation PR does not come from live Groq orchestration. Keep demo application code separate from the product so judges can inspect the PR as a customer's artifact. Current publication/evidence status is in [the handoff](IMPLEMENTATION-HANDOFF.md).
 
 The proposed Japan connection is functional: ingest Japanese JPCERT/CC and JVN sources, preserve their original text and timestamps, explain the impact in Japanese and English, and test a Japanese storefront. Source availability has been researched; product ingestion and translation still need implementation.
 
@@ -56,6 +56,23 @@ docs/                        Architecture, setup, judging material
 The PHP target has its own Dockerfile, application, tests, README, and CI workflow. Source snapshots in the product are replay inputs, not a second authoritative advisory database.
 
 The API owns tenant access and writes run requests. The worker owns job execution and appends events. The database owns durable state. Artifact digests identify immutable evidence. The browser reads state and requests actions; it never owns provider keys, GitHub tokens, or eligibility.
+
+```mermaid
+flowchart LR
+  J[Japanese and vendor sources] --> S[Supply Chain Agent / Groq 20B]
+  I[Repository inventory] --> S
+  S --> C[Deterministic controller]
+  C --> B[Freeze baseline checks]
+  B --> F[Remediation Agent / Groq 120B]
+  F --> T[Isolated runner / real checks]
+  T --> R[DevSec reviewer / Groq 120B]
+  R --> G{Evidence gate}
+  G -->|Retry within budget| F
+  G -->|Review packet| P[Draft GitHub PR]
+  P --> H[Human review and deployment]
+  C --> E[(SQLite jobs and append-only events)]
+  E --> U[Next.js React Flow / SSE]
+```
 
 | Proposed endpoint | Result |
 |---|---|
@@ -136,6 +153,15 @@ Local inference is a later optional adapter unless a suitable model already runs
 
 Deploy the web frontend separately from one persistent Node host for API and worker. Keep SQLite and artifacts on persistent storage with a backup before schema changes. Do not put long-running jobs into an ephemeral frontend request handler. Production multi-tenancy, managed queues, and customer-owned runners follow a pilot.
 
+For the automated vertical slice, prefer a local isolated Docker runner once its
+engine is available. If hosted Actions is the runner, add a trusted
+`workflow_dispatch` job with exact base/head inputs so verification can finish
+before draft publication. The current foundation workflow runs on an existing
+draft PR; it is not the complete backend execution order. Do not create a
+circular dependency by waiting for PR-triggered CI before creating that PR.
+Only the controller gets the additional permission to dispatch this fixed
+workflow; runner code remains without publication credentials.
+
 For the PHP demo, confirm that the selected image tag exists and resolves before pinning its digest. Bind local ports to loopback. A failed candidate never replaces the baseline deployment. A real release uses an approved image and a documented prior image digest; roll back only with an owner's assessment of the security exposure.
 
 At the 24 October environment check, Docker's daemon was not running, and PHP CLI and `gh` were absent. No Groq key was configured. Git Credential Manager authenticated as Harsh5840 and the GitHub API confirmed push access to the product repository. These are preflight facts, not evidence of an executed backend. A direct GitHub API connector can replace `gh`; an owned CI runner can replace local Docker.
@@ -181,4 +207,4 @@ The target is a repeatable run that starts from a known vulnerable inventory and
 6. Repeat the same request. Confirm the connector returns the existing PR rather than opening a duplicate.
 7. If credentials, provider, or runner fail, switch explicitly to recorded replay and show the last captured real PR and logs. Do not describe replay as live execution.
 
-Open decisions: exact cutoff; approved target-repository owner; GitHub token or App permissions; Groq key and account limits; local Docker versus CI runner; required checks for a limited draft; acceptable bilingual terminology; owner of configuration and incident follow-up. Resolve the first six before backend implementation expands.
+Open decisions: exact cutoff; service GitHub token or App permissions; Groq key and account limits; local Docker versus a trusted dispatch-based CI runner; required checks for a limited draft; acceptable bilingual terminology; owner of configuration and incident follow-up. Target repository ownership and the prepared PR are verified. Resolve the runtime/provider decisions before backend implementation expands.

@@ -8,6 +8,12 @@ bilingual human-review PR. Read [the end-to-end system-design draft](docs/HACKAT
 and [the verified Japan use case](docs/JAPAN-USE-CASE.md) before building the backend.
 Current agent execution in the frontend remains simulated.
 
+Published review target: [SakuraShop PHP demo](https://github.com/Harsh5840/arigato-php-demo)
+and [draft repair PR #1](https://github.com/Harsh5840/arigato-php-demo/pull/1).
+This is a prepared fixture repair, not a live Groq run. Read the
+[implementation handoff](docs/IMPLEMENTATION-HANDOFF.md) for exact commits,
+checks, current limits and the next implementation slice.
+
 ## Run
 Requires Node 22.12+ and npm. From a fresh clone:
 
