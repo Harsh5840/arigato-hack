@@ -15,7 +15,7 @@ export function routes(store: RunStore, monitor?: MonitoringStore) {
   if (monitor) {
     const monitoring = monitoringHandlers(monitor, store);
     router.get('/repositories', monitoring.repositories); router.post('/repositories', monitoring.add);
-    router.patch('/repositories/:id', monitoring.patch); router.post('/repositories/:id/scan', monitoring.scan);
+    router.patch('/repositories/:id', monitoring.patch); router.delete('/repositories/:id', monitoring.remove); router.post('/repositories/:id/scan', monitoring.scan);
     router.get('/monitoring', monitoring.state); router.post('/monitoring/poll', monitoring.poll); router.patch('/monitoring', monitoring.settings);
     router.get('/findings', monitoring.findings); router.delete('/findings', monitoring.clearFindings); router.post('/findings/:id/remediate', monitoring.remediate);
   }

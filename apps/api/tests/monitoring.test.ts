@@ -268,6 +268,38 @@ test('manual scan and source polling persist requests without doing network or m
   assert.equal(monitor.state('pollRequested'), true); assert.equal(runs.list().length, 0);
 });
 
+test('disconnect removes a service and its findings, blocks active work, and never reseeds it', async () => {
+  const directory = mkdtempSync(resolve(tmpdir(), 'proofpatch-monitoring-'));
+  temporaryDirectories.push(directory);
+  const path = resolve(directory, 'state.sqlite');
+  const monitor = new MonitoringStore(path);
+  const runs = new RunStore(path);
+  const repo = repository(); monitor.saveRepository(repo); monitor.saveFinding(finding());
+  const {run} = runs.createForFinding(repo, finding());
+  monitor.patchFinding('finding-unit', {status: 'draft-created', runId: run.id, pullRequest: {url: 'https://github.com/unit-owner/python-service/pull/7', number: 7, draft: true}});
+  const app = createApp(runs, undefined, monitor);
+  const remove = (id: string) => app.request(`http://127.0.0.1/api/repositories/${id}`, {method: 'DELETE', headers, body: '{}'});
+  assert.equal((await remove(repo.id)).status, 409);
+  assert.ok(monitor.repository(repo.id));
+  runs.update(run.id, {status: 'completed'});
+  monitor.patchRepository(repo.id, {scanStatus: 'scanning'});
+  assert.equal((await remove(repo.id)).status, 409);
+  monitor.patchRepository(repo.id, {scanStatus: 'idle'});
+  const disconnected = await remove(repo.id);
+  assert.equal(disconnected.status, 200);
+  assert.deepEqual(await disconnected.json(), {deletedFindings: 1});
+  assert.equal(monitor.repository(repo.id), undefined);
+  assert.equal(monitor.finding('finding-unit'), undefined);
+  assert.ok(runs.get(run.id));
+  assert.equal((await remove(repo.id)).status, 404);
+  assert.equal((await remove('sakurashop-php')).status, 200);
+  monitor.close(); runs.close();
+  const reopened = new MonitoringStore(path); stores.push(reopened);
+  assert.deepEqual(reopened.repositories(), []);
+  reopened.saveRepository(repo); reopened.saveFinding(finding());
+  assert.equal(reopened.finding('finding-unit')?.pullRequest?.number, 7);
+});
+
 test('monitoring schedule HTTP validation rejects unsafe intervals and hidden state fields', async () => {
   const {monitor, runs} = memory(); const app = createApp(runs, undefined, monitor);
   const patch = (body: unknown) => app.request('http://127.0.0.1/api/monitoring', {method: 'PATCH', headers, body: JSON.stringify(body)});

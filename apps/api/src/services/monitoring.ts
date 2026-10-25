@@ -71,6 +71,7 @@ export async function monitorCycle(monitor: MonitoringStore, runs: RunStore) {
           if (repo.enabled && repo.autoRemediate && stored.status === 'detected' && repairCapability.supported && repairCapability.ecosystems.includes(stored.ecosystem) && (!repairCapability.targets || repairCapability.targets.some(target=>target.ecosystem===stored.ecosystem&&target.packageName===stored.packageName&&target.manifestPath===stored.manifestPath))) queueRemediation(monitor, runs, stored.id);
         }
       } catch (error) {
+        if (!monitor.repository(repo.id)) continue;
         const message = error instanceof Error ? error.message : 'Repository scan failed.';
         osvError = message;
         for(const source of touchedSources)sourceResults.set(source,{status:'error',checkedAt:new Date().toISOString(),error:message.slice(0,700)});

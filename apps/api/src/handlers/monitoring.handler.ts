@@ -9,6 +9,13 @@ export function monitoringHandlers(monitor: MonitoringStore, runs: RunStore) {
   return {
     repositories: (c: Context) => c.json({ repositories: monitor.repositories() }),
     add: async (c: Context) => { const body = await c.req.json().catch(() => null); if (!body || typeof body.url !== 'string' || Object.keys(body).some(key => key !== 'url')) return error(c, 'Provide only a GitHub HTTPS repository URL.'); try { parseRepository(body.url); } catch (cause) { return error(c, cause instanceof Error ? cause.message : 'Invalid GitHub repository URL.'); } return c.json({ repository: await registerRepository(monitor, body.url, c.req.raw.signal) }, 201); },
+    remove: (c: Context) => {
+      const repo = monitor.repository(c.req.param('id')!);
+      if (!repo) return error(c, 'Repository not found.', 404);
+      if (runs.hasActiveForRepositories([repo])) return error(c, 'Wait for this service repair to finish or cancel it before disconnecting.', 409);
+      try { return c.json(monitor.disconnectRepository(repo.id)); }
+      catch (cause) { return error(c, cause instanceof Error ? cause.message : 'Service could not be disconnected.', 409); }
+    },
     patch: async (c: Context) => {
       const repo = monitor.repository(c.req.param('id')!); if (!repo) return error(c, 'Repository not found.', 404);
       const body = await c.req.json().catch(() => null);

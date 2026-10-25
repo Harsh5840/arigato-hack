@@ -1,7 +1,7 @@
 'use client';
 
 import {useEffect, useRef, useState, type FormEvent} from 'react';
-import {ArrowUpRight, ChevronDown, FileCode2, Github, Plus} from 'lucide-react';
+import {ArrowUpRight, ChevronDown, FileCode2, Github, Plus, Trash2} from 'lucide-react';
 import type {MonitoredRepository} from '@/types/monitoring';
 import {japanTime} from './format';
 import {canPrepareRepair, repairUnavailableReason} from './repair-capability';
@@ -17,13 +17,14 @@ interface Props {
   onFocus: (id: string) => void;
   onAdd: (url: string) => Promise<boolean>;
   onWatch: (id: string, enabled: boolean) => void;
+  onRemove: (id: string) => void;
 }
 
 function stackLabel(repository: MonitoredRepository): string {
   return repository.repairCapability?.stack.join(' · ') || [...new Set(repository.inventory.map(item => item.ecosystem === 'PyPI' ? 'Python' : item.ecosystem === 'Packagist' ? 'PHP' : item.ecosystem === 'Docker' ? 'Container' : 'Node.js'))].join(' · ');
 }
 
-export default function RepositoryPanel({repositories, selectedIds, focusedId, loaded, pending, onToggle, onAll, onFocus, onAdd, onWatch}: Props) {
+export default function RepositoryPanel({repositories, selectedIds, focusedId, loaded, pending, onToggle, onAll, onFocus, onAdd, onWatch, onRemove}: Props) {
   const [adding, setAdding] = useState(false);
   const [url, setUrl] = useState('');
   const allRef = useRef<HTMLInputElement>(null);
@@ -39,7 +40,7 @@ export default function RepositoryPanel({repositories, selectedIds, focusedId, l
     <ul className="ops-service-list">{repositories.map(repository => <li key={repository.id} className={repository.id === focusedId ? 'focused' : ''}>
       <label className="ops-service-check"><input type="checkbox" checked={selectedIds.includes(repository.id)} onChange={() => onToggle(repository.id)} aria-label={`Include ${repository.owner}/${repository.name}`} disabled={!!pending}/></label>
       <div className="ops-service-identity"><button onClick={() => onFocus(repository.id)} aria-current={repository.id === focusedId ? 'true' : undefined}>{repository.owner}/{repository.name}</button><span>{stackLabel(repository) || 'Stack detection pending'} · {repository.inventory.length} tracked</span><small>{repository.scanStatus === 'scanning' ? 'Scanning now' : repository.scanStatus === 'queued' ? 'Scan queued' : repository.lastCheckedAt ? `Last scan ${japanTime(repository.lastCheckedAt)} JST` : 'Never scanned'}</small></div>
-      <div className="ops-service-row-controls"><label><input type="checkbox" checked={repository.enabled} disabled={!!pending} onChange={event => onWatch(repository.id, event.target.checked)}/>Continuous watch</label><span className={repository.autoRemediate ? 'automatic' : ''}>{repository.autoRemediate ? 'Auto fix on' : 'Scan only'}</span></div>
+      <div className="ops-service-row-controls"><label><input type="checkbox" checked={repository.enabled} disabled={!!pending} onChange={event => onWatch(repository.id, event.target.checked)}/>Continuous watch</label><span className={repository.autoRemediate ? 'automatic' : ''}>{repository.autoRemediate ? 'Auto fix on' : 'Scan only'}</span><button type="button" className="ops-service-remove" disabled={!!pending || repository.scanStatus === 'scanning'} title={repository.scanStatus === 'scanning' ? 'Wait for this scan to finish' : 'Stop monitoring and remove this service from ProofPatch'} onClick={() => onRemove(repository.id)}><Trash2 size={12}/>{pending === `remove:${repository.id}` ? 'Removing…' : 'Remove service'}</button></div>
     </li>)}</ul>
     {!repositories.length && <p className="ops-selector-empty">{loaded ? 'Add a GitHub repository to get started.' : 'Loading connected repositories…'}</p>}
     {focused && <details className="ops-focused-repository"><summary><FileCode2 size={14}/>Inspect {focused.owner}/{focused.name}<ChevronDown size={14}/></summary><div className="ops-focused-body"><p>{focused.repairCapability?.reason || repairUnavailableReason(focused)}</p><dl><div><dt>Detected stack</dt><dd>{stackLabel(focused) || 'Awaiting scan'}</dd></div><div><dt>Draft PR access</dt><dd>{focused.canPush ? 'Branch and PR permission verified' : 'Read only or unverified'}</dd></div><div><dt>Fix capability</dt><dd>{canPrepareRepair(focused) ? 'Supported after a confirmed advisory' : 'Scan and review only'}</dd></div></dl>{focused.repairCapability?.testCommands.length ? <div><strong>Relevant tests</strong><ul>{focused.repairCapability.testCommands.map(command => <li key={command}><code>{command}</code></li>)}</ul></div> : <p>No runnable test command detected yet.</p>}<a href={focused.url} target="_blank" rel="noreferrer">Open GitHub repository<ArrowUpRight size={12}/></a></div></details>}

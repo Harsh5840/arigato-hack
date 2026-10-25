@@ -27,6 +27,7 @@ export const startRun = (sourceMode: 'live' | 'cached') => request<{run: LiveRun
 export const cancelRun = (id: string) => request<{run: LiveRun}>(`/runs/${encodeURIComponent(id)}/cancel`, {method: 'POST', body: '{}'});
 export const getRepositories = () => request<{repositories: MonitoredRepository[]}>('/repositories');
 export const addRepository = (url: string) => request<{repository: MonitoredRepository}>('/repositories', {method: 'POST', body: JSON.stringify({url})});
+export const disconnectRepository = (id: string) => request<{deletedFindings: number}>(`/repositories/${encodeURIComponent(id)}`, {method: 'DELETE', body: '{}'});
 export const updateRepository = (id: string, changes: {enabled?: boolean; autoRemediate?: boolean}) => request<{repository: MonitoredRepository}>(`/repositories/${encodeURIComponent(id)}`, {method: 'PATCH', body: JSON.stringify(changes)});
 export const scanRepository = (id: string) => request<{repository: MonitoredRepository; findings: SupplyFinding[]}>(`/repositories/${encodeURIComponent(id)}/scan`, {method: 'POST', body: '{}'});
 export const getMonitoring = () => request<MonitoringSnapshot>('/monitoring');

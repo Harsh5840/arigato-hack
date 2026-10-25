@@ -149,6 +149,19 @@ export default function OperationsDashboard() {
     const result = await monitoring.scanSelected(selectedIds);
     if (result) setNotice(`${result.queued} service scan${result.queued === 1 ? '' : 's'} queued. ${mode === 'automatic' ? 'New confirmed supported findings will continue through fix, tests, senior review, and a draft PR.' : 'Open Findings after the worker checks advisory sources.'}`);
   }
+  async function disconnectService(id: string) {
+    const repository = monitoring.repositories.find(item => item.id === id);
+    if (!repository) return;
+    const findingCount = monitoring.findings.filter(item => item.repositoryId === id).length;
+    if (!window.confirm(`Remove ${repository.owner}/${repository.name} from ProofPatch?\n\nMonitoring stops and ${findingCount} current dashboard finding${findingCount === 1 ? '' : 's'} will be removed. Saved runs and the GitHub repository and PRs remain.`)) return;
+    setNotice('');
+    const result = await monitoring.remove(id);
+    if (!result) return;
+    setSelectedIds(previous => previous.filter(item => item !== id));
+    setFocusedId(previous => previous === id ? selectedIds.find(item => item !== id) || '' : previous);
+    requestedRun.current = null;
+    setNotice(`${repository.owner}/${repository.name} removed from ProofPatch. ${result.deletedFindings} dashboard finding${result.deletedFindings === 1 ? '' : 's'} removed.`);
+  }
   async function prepareFix(id: string) {
     const finding = monitoring.findings.find(item => item.id === id);
     if (finding) focusRepository(finding.repositoryId);
@@ -208,7 +221,7 @@ export default function OperationsDashboard() {
       {tab === 'how' && <HowItWorks onStart={() => changeTab('services')}/>}
 
       {tab === 'services' && <div className="ops-services-view">
-        <div className="ops-services-grid"><RepositoryPanel repositories={monitoring.repositories} selectedIds={selectedIds} focusedId={focusedId} loaded={monitoring.loaded} pending={monitoring.pending} onToggle={toggleRepository} onAll={selectAll} onFocus={focusRepository} onAdd={add} onWatch={(id, enabled) => void monitoring.update(id, {enabled})}/><ExecutionControls selectedCount={selectedRepositories.length} eligibleCount={eligible.length} existingDrafts={existingDrafts} mode={mode} pending={monitoring.pending} connected={monitoring.loaded && connection !== 'offline'} notice={notice} onMode={next => void applyMode(next)} onScan={() => void scanSelected()} onFindings={() => changeTab('findings')} onPipeline={() => changeTab('pipeline')}/></div>
+        <div className="ops-services-grid"><RepositoryPanel repositories={monitoring.repositories} selectedIds={selectedIds} focusedId={focusedId} loaded={monitoring.loaded} pending={monitoring.pending} onToggle={toggleRepository} onAll={selectAll} onFocus={focusRepository} onAdd={add} onWatch={(id, enabled) => void monitoring.update(id, {enabled})} onRemove={id => void disconnectService(id)}/><ExecutionControls selectedCount={selectedRepositories.length} eligibleCount={eligible.length} existingDrafts={existingDrafts} mode={mode} pending={monitoring.pending} connected={monitoring.loaded && connection !== 'offline'} notice={notice} onMode={next => void applyMode(next)} onScan={() => void scanSelected()} onFindings={() => changeTab('findings')} onPipeline={() => changeTab('pipeline')}/></div>
         <details className="ops-watch-details"><summary>Threat sources and watch schedule <span>Service status</span></summary><SecurityWatchPanel snapshot={monitoring.snapshot} pending={monitoring.pending} onPoll={() => void monitoring.poll()} onToggle={enabled => void monitoring.configure({enabled})}/></details>
       </div>}
 
