@@ -14,6 +14,8 @@ npm run dev
 
 Configure `GROQ_API_KEY` and server-side GitHub authentication. Locally, `GITHUB_TOKEN` or non-interactive Git Credential Manager supplies the GitHub identity. Never put populated credentials in Git or the browser.
 
+Use one server-side Groq key for the demo. Groq applies [rate limits](https://console.groq.com/docs/rate-limits) and [spend limits](https://console.groq.com/docs/spend-limits) at the organization level, so extra keys do not add quota. On a `429`, the model call honors `Retry-After` for one retry up to 60 seconds; model discovery waits at most five seconds. A longer wait or a second rejection is shown as a provider limit, not a successful run. Check the account's Limits page before judging and leave time between live runs. Previously recorded drafts and CI evidence are historical fallback examples, not a claim that a new attempt succeeded.
+
 The identity needs Contents read/write and Pull requests read/write on each repair target. It also needs Actions read/write on the central verifier repository, `Harsh5840/arigato-hack`. The targets do not need a ProofPatch workflow. The central workflow must already exist on the service repository's main branch.
 
 Open `http://127.0.0.1:3000`. The command starts Next.js, Hono on `127.0.0.1:8787` and a separate watcher/queue worker. Keep all three running. Candidate execution uses GitHub Actions, so the judging laptop does not need local PHP, Python or a running Docker engine. [Separate-server configuration](SEPARATE-SERVER-DEPLOYMENT.md) is available; no remote host has been deployed.

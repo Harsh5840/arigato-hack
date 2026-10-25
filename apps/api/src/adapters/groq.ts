@@ -1,5 +1,6 @@
 import { invokeStructuredRole } from './package-groq.js';
-import { abortableDelay, boundedJson, combinedSignal, exactKeys, object, sha256, string, strings } from './http.js';
+import { boundedJson, combinedSignal, exactKeys, object, sha256, string, strings } from './http.js';
+import { fetchGroqWithRetry } from './groq-retry.js';
 import { allowedPaths, fixedImage, type Advisory, type Analysis, type ModelUsage, type Repair, type Review } from './types.js';
 
 const endpoint = 'https://api.groq.com/openai/v1';
@@ -24,26 +25,16 @@ function apiKey(): string {
 
 async function groqRequest(path: string, body?: unknown, signal?: AbortSignal): Promise<unknown> {
   const key = apiKey();
-  // One short retry for transient transport/provider failures. Retry ceilings are
-  // bounded independently from the controller's candidate-attempt budget.
-  for (let attempt = 0; attempt < 2; attempt++) {
-    const response = await fetch(`${endpoint}${path}`, {
-      method: body === undefined ? 'GET' : 'POST', redirect: 'error', signal: combinedSignal(signal, 90_000),
-      headers: { authorization: `Bearer ${key}`, 'content-type': 'application/json', accept: 'application/json' },
-      ...(body === undefined ? {} : { body: JSON.stringify(body) }),
-    });
-    if (response.ok) return boundedJson(response, 900_000);
-    await response.body?.cancel();
-    const retryAfter = Number(response.headers.get('retry-after'));
-    if (attempt === 0 && [429, 502, 503, 504].includes(response.status) && (!Number.isFinite(retryAfter) || retryAfter <= 5)) {
-      await abortableDelay(Number.isFinite(retryAfter) && retryAfter > 0 ? retryAfter * 1_000 : 1_200, signal);
-      continue;
-    }
-    if (response.status === 401 || response.status === 403) throw new Error(`Groq rejected authentication or model access (HTTP ${response.status}). Check the server API key and selected model permissions.`);
-    if (response.status === 429) throw new Error('Groq rate limit reached. Wait for the provider reset or increase the account quota; the run was not replaced with simulated output.');
-    throw new Error(`Groq request failed (HTTP ${response.status}). Check strict-output/model compatibility and account status. Provider response bodies are omitted to protect secrets.`);
-  }
-  throw new Error('Groq retry budget exhausted.');
+  const response = await fetchGroqWithRetry(`${endpoint}${path}`, {
+    method: body === undefined ? 'GET' : 'POST', signal: combinedSignal(signal, 15_000),
+    headers: { authorization: `Bearer ${key}`, 'content-type': 'application/json', accept: 'application/json' },
+    ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+  }, 5_000, signal);
+  if (response.ok) return boundedJson(response, 900_000);
+  await response.body?.cancel();
+  if (response.status === 401 || response.status === 403) throw new Error(`Groq rejected authentication or model access (HTTP ${response.status}). Check the server API key and selected model permissions.`);
+  if (response.status === 429) throw new Error('Groq rate limit reached. Wait for the provider reset or increase the account quota; the run was not replaced with simulated output.');
+  throw new Error(`Groq request failed (HTTP ${response.status}). Check strict-output/model compatibility and account status. Provider response bodies are omitted to protect secrets.`);
 }
 
 export async function verifyGroqModels(signal?: AbortSignal): Promise<ReturnType<typeof configuredModels>> {
