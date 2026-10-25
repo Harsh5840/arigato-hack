@@ -33,6 +33,8 @@ npm run dev
 ```
 
 Open http://127.0.0.1:3000. The command starts frontend, API and worker.
+Use [SETUP.md](SETUP.md) for the complete GitHub permissions, three-repository
+connection, teammate invitation and judge-demo checklist.
 The API, watcher/queue worker and frontend are separate processes. [Deployment configuration](docs/SEPARATE-SERVER-DEPLOYMENT.md) explains the server layout; no remote host has been deployed by this implementation.
 
 ## Deliverables
