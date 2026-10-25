@@ -1,0 +1,118 @@
+/* The pipeline is a signal path: evidence first, agents in the middle, human authority last. */
+.ops-pipeline-page .ops-tab-intro {margin-bottom: 2px}
+.ops-pipeline-page .ops-tab-intro h2 {font-size: clamp(27px, 2.8vw, 32px); letter-spacing: -.035em}
+.ops-pipeline-page .ops-tab-intro > strong {padding: 9px 12px; border: 1px solid #536144; border-radius: 6px; background: #20251c; max-width: 42ch}
+
+.ops-pipeline-page .ops-security-journey {background: #1a1d17; border-color: #505c43; box-shadow: 0 14px 36px #11130f38}
+.ops-pipeline-page .ops-journey-heading {min-height: 78px; padding: 20px 24px; background: #20251c}
+.ops-pipeline-page .ops-journey-heading > div {display: flex; align-items: baseline; flex-wrap: wrap; gap: 9px 17px}
+.ops-pipeline-page .ops-journey-heading h2 {font-size: 18px; letter-spacing: -.025em}
+.ops-pipeline-page .ops-journey-heading > div > span {font-size: 11px; color: #d3efb0; font-variant-numeric: tabular-nums}
+.ops-pipeline-page .ops-journey-heading > span {color: #bac7ac; text-align: right; line-height: 1.5}
+.ops-pipeline-page .ops-security-journey > ol > li {display: flex; flex-direction: column; min-height: 195px; padding: 18px 18px 17px; background: #1e211b; border-right-color: #394131; isolation: isolate}
+.ops-pipeline-page .ops-security-journey > ol > li::before {content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: #536144}
+.ops-pipeline-page .ops-security-journey > ol > li.done::before {background: #8fba60}
+.ops-pipeline-page .ops-security-journey > ol > li.active {background: #2d3823}
+.ops-pipeline-page .ops-security-journey > ol > li.active::before {background: #c7ef79; box-shadow: 0 3px 13px #c7ef7947}
+.ops-pipeline-page .ops-security-journey li > .ops-stage-top {margin-bottom: 20px; justify-content: space-between; align-items: flex-start; color: #9daf8d}
+.ops-pipeline-page .ops-stage-top > span {font-size: 30px; font-weight: 550; line-height: 1; letter-spacing: -.04em; color: #9daf8d; font-variant-numeric: tabular-nums}
+.ops-pipeline-page .ops-security-journey li.done .ops-stage-top > span {color: #d3efb0}
+.ops-pipeline-page .ops-security-journey li.active .ops-stage-top > span {color: #ddf8bc}
+.ops-pipeline-page .ops-stage-top > i {width: 36px; height: 36px; display: grid; place-items: center; border: 1px solid #536144; border-radius: 8px; color: #bac7ac; background: #252c1e; font-style: normal}
+.ops-pipeline-page .ops-security-journey li.done .ops-stage-top > i {border-color: #8fba60; color: #ddf8bc; background: #3b482f}
+.ops-pipeline-page .ops-security-journey li.active .ops-stage-top > i {color: #18220e; background: #c7ef79; border-color: #c7ef79}
+.ops-pipeline-page .ops-security-journey li > strong {font-size: 16px; line-height: 1.35; color: #f1f1eb; letter-spacing: -.015em}
+.ops-pipeline-page .ops-security-journey li > p {font-size: 11px; line-height: 1.55; margin-top: 9px; color: #bac7ac; max-width: 28ch; flex: 1}
+.ops-pipeline-page .ops-stage-state {display: inline-flex; align-items: center; gap: 7px; margin-top: 15px; font-size: 10px; font-weight: 650; color: #9daf8d}
+.ops-pipeline-page .ops-stage-state::before {content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor}
+.ops-pipeline-page li.done .ops-stage-state {color: #d3efb0}
+.ops-pipeline-page li.active .ops-stage-state {color: #ddf8bc}
+.ops-pipeline-page .ops-step-arrow {top: 91px; color: #bac7ac; background: #1e211b}
+.ops-pipeline-page li.active > .ops-step-arrow {background: #2d3823}
+.ops-pipeline-page .ops-journey-activity {min-height: 62px; padding: 14px 24px; background: #11130f; gap: 12px}
+.ops-pipeline-page .ops-journey-activity > svg {color: #c7ef79; flex-shrink: 0}
+.ops-pipeline-page .ops-journey-activity > strong {font-size: 12px; color: #ddf8bc}
+.ops-pipeline-page .ops-journey-activity > p {font-size: 11px; color: #bac7ac}
+
+.ops-pipeline-page > .ops-orchestration-grid {border-color: #536144; box-shadow: 0 18px 42px #11130f3d}
+.ops-pipeline-page .ops-flow-panel > .ops-panel-heading {background: #20251c; min-height: 68px; padding: 18px 23px}
+.ops-pipeline-page .ops-flow-panel > .ops-panel-heading h2 {font-size: 19px; letter-spacing: -.02em}
+.ops-pipeline-page .ops-flow-panel > .ops-panel-heading .ops-status {padding: 6px 9px; border: 1px solid #536144; border-radius: 12px; background: #2d3823}
+.ops-pipeline-page .ops-flow-panel > .ops-panel-heading .ops-status.failed,
+.ops-pipeline-page .ops-flow-panel > .ops-panel-heading .ops-status.blocked {border-color: #e9a08e; background: #39231f}
+.ops-pipeline-page .ops-flow-panel .live-flow-canvas {height: 530px; position: relative; background: radial-gradient(ellipse 65% 80% at 50% 40%, #2d3823 0%, #1e211b 55%, #151713 100%)}
+.ops-pipeline-page .live-flow-canvas .react-flow {--xy-background-color: transparent; --xy-controls-button-background-color: #2a3322; --xy-controls-button-background-color-hover: #3b482f; --xy-controls-button-color: #d6e5c6; --xy-controls-button-border-color: #505c43}
+.ops-pipeline-page .live-flow-canvas .react-flow__controls {border: 1px solid #8fba60; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 24px #11130f80}
+.ops-pipeline-page .live-flow-canvas .react-flow__edge-path {filter: drop-shadow(0 1px 2px #11130f)}
+.ops-pipeline-page .live-flow-node {position: relative; display: flex; flex-direction: column; min-height: 157px; padding: 13px 15px 14px; overflow: visible; border: 1px solid #536144; border-radius: 12px; background: linear-gradient(155deg, #2d3823 0%, #20251c 65%, #1a1d17 100%); box-shadow: 0 13px 28px #11130f7d; transition: border-color .22s ease-out, background .22s ease-out, transform .22s ease-out, box-shadow .22s ease-out}
+.ops-pipeline-page .live-flow-node.system {min-height: 125px; background: linear-gradient(155deg, #252c1e, #1e211b); border-color: #536144; padding: 12px 15px}
+.ops-pipeline-page .live-flow-node.is-active {border-color: #d6f99d; background: linear-gradient(150deg, #3b482f, #2d3823); box-shadow: 0 17px 36px #11130fad; transform: translateY(-2px)}
+.ops-pipeline-page .live-flow-node.is-done {border-color: #8fba60}
+.ops-pipeline-page .live-flow-node.is-ready {border-color: #c7ef79; background: linear-gradient(150deg, #303d24, #2d3823)}
+.ops-pipeline-page .live-flow-node.is-held {border-color: #e9a08e; background: #39231f}
+.ops-pipeline-page .live-flow-node > .live-node-header {display: flex; align-items: center; gap: 8px; width: 100%; margin-bottom: 13px; color: #d6e5c6}
+.ops-pipeline-page .live-node-sequence {font-size: 10px; font-weight: 700; color: #bac7ac; letter-spacing: .06em; font-variant-numeric: tabular-nums}
+.ops-pipeline-page .live-node-icon {display: grid; place-items: center; width: 29px; height: 29px; border: 1px solid #8fba60; border-radius: 8px; color: #d3efb0; background: #303d24}
+.ops-pipeline-page .live-flow-node.system .live-node-icon {border-color: #536144; background: #303d24}
+.ops-pipeline-page .live-node-state {display: inline-flex; align-items: center; gap: 5px; margin-left: auto; padding: 4px 6px; border-radius: 4px; background: #1e211b; color: #d6e5c6; font-size: 10px; line-height: 1.3; white-space: nowrap}
+.ops-pipeline-page .live-node-state > i {width: 5px; height: 5px; border-radius: 50%; background: #9daf8d}
+.ops-pipeline-page .is-active .live-node-state > i {background: #d6f99d; animation: ops-signal 1.5s ease-out infinite}
+.ops-pipeline-page .is-ready .live-node-state > i,
+.ops-pipeline-page .is-done .live-node-state > i {background: #c7ef79}
+.ops-pipeline-page .is-held .live-node-state > i {background: #f4b0a1}
+.ops-pipeline-page .live-flow-node > strong {font-size: 17px; color: #f1f1eb; letter-spacing: -.025em; line-height: 1.22}
+.ops-pipeline-page .live-flow-node.system > strong {font-size: 13px}
+.ops-pipeline-page .live-flow-node > p {font-size: 11px; color: #bac7ac; line-height: 1.45; margin-top: 6px}
+.ops-pipeline-page .live-node-type {margin-top: auto; padding-top: 12px; color: #bac7ac; text-transform: uppercase; font-size: 10px; font-weight: 650; letter-spacing: .09em}
+.ops-pipeline-page .live-flow-node.system .live-node-type {color: #bac7ac}
+.ops-pipeline-page .live-flow-node .react-flow__handle {width: 8px; height: 8px; border: 2px solid #1a1d17; background: #c7ef79}
+.ops-pipeline-page .live-flow-legend.compact {border-top: 1px solid #394131; padding: 16px 22px 19px; background: #181c16; gap: 13px 19px}
+.ops-pipeline-page .live-flow-legend > li {font-size: 11px; line-height: 1.5; color: #c5cdbb}
+.ops-pipeline-page .live-flow-legend > li > span {flex-basis: 22px; min-height: 22px; border-color: #536144; color: #d3efb0; background: #2d3823}
+.ops-pipeline-page .ops-agent-row {background: #20251c; border-top-color: #536144}
+.ops-pipeline-page .ops-agent-row > button {position: relative; padding: 17px 21px}
+.ops-pipeline-page .ops-agent-row > button[aria-pressed=true] {background: #303d24}
+.ops-pipeline-page .ops-agent-row > button[aria-pressed=true]::before {content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: #c7ef79}
+.ops-pipeline-page .ops-agent-row > button > span {font-size: 13px; font-weight: 600}
+.ops-pipeline-page .ops-agent-detail {background: #181c16}
+.ops-pipeline-page .ops-event-rail {background: #1a1d17}
+.ops-pipeline-page .ops-event-rail .ops-panel-heading {background: #20251c}
+.ops-pipeline-page .ops-event-rail > ol {counter-reset: event}
+.ops-pipeline-page .ops-event-rail li {position: relative; border-bottom-color: #394131; padding: 16px 4px 15px 17px}
+.ops-pipeline-page .ops-event-rail li::before {content: ''; position: absolute; top: 21px; left: 0; width: 6px; height: 6px; border-radius: 50%; background: #8fba60}
+.ops-pipeline-page .ops-event-rail li:not(:last-child)::after {content: ''; position: absolute; top: 29px; bottom: -16px; left: 2px; width: 1px; background: #536144}
+
+@keyframes ops-signal {0% {box-shadow: 0 0 0 0 #c7ef7999} 70%, 100% {box-shadow: 0 0 0 6px #c7ef7900}}
+@media (max-width: 1100px) {
+  .ops-pipeline-page .ops-security-journey > ol > li {min-height: 170px}
+  .ops-pipeline-page .ops-security-journey > ol > li:nth-child(3) {border-right: 0}
+  .ops-pipeline-page .ops-security-journey > ol > li:nth-child(-n+3) {border-bottom: 1px solid #394131}
+}
+@media (max-width: 740px) {
+  .ops-pipeline-page .ops-tab-intro h2 {font-size: 27px}
+  .ops-pipeline-page .ops-journey-heading {padding: 17px; gap: 9px}
+  .ops-pipeline-page .ops-journey-heading h2 {font-size: 17px}
+  .ops-pipeline-page .ops-journey-heading > span {text-align: left}
+  .ops-pipeline-page .ops-security-journey > ol > li {min-height: 168px; padding: 14px 12px}
+  .ops-pipeline-page .ops-security-journey > ol > li:nth-child(3) {border-right: 1px solid #394131}
+  .ops-pipeline-page .ops-security-journey > ol > li:nth-child(even) {border-right: 0}
+  .ops-pipeline-page .ops-security-journey > ol > li:nth-child(4) {border-bottom: 1px solid #394131}
+  .ops-pipeline-page .ops-security-journey li > .ops-stage-top {margin-bottom: 14px}
+  .ops-pipeline-page .ops-stage-top > span {font-size: 27px}
+  .ops-pipeline-page .ops-stage-top > i {width: 31px; height: 31px}
+  .ops-pipeline-page .ops-security-journey li > strong {font-size: 12px}
+  .ops-pipeline-page .ops-security-journey li > p {font-size: 10px; line-height: 1.5}
+  .ops-pipeline-page .ops-journey-activity {padding: 13px 16px}
+  .ops-pipeline-page .ops-flow-panel > .ops-panel-heading {padding: 16px}
+  .ops-pipeline-page .ops-flow-panel > .ops-panel-heading h2 {font-size: 16px}
+  .ops-pipeline-page .ops-flow-panel .live-flow-canvas.is-mobile {height: 1120px}
+  .ops-pipeline-page .live-flow-node {min-height: 155px}
+  .ops-pipeline-page .live-flow-node.system {min-height: 125px}
+  .ops-pipeline-page .live-flow-legend.compact {padding: 15px 16px 18px}
+  .ops-pipeline-page .ops-agent-row > button {padding: 13px 9px}
+  .ops-pipeline-page .ops-agent-row > button > span {font-size: 10px}
+}
+@media (prefers-reduced-motion: reduce) {
+  .ops-pipeline-page .live-flow-node {transition: none; transform: none}
+  .ops-pipeline-page .is-active .live-node-state > i {animation: none}
+}
