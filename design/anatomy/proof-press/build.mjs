@@ -344,8 +344,8 @@ const card = k.plateHtml({
   caption: 'A cartridge carrying one dependency update rides a rail through five stations. It is checked, repaired, tested, reviewed and stamped into a draft PR. The knob beside the tray is only ever turned by a person.',
   body: `<div class="iso-stage" tabindex="0" role="slider" aria-label="Proof press: arrow keys move the cartridge between stations" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0">${svg}</div>`,
 });
-const skin = `<style>:root[data-theme=light],[data-theme=light]{--anatomy-page:#f5f6f4;--anatomy-card:#fcfdfb;--anatomy-lit:#3f7d0e;--anatomy-lit-top:#d9f0b4;--anatomy-lit-shade:#b9db84;--anatomy-strong:#1f2417}
-.iso-solid[data-lit]>.iso-edge{stroke:#3f7d0e}body{padding:0}</style>`;
+const skin = `<style>:root[data-theme=light],[data-theme=light]{--anatomy-page:#FFFBF2;--anatomy-card:#FFFBF2;--anatomy-paper:#FFFBF2;--anatomy-face:#FFFEFA;--anatomy-top:#FFFEFA;--anatomy-text:#232323;--anatomy-strong:#232323;--anatomy-muted:#696969;--anatomy-lit:#3347c9;--anatomy-lit-top:#DCE1F7;--anatomy-lit-shade:#B6C4FD;--anatomy-hi:#232323;--anatomy-mid:#8d8a80;--anatomy-lo:#bdb9ad;--anatomy-faint:#dedacb}
+.iso-solid[data-lit]>.iso-edge{stroke:#3347c9}body{padding:0}</style>`;
 const html = k.pageHtml({ title: 'Proof press', theme, body: card, script: kitSource + live, width: 780 }).replace('</head>', skin + '</head>');
 writeFileSync(resolve(out, 'proof-press.html'), html);
 console.log('wrote', resolve(out, 'proof-press.html'), html.length, 'bytes; solids ~', (html.match(/class="iso-solid/g) || []).length);

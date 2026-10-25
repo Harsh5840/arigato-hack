@@ -2,7 +2,6 @@
 
 import dynamic from 'next/dynamic';
 import {useEffect, useRef, useState} from 'react';
-import {ArrowRight, Bot, Box, ShieldCheck, UserCheck, Wrench, Radar} from 'lucide-react';
 
 const ProofCore = dynamic(() => import('./proof-core'), {ssr: false, loading: () => <div className="how-core-loading" aria-hidden="true"/>});
 
@@ -13,7 +12,7 @@ const stations: {name: string; body: string; lanes: Lane[]; fact: string}[] = [
   {name: 'Watch', body: 'Official advisories and allowlisted forum leads are polled every five minutes. The Supply Chain agent triages new leads read-only. Exact version matching against OSV decides, never the model.', lanes: ['controller', 'agent'], fact: 'nginx 1.26.0 matched exactly'},
   {name: 'Repair', body: 'The Remediation agent changes one exact package or image reference, in at most two attempts. It cannot touch application code or integrity metadata.', lanes: ['agent'], fact: 'One line: 1.26.0 to 1.30.6'},
   {name: 'Verify', body: 'A hosted workflow freezes the baseline tests, runs the candidate in a no-network container, then scans before and after. A selected CVE still present blocks the PR.', lanes: ['verifier'], fact: '5 check groups, 7 HTTP assertions'},
-  {name: 'Review', body: 'A separate senior reviewer reads the real diff and the evidence the verifier observed. Its opinion is advisory, the controller gates are not.', lanes: ['agent', 'controller'], fact: '11 of 11 controller gates'},
+  {name: 'Review', body: 'A separate senior reviewer reads the real diff and the evidence the verifier observed. Its opinion is advisory. The controller gates are not.', lanes: ['agent', 'controller'], fact: '11 of 11 controller gates'},
   {name: 'Draft PR', body: 'An open draft is published at the verified commit. Merging, deploying and incident follow-up stay with a person. Nothing is merge-ready automatically.', lanes: ['human'], fact: 'Draft only, you decide'},
 ];
 
@@ -21,28 +20,30 @@ const numbers = [
   ['7', 'live HTTP assertions on the container draft PR'],
   ['11', 'controller and runner gates that passed'],
   ['831 to 391', 'Trivy findings, baseline to candidate'],
-  ['0', 'automatic merges, ever'],
+  ['0', 'automatic merges'],
 ];
 
 const gates = [
-  ['Exact match', 'Package and version checked against OSV, not by keyword.'],
+  ['Exact match', 'Package and version are checked against OSV, not by keyword.'],
   ['Frozen baseline', 'Relevant tests are fixed before any change is written.'],
   ['Locked sandbox', 'No external network, secrets or Docker socket.'],
   ['Before and after', 'A selected CVE still present blocks publication.'],
   ['Draft only', 'Opens a draft at the verified commit and stops.'],
 ];
 
-const proofs = [
-  {repo: 'arigato-python-demo', pr: '#2', stack: 'PyPI requirement', value: 12, unit: 'business assertions'},
-  {repo: 'arigato-container-demo', pr: '#1', stack: 'nginx 1.26.0 to 1.30.6', value: 7, unit: 'live HTTP assertions'},
-  {repo: 'arigato-php-demo', pr: '#6', stack: 'PHP 8.3.36 image', value: 15, unit: 'storefront assertions'},
+const shipped = [
+  {repo: 'arigato-container-demo', pr: 1, stack: 'Container', change: 'nginx 1.26.0 to 1.30.6, pinned by digest', value: 7, unit: 'live HTTP assertions', url: 'https://github.com/Harsh5840/arigato-container-demo/pull/1', tone: 'sky'},
+  {repo: 'arigato-python-demo', pr: 2, stack: 'Python', change: 'Requests pinned in requirements.txt', value: 12, unit: 'business assertions', url: 'https://github.com/Harsh5840/arigato-python-demo/pull/2', tone: 'peri'},
+  {repo: 'arigato-php-demo', pr: 6, stack: 'PHP', change: 'PHP image 8.3.36 in the Dockerfile', value: 15, unit: 'storefront assertions', url: 'https://github.com/Harsh5840/arigato-php-demo/pull/6', tone: 'terra'},
 ];
 
-const CELLS = 22;
-const blocks = (value: number, max: number) => {
-  const filled = Math.max(1, Math.round((value / max) * CELLS));
-  return '█'.repeat(filled) + '░'.repeat(CELLS - filled);
-};
+const faqs = [
+  ['Does ProofPatch merge or deploy anything?', 'No. It opens a draft pull request at the verified commit. A person reads it, merges it, deploys it and confirms the running service. mergeReady and findingClosed stay false.'],
+  ['What can it repair automatically?', 'Exact PyPI pins, direct npm or Composer dependencies that have committed lockfiles, and official PHP or nginx image references in Dockerfiles or Compose files, when the repository has meaningful baseline tests. Everything else is monitored or blocked, never guessed at.'],
+  ['What do the AI models actually do?', 'Three Groq-hosted gpt-oss agents triage leads, propose the smallest change and review it, each in a separate context. They are not Claude models and not independent assurance. Their explanations are untrusted. Exact findings, frozen tests and controller decisions are the evidence.'],
+  ['Does a clean run mean the service is secure?', 'No. Counts are observed checks, not a security score. A selected CVE must disappear from the candidate, but unrelated scanner findings and coverage gaps stay visible for human review.'],
+  ['Can it work on private repositories?', 'It can read the inventory of a private repository it has access to. The central verifier currently checks out public source anonymously, so private repositories are not yet eligible for automatic fixes.'],
+];
 
 export default function HowItWorks({onStart}: {onStart: () => void}) {
   const [active, setActive] = useState(0);
@@ -65,73 +66,101 @@ export default function HowItWorks({onStart}: {onStart: () => void}) {
   return <div className="how">
     <section className="how-hero">
       <div className="how-hero-copy">
+        <p className="how-label">Repository security watch</p>
         <h2>A security alert in. A reviewed fix out. <em>Nothing merges itself.</em></h2>
-        <p>ProofPatch watches your repositories, proves a fix in a locked sandbox, and opens a draft PR. AI agents help. Deterministic code decides.</p>
-        <div className="how-hero-actions">
-          <button className="button primary" onClick={onStart}>Connect a repository<ArrowRight size={15}/></button>
-          <a className="how-link" href="#how-press">Watch the press run</a>
+        <p className="how-lede">ProofPatch watches the dependencies your team already ships, proves a fix in a locked sandbox, and opens a draft pull request for a person to review.</p>
+        <div className="how-actions">
+          <button className="button primary" onClick={onStart}>Connect a repository</button>
+          <a className="button" href="#how-press">Watch the press run</a>
         </div>
       </div>
-      <div className="how-hero-stage" aria-hidden={false}>
+      <figure className="how-plate">
+        <div className="how-arch" aria-hidden="true"/>
         <ProofCore className="how-core"/>
+        <figcaption>Fig. 1. A verified cartridge, drawn in characters. The ring carries the four authorities.</figcaption>
         <ul className="how-legend" aria-label="Authorities shown as satellites on the ring">
           {(['controller', 'agent', 'verifier', 'human'] as Lane[]).map(lane => <li key={lane} data-lane={lane}><i/>{laneLabel[lane]}</li>)}
         </ul>
-      </div>
+      </figure>
+    </section>
+
+    <section className="how-mission">
+      <p>Security tools usually end at an alert. This one ends at a <em>tested change</em> that a person can read in a minute. AI helps to find and write it. Deterministic code decides whether it is safe to show you.</p>
       <dl className="how-numbers">
         {numbers.map(([value, label]) => <div key={label}><dt>{value}</dt><dd>{label}</dd></div>)}
       </dl>
     </section>
 
-    <section className="how-press" id="how-press">
-      <ol className="how-steps" aria-label="Pipeline stages">
-        {stations.map((station, index) => <li key={station.name} data-active={active === index} data-done={index < active}>
-          <button onClick={() => go(index)} aria-current={active === index ? 'step' : undefined}>
-            <span className="how-step-mark"/>
-            <span className="how-step-head"><strong>{station.name}</strong><small>{station.fact}</small></span>
-          </button>
-          <div className="how-step-body" hidden={active !== index}>
-            <p>{station.body}</p>
-            <div>{station.lanes.map(lane => <span key={lane} data-lane={lane}>{laneLabel[lane]}</span>)}</div>
-          </div>
+    <section className="how-block" id="how-press">
+      <header className="how-head"><span>01</span><h3>Five stations, one cartridge</h3></header>
+      <div className="how-press">
+        <ol className="how-steps" aria-label="Pipeline stages">
+          {stations.map((station, index) => <li key={station.name} data-active={active === index} data-done={index < active}>
+            <button onClick={() => go(index)} aria-current={active === index ? 'step' : undefined}>
+              <span className="how-step-no">{String(index + 1).padStart(2, '0')}</span>
+              <span className="how-step-head"><strong>{station.name}</strong><small>{station.fact}</small></span>
+            </button>
+            <div className="how-step-body" hidden={active !== index}>
+              <p>{station.body}</p>
+              <div>{station.lanes.map(lane => <span key={lane} data-lane={lane}>{laneLabel[lane]}</span>)}</div>
+            </div>
+          </li>)}
+        </ol>
+        <div className="how-press-frame">
+          <iframe ref={frame} src="/figures/proof-press.html" title="Interactive proof press: a cartridge moves through five stations" loading="lazy"/>
+        </div>
+      </div>
+    </section>
+
+    <section className="how-block">
+      <header className="how-head"><span>02</span><h3>Who is allowed to decide</h3></header>
+      <div className="how-tracks">
+        <article data-tone="peri">
+          <span className="how-track-no">01</span>
+          <h4>Controller and verifier</h4>
+          <p>Plain code. It matches exact versions against OSV, freezes baseline tests, validates every identity and artifact, and is the only authority that can block or publish.</p>
+          <small>Deterministic. No model in the loop.</small>
+        </article>
+        <article data-tone="sky">
+          <span className="how-track-no">02</span>
+          <h4>Three AI agents</h4>
+          <ul>
+            <li><b>Supply Chain</b><code>gpt-oss-20b</code><span>Triages leads, read-only.</span></li>
+            <li><b>Remediation</b><code>gpt-oss-120b</code><span>Smallest change, two attempts.</span></li>
+            <li><b>Senior review</b><code>gpt-oss-120b</code><span>Separate context from the fixer.</span></li>
+          </ul>
+          <small>They propose and explain. They cannot publish.</small>
+        </article>
+        <article data-tone="terra">
+          <span className="how-track-no">03</span>
+          <h4>You</h4>
+          <p>Read the draft, merge it, deploy it and confirm the running service. The knob beside the tray on the press is the one part the machine never turns.</p>
+          <small>The last word is always human.</small>
+        </article>
+      </div>
+    </section>
+
+    <section className="how-block">
+      <header className="how-head"><span>03</span><h3>What it has shipped</h3></header>
+      <ul className="how-shipped">
+        {shipped.map(item => <li key={item.repo} data-tone={item.tone}>
+          <span className="how-ship-no">#{item.pr}</span>
+          <div className="how-ship-main"><h4>{item.repo}</h4><p>{item.change}</p><small>{item.stack}</small></div>
+          <div className="how-ship-metric"><b>{item.value}</b><span>{item.unit}</span></div>
+          <a href={item.url} target="_blank" rel="noreferrer" aria-label={`Open draft PR ${item.pr} on ${item.repo}`}>Draft PR <span aria-hidden="true">↗</span></a>
         </li>)}
-      </ol>
-      <div className="how-press-frame">
-        <iframe ref={frame} src="/figures/proof-press.html" title="Interactive proof press: a cartridge moves through five stations" loading="lazy"/>
-      </div>
+      </ul>
+      <p className="how-note">Counts are observed checks on real draft PRs, not a security score. Residual scanner findings stay visible for review.</p>
     </section>
 
-    <section className="how-authority">
-      <header><h3>Who is allowed to decide</h3><p>Models explain and propose. Only the controller and the verifier can block or publish. A person owns everything after that.</p></header>
-      <article className="how-a-controller" data-lane="controller">
-        <Box size={20} strokeWidth={1.7}/>
-        <h4>Controller and verifier</h4>
-        <code>Deterministic code</code>
-        <p>Matches exact versions against OSV, freezes baseline tests, validates every identity and artifact, and is the only authority that can publish.</p>
-      </article>
-      <article data-lane="agent"><Radar size={18} strokeWidth={1.7}/><h4>Supply Chain</h4><code>gpt-oss-20b</code><p>Triages leads. Read-only.</p></article>
-      <article data-lane="agent"><Wrench size={18} strokeWidth={1.7}/><h4>Remediation</h4><code>gpt-oss-120b</code><p>Smallest change, two attempts.</p></article>
-      <article data-lane="agent"><ShieldCheck size={18} strokeWidth={1.7}/><h4>Senior review</h4><code>gpt-oss-120b</code><p>Separate context from the fixer.</p></article>
-      <article className="how-a-human" data-lane="human">
-        <UserCheck size={20} strokeWidth={1.7}/>
-        <h4>You</h4>
-        <p>Read the draft, merge, deploy and confirm the running service. The knob beside the tray on the press is the only part the machine never turns.</p>
-      </article>
+    <section className="how-block">
+      <header className="how-head"><span>04</span><h3>Five gates before a draft exists</h3></header>
+      <ol className="how-gates">{gates.map(([title, body], i) => <li key={title}><b>{String(i + 1).padStart(2, '0')}</b><strong>{title}</strong><p>{body}</p></li>)}</ol>
     </section>
 
-    <section className="how-evidence">
-      <div className="how-gates">
-        <h3>Five gates before a draft exists</h3>
-        <ol>{gates.map(([title, body], i) => <li key={title}><b>{i + 1}</b><div><strong>{title}</strong><span>{body}</span></div></li>)}</ol>
-      </div>
-      <div className="how-proof">
-        <h3>Recorded on real draft PRs</h3>
-        <ul className="how-bars">{proofs.map(item => <li key={item.repo}>
-          <div><strong>{item.repo}</strong><span>PR {item.pr} · {item.stack}</span></div>
-          <div className="how-bar"><span className="how-blocks" aria-hidden="true">{blocks(item.value, 15)}</span><b>{item.value}</b><small>{item.unit}</small></div>
-        </li>)}</ul>
-        <p className="how-note"><Bot size={14}/>Counts are observed checks, not a security score. Residual scanner findings stay visible for review.</p>
-      </div>
+    <section className="how-block">
+      <header className="how-head"><span>05</span><h3>Questions, answered</h3></header>
+      <div className="how-faq">{faqs.map(([q, a]) => <details key={q}><summary>{q}</summary><p>{a}</p></details>)}</div>
     </section>
   </div>;
 }

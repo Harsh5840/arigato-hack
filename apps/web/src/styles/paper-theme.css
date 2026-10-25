@@ -1,0 +1,54 @@
+/* Paper theme, after the Build for Bharat Fellowship site: warm paper, black hairlines, serif display,
+   mono small-caps labels, flat pastel fields, folder tabs, pill buttons. Blue replaces green throughout.
+   Loaded last so it restyles every earlier surface without editing their sources. */
+:root{
+  --serif-display:'Libertinus Serif Display','Libertinus Serif',Georgia,serif;--serif:'Libertinus Serif',Georgia,serif;
+  --sans:var(--font-public),'Public Sans',system-ui,sans-serif;--mono:'DM Mono',ui-monospace,Menlo,Consolas,monospace;
+  --paper:#FFFBF2;--surface:#FCF8EF;--ink:#232323;--rule:#000;--muted:#696969;
+  --blue:#3347c9;--blue-deep:#26379f;--peri:#B6C4FD;--peri-soft:#DCE1F7;--sky:#90CBFF;--sky-soft:#C4E9FB;--terra:#EA9B7C;--terra-soft:#E7CEC1;--grey:#E0E0DB;
+  --background:#FFFBF2;--foreground:#232323;--card:#FCF8EF;--popover:#FFFBF2;--primary:#3347c9;--primary-foreground:#FFFBF2;--ring:#3347c9;
+  --border:#000;--input:#000;--secondary:#F3EEE2;--accent:#DCE1F7;--muted-foreground:#696969;--pale:#FCF8EF;--line:#000;--ink:#232323;--blue:#3347c9;--green:#3347c9;
+}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased}
+body::after{content:"";position:fixed;inset:0;z-index:60;pointer-events:none;opacity:.5;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .3 0 0 0 0 .25 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+.operations-dashboard{background:transparent;font-family:var(--sans)}
+.operations-dashboard :where(div,section,article,header,footer,main,nav,details,summary,a,span,small,figure,li,ul,ol,dl,iframe,img,canvas,aside,table,td,th,i,b,em,input,select,textarea,label){border-radius:0!important}
+.operations-dashboard :where(h1,h2,h3,h4){font-family:var(--serif-display);font-weight:400;letter-spacing:-.01em;color:var(--ink)}
+.operations-dashboard :where(small,code,time,dt,th){font-family:var(--mono);letter-spacing:.02em}
+
+/* header: wordmark and a single rule */
+.ops-header{background:var(--paper)!important;border-bottom:1px solid var(--rule)!important;backdrop-filter:none}
+.ops-brand strong{font-family:var(--serif-display);font-weight:400;font-size:25px;letter-spacing:-.02em;color:var(--ink)}
+.ops-brand svg{color:var(--blue)}
+.ops-service{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink)}
+.ops-console-heading h1{font-size:clamp(26px,3vw,34px)!important;line-height:1.1}
+.ops-console-heading p{font-size:13px!important;color:var(--muted)}
+.ops-console-heading>span{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.14em}
+
+/* folder tabs, each its own pastel like the fellowship's filing folders */
+.ops-dashboard-tabs{display:flex!important;align-items:flex-end;gap:0!important;border-bottom:1px solid var(--rule)!important;padding:0!important;overflow-x:auto}
+.ops-dashboard-tabs button{font-family:var(--mono)!important;text-transform:uppercase;letter-spacing:.14em;font-size:11px!important;font-weight:500;color:var(--ink)!important;
+  background:var(--tab,var(--surface))!important;border:1px solid var(--rule)!important;border-bottom:0!important;margin-right:-1px;padding:12px 18px!important;
+  border-top-left-radius:12px!important;border-top-right-radius:12px!important;position:relative;top:1px;white-space:nowrap}
+.ops-dashboard-tabs button:nth-child(5n+1){--tab:var(--sky-soft)}.ops-dashboard-tabs button:nth-child(5n+2){--tab:var(--peri-soft)}.ops-dashboard-tabs button:nth-child(5n+3){--tab:var(--terra-soft)}.ops-dashboard-tabs button:nth-child(5n+4){--tab:var(--grey)}.ops-dashboard-tabs button:nth-child(5n){--tab:var(--sky)}
+.ops-dashboard-tabs button[aria-current=page]{background:var(--paper)!important;padding-top:15px!important;border-bottom:1px solid var(--paper)!important;z-index:2}
+.ops-dashboard-tabs button span{border:1px solid var(--rule)!important;background:var(--paper)!important;color:var(--ink)!important;font-size:10px!important;padding:0 6px;border-radius:999px!important}
+
+/* panels: flat, black hairline, no shadow */
+:where(.ops-repository-panel,.ops-detected-findings,.ops-security-journey,.ops-execution-panel,.ops-pr-card,.ops-run-facts,.ops-metrics>div,.ops-orchestration-grid,.ops-watch-details,.ops-tab-empty,.ops-repository-findings){border:1px solid var(--rule)!important;background:var(--surface)!important;box-shadow:none!important}
+.ops-tab-intro h2{font-size:clamp(30px,3.6vw,46px);line-height:1.04}
+.ops-tab-intro>div>span{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink)}
+.ops-metrics>div strong{font-family:var(--serif-display);font-weight:400;font-size:clamp(30px,3.4vw,44px);letter-spacing:-.02em}
+
+/* buttons: pills, flat */
+.button,button.button{font-family:var(--mono);text-transform:uppercase;letter-spacing:.12em;font-size:11px!important;font-weight:500;border:1px solid var(--rule)!important;border-radius:30px!important;box-shadow:none!important;padding:11px 20px}
+.button.primary,button.primary{background:var(--ink)!important;color:var(--paper)!important}
+.button.primary:hover,button.primary:hover{background:var(--blue)!important}
+.button:not(.primary){background:transparent!important;color:var(--ink)!important}
+.button:not(.primary):hover{background:var(--peri-soft)!important}
+input,select,textarea{font-family:var(--sans);border:1px solid var(--rule)!important;background:#fff!important}
+input[type=checkbox]{accent-color:var(--blue)}
+:focus-visible{outline:2px solid var(--blue)!important;outline-offset:2px}
+.ops-footer{border-top:1px solid var(--rule)!important;font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink)}
+.ops-error-banner{border:1px solid #a1301f!important;border-left-width:6px!important;background:#FFF1EA!important}

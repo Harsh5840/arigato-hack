@@ -9,7 +9,7 @@ import {useEffect, useRef, useState} from 'react';
  * stand for the four authorities in the pipeline, in the same lane colours as the flow.
  * Everything is procedural, no external model or texture.
  */
-const LANES = {controller: 0x3d5a80, agent: 0x4a7a12, verifier: 0xa2641a, human: 0x8a3a5c} as const;
+const LANES = {controller: 0x1f6f9f, agent: 0x3347c9, verifier: 0xb4552f, human: 0x8a3a5c} as const;
 
 export default function ProofCore({className}: {className?: string}) {
   const host = useRef<HTMLDivElement>(null);
@@ -65,7 +65,7 @@ export default function ProofCore({className}: {className?: string}) {
       const paper = new THREE.MeshPhysicalMaterial({color: 0xd4d7cd, roughness: 0.42, metalness: 0.04, clearcoat: 0.5, clearcoatRoughness: 0.35});
       const steel = new THREE.MeshPhysicalMaterial({color: 0xc9cdc4, roughness: 0.32, metalness: 0.85});
       const ink = new THREE.MeshStandardMaterial({color: 0x23281d, roughness: 0.55, metalness: 0.1});
-      const accent = new THREE.MeshPhysicalMaterial({color: LANES.agent, roughness: 0.28, metalness: 0.15, clearcoat: 1, clearcoatRoughness: 0.12, emissive: 0x16300a, emissiveIntensity: 0.45});
+      const accent = new THREE.MeshPhysicalMaterial({color: LANES.agent, roughness: 0.28, metalness: 0.15, clearcoat: 1, clearcoatRoughness: 0.12, emissive: 0x101a55, emissiveIntensity: 0.45});
 
       const core = new THREE.Group();
       scene.add(core);
