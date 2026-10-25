@@ -21,7 +21,8 @@ const mobileOrder: LiveNode[] = ['controller', 'supply-chain', 'devsec', 'remedi
 const mobileHandoffs = ['Controller → Supply Chain: scoped job', 'Supply Chain → DevSec: affected inventory', 'DevSec → Remediation: frozen baseline', 'Remediation → DevSec: candidate replay', 'DevSec → evidence gate: checks and review', 'Evidence gate → human: draft PR'];
 function LiveAgentNode({id, data}: NodeProps<FlowNode>) {
   const Icon = icons[id as LiveNode];
-  return <div className={`live-flow-node ${data.agent ? 'agent' : 'system'} ${data.active ? 'is-active' : ''} ${data.done ? 'is-done' : ''} ${data.held ? 'is-held' : ''} ${data.ready ? 'is-ready' : ''}`}>
+  const role = id === 'review' ? 'human' : data.agent ? 'agent' : 'controller';
+  return <div className={`live-flow-node ${data.agent ? 'agent' : 'system'} ${data.active ? 'is-active' : ''} ${data.done ? 'is-done' : ''} ${data.held ? 'is-held' : ''} ${data.ready ? 'is-ready' : ''}`} data-role={role}>
     <Handle type="target" position={Position.Top} id="top-in"/><Handle type="target" position={Position.Left} id="left-in"/><Handle type="target" position={Position.Right} id="right-in"/>
     <div className="live-node-header"><span className="live-node-sequence">{data.sequence}</span><span className="live-node-icon"><Icon size={17}/></span><span className="live-node-state"><i/>{data.state}</span></div>
     <strong>{data.title}</strong><p>{data.subtitle}</p>
@@ -80,14 +81,14 @@ export default function LiveAgentFlow({run, events, onSelect, compact = false}: 
     return links.map(([id, source, target, label, sourceHandle, targetHandle], index) => {
       const flowing = !!active && (source === active || target === active);
       const recorded = target === 'review' ? !!run?.pullRequest : events.some(event => event.node === target);
-      const color = flowing ? '#3347c9' : recorded ? '#6474b3' : '#b5b0a8';
-      return {id, source, target, label: mobile || compact ? String(index + 1) : label, ariaLabel: mobile || compact ? `${index + 1}. ${mobileHandoffs[index]}` : label, sourceHandle, targetHandle, type: 'smoothstep', pathOptions: {offset: mobile && id === 'candidate' ? 40 : mobile && id === 'evidence' ? 72 : 20}, animated: flowing, markerEnd: {type: MarkerType.ArrowClosed, color}, style: {stroke: color, strokeWidth: flowing ? 2.5 : recorded ? 2 : 1.4}, labelStyle: {fill: flowing || recorded ? '#1f3073' : '#5b564e', fontSize: 11}, labelBgStyle: {fill: '#f5f4f3'}, labelBgPadding: [6, 4]} as Edge;
+      const color = flowing ? '#3347c9' : recorded ? '#1f6f9f' : '#8c8777';
+      return {id, source, target, label: mobile || compact ? String(index + 1) : label, ariaLabel: mobile || compact ? `${index + 1}. ${mobileHandoffs[index]}` : label, sourceHandle, targetHandle, type: 'smoothstep', pathOptions: {offset: mobile && id === 'candidate' ? 40 : mobile && id === 'evidence' ? 72 : 20}, animated: flowing, markerEnd: {type: MarkerType.ArrowClosed, color}, style: {stroke: color, strokeWidth: flowing ? 2.5 : recorded ? 2 : 1.4}, labelStyle: {fill: flowing || recorded ? '#232323' : '#696969', fontSize: 11, fontFamily: 'var(--mono)'}, labelBgStyle: {fill: '#FFFBF2', stroke: '#000', strokeWidth: 1}, labelBgPadding: [6, 4]} as Edge;
     });
   }, [mobile, compact, active, run?.pullRequest, events]);
   const onNodesChange = useCallback((changes: NodeChange<FlowNode>[]) => setNodes(previous => applyNodeChanges(changes, previous)), []);
   return <><div className={`orchestration-canvas live-flow-canvas ${mobile ? 'is-mobile' : ''}`} aria-label="Live agent orchestration diagram">
-    <ReactFlow key={mobile ? 'mobile' : 'desktop'} nodes={shownNodes} edges={edges} nodeTypes={nodeTypes} onNodesChange={onNodesChange} onNodeClick={(_, node) => onSelect(node.id as LiveNode)} nodesConnectable={false} deleteKeyCode={null} minZoom={.3} maxZoom={1.6} colorMode="dark" preventScrolling={false}>
-      <InitialFit mobile={mobile} compact={compact}/><Background gap={24} color="#dfddd9" size={1}/>
+    <ReactFlow key={mobile ? 'mobile' : 'desktop'} nodes={shownNodes} edges={edges} nodeTypes={nodeTypes} onNodesChange={onNodesChange} onNodeClick={(_, node) => onSelect(node.id as LiveNode)} nodesConnectable={false} deleteKeyCode={null} minZoom={.3} maxZoom={1.6} colorMode="light" preventScrolling={false}>
+      <InitialFit mobile={mobile} compact={compact}/><Background gap={24} color="#d8d5cf" size={1}/>
     </ReactFlow>
   </div>{(mobile || compact) && <ol className={`live-flow-legend ${compact ? 'compact' : ''}`} aria-label="Numbered diagram handoffs">{mobileHandoffs.map((handoff, index) => <li key={handoff}><span>{index + 1}</span>{handoff}</li>)}</ol>}</>;
 }

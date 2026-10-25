@@ -8,7 +8,7 @@
 
 /* hero */
 .how-hero{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);gap:clamp(24px,4vw,64px);align-items:center;padding-top:8px}
-.how-hero h2{font-size:clamp(40px,5.6vw,80px);line-height:.98;letter-spacing:-.03em;max-width:12ch;text-wrap:balance}
+.how-hero h2{font-size:clamp(40px,5.6vw,80px);line-height:1.04;letter-spacing:-.03em;max-width:12ch;text-wrap:balance;padding-bottom:.05em}
 .how-hero h2 em{font-family:var(--serif);font-style:italic;color:var(--blue)}
 .how-lede{font-size:17px;line-height:1.6;max-width:46ch;color:#3b3b3b;margin:26px 0 30px!important}
 .how-actions{display:flex;gap:12px;flex-wrap:wrap}
