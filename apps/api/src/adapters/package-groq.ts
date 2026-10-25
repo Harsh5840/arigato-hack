@@ -1,6 +1,7 @@
 import { ChatGroq } from '@langchain/groq';
 import { AIMessage } from '@langchain/core/messages';
 import { configuredModels, verifyGroqModels } from './groq.js';
+import { fetchGroqWithRetry } from './groq-retry.js';
 import { boundedBytes, combinedSignal, exactKeys, object, string, strings } from './http.js';
 import type { Analysis, Evidence, ModelUsage, Repair, Review } from './types.js';
 import type { AdvisoryLead, Dependency } from '../../../../packages/contracts/src/monitoring.js';
@@ -21,10 +22,10 @@ export async function invokeStructuredRole(model: string, name: string, properti
   let lastHttpStatus: number | undefined;
   const llm = new ChatGroq({
     apiKey, model, temperature: 0.1, maxTokens: name.includes('repair') ? 5_000 : 2_500,
-    maxRetries: 1, timeout: 90_000, streaming: false, reasoningEffort: 'low',
+    maxRetries: 0, timeout: 155_000, streaming: false, reasoningEffort: 'low',
     // Keep redirects and response sizes bounded even inside the provider SDK.
     fetch: async (url: string | URL | Request, init?: RequestInit) => {
-      const response = await globalThis.fetch(url, { ...init, redirect: 'error' });
+      const response = await fetchGroqWithRetry(url, init ?? {}, 60_000, signal);
       if (!response.ok) {
         lastHttpStatus = response.status;
         await response.body?.cancel();
@@ -41,7 +42,7 @@ export async function invokeStructuredRole(model: string, name: string, properti
   let result: AIMessage;
   try {
     result = await llm.invoke([{ role: 'system', content: instruction }, { role: 'user', content }], {
-      signal: combinedSignal(signal, 95_000),
+      signal: combinedSignal(signal, 160_000),
       response_format: { type: 'json_schema', json_schema: { name, strict: true, schema: objectSchema(properties) } },
       runName: `proofpatch.${name}`, tags: ['proofpatch', 'supply-chain'],
     });

@@ -38,6 +38,39 @@ test('authenticated model discovery refuses unavailable configured model IDs', a
   await assert.rejects(verifyGroqModels(), /unavailable.*120b/);
 });
 
+test('Groq model discovery respects Retry-After and retries one throttled response', async () => {
+  process.env.GROQ_API_KEY = 'unit-test-placeholder';
+  let calls = 0;
+  globalThis.fetch = async () => ++calls === 1
+    ? new Response('{}', { status: 429, headers: { 'retry-after': '0' } })
+    : response(catalog);
+  await verifyGroqModels();
+  assert.equal(calls, 2);
+});
+
+test('LangChain role retries a throttled completion once and keeps actual usage', async () => {
+  process.env.GROQ_API_KEY = 'unit-test-placeholder';
+  const advisory = await fetchAdvisory('cached');
+  let completions = 0;
+  globalThis.fetch = async (input) => {
+    if (String(input).endsWith('/models')) return response(catalog);
+    return ++completions === 1
+      ? new Response('{}', { status: 429, headers: { 'retry-after': '0' } })
+      : response(completion({ summaryEn: 'Affected declared PHP runtime.', summaryJa: '宣言された PHP ランタイムが対象です。', affected: true, confidence: 'high' }));
+  };
+  const result = await analyzeAdvisory(advisory, { runtimeVersion: '8.3.35' });
+  assert.equal(completions, 2);
+  assert.equal(result.usage.totalTokens, 200);
+});
+
+test('a provider wait beyond the retry ceiling fails explicitly without another request', async () => {
+  process.env.GROQ_API_KEY = 'unit-test-placeholder';
+  let calls = 0;
+  globalThis.fetch = async () => { calls++; return new Response('{}', { status: 429, headers: { 'retry-after': '300' } }); };
+  await assert.rejects(verifyGroqModels(), /rate limit reached/);
+  assert.equal(calls, 1);
+});
+
 test('Supply Chain makes a real-shape strict JSON request and records actual reported token usage', async () => {
   process.env.GROQ_API_KEY = 'unit-test-placeholder';
   const advisory = await fetchAdvisory('cached');
