@@ -15,7 +15,9 @@ export interface ServiceStatus {
   target: string;
   runner: string;
   activeRunId?: string;
+  langsmith?: {enabled: boolean; project: string};
 }
+export type LangSmithTrace = {state: 'not-connected' | 'not-found' | 'unavailable'; url?: never} | {state: 'available'; url: string};
 export const isTerminal = (status: LiveStatus) => ['completed', 'blocked', 'failed', 'cancelled'].includes(status);
 export const liveStatusLabels: Record<LiveStatus, string> = {
   queued: 'Queued', 'source-fetching': 'Fetching Japanese advisory', triaging: 'Supply Chain · triaging', matching: 'Matching repository inventory', baseline: 'Recording baseline', patching: 'Remediation · preparing candidate', verifying: 'Executing candidate checks', reviewing: 'DevSec · reviewing evidence', publishing: 'Opening draft pull request', completed: 'Draft ready for human review', blocked: 'Evidence gate blocked', failed: 'Run failed', cancelled: 'Run cancelled',

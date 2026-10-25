@@ -21,6 +21,11 @@ services:
       SUPPLY_MODEL: ${SUPPLY_MODEL:-openai/gpt-oss-20b}
       FIXER_MODEL: ${FIXER_MODEL:-openai/gpt-oss-120b}
       REVIEWER_MODEL: ${REVIEWER_MODEL:-openai/gpt-oss-120b}
+      LANGSMITH_TRACING: ${LANGSMITH_TRACING:-false}
+      LANGSMITH_API_KEY: ${LANGSMITH_API_KEY:-}
+      LANGSMITH_PROJECT: ${LANGSMITH_PROJECT:-proofpatch}
+      LANGSMITH_ENDPOINT: ${LANGSMITH_ENDPOINT:-}
+      LANGSMITH_WORKSPACE_ID: ${LANGSMITH_WORKSPACE_ID:-}
     expose:
       - "8787"
     volumes:

@@ -11,7 +11,7 @@ const children = commands.map(([app, entry]) => {
   const cwd = resolve(root, 'apps', app);
   const executable = app === 'api' ? ['--experimental-sqlite', '--import', 'tsx', entry] : [resolve(cwd, 'node_modules/next/dist/bin/next'), 'dev', '--hostname', '127.0.0.1', '--port', '3000'];
   const env = { ...process.env, PROOFPATCH_ROOT: root };
-  if (app === 'web') for (const key of ['GROQ_API_KEY','GITHUB_TOKEN','GH_TOKEN']) delete env[key];
+  if (app === 'web') for (const key of ['GROQ_API_KEY','GITHUB_TOKEN','GH_TOKEN','LANGSMITH_API_KEY']) delete env[key];
   return spawn(process.execPath, executable, { cwd, stdio: 'inherit', windowsHide: true, env });
 });
 let ending = false;
