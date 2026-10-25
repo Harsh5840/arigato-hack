@@ -5,13 +5,14 @@ import { getProviderStatus, readCandidateDiff } from '../adapters/index.js';
 import type { RunStore } from '../db/client.js';
 import type { MonitoringStore } from '../db/monitoring.js';
 import { readRepositoryCandidateDiff } from '../adapters/repository.js';
+import { langSmithStatus, langSmithTrace } from '../services/langsmith-tracing.js';
 
 export function runHandlers(store: RunStore, monitor?: MonitoringStore) {
   const missing = (c: Context) => c.json({ error: { code: 'NOT_FOUND', message: 'Run not found.' } }, 404);
   return {
     status: async (c: Context) => {
       const state = await getProviderStatus();
-      return c.json({ ...state, target: 'Harsh5840/arigato-php-demo', runner: 'github-actions', activeRunId: store.active()?.id, service: 'ProofPatch', ready: state.groqConfigured && state.githubConfigured });
+      return c.json({ ...state, target: 'Harsh5840/arigato-php-demo', runner: 'github-actions', activeRunId: store.active()?.id, service: 'ProofPatch', ready: state.groqConfigured && state.githubConfigured, langsmith: langSmithStatus() });
     },
     list: (c: Context) => c.json({ runs: store.list() }),
     clear: (c: Context) => {
@@ -27,6 +28,7 @@ export function runHandlers(store: RunStore, monitor?: MonitoringStore) {
     },
     get: (c: Context) => { const run = store.get(c.req.param('id')!); return run ? c.json({ run }) : missing(c); },
     evidence: (c: Context) => { const run = store.get(c.req.param('id')!); return run ? c.json({ run, events: store.events(run.id) }) : missing(c); },
+    langsmith: async (c: Context) => { const run = store.get(c.req.param('id')!); return run ? c.json(await langSmithTrace(run.id)) : missing(c); },
     diff: async (c: Context) => {
       const run = store.get(c.req.param('id')!); if (!run) return missing(c);
       if (!run.repo.baseSha || !run.repo.candidateSha) return c.json({ error: { code: 'CANDIDATE_PENDING', message: 'The selected run has not published a candidate commit yet.' } }, 409);

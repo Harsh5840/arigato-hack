@@ -213,7 +213,7 @@ export async function executePackageRun(store: RunStore, monitor: MonitoringStor
       beforeNode: name => { assertActive(); const prior = current().graph; store.update(id, { orchestrationEngine: 'langgraph', graph: { threadId: id, currentNode: name, completedNodes: prior?.completedNodes ?? [] } }); store.event(id, 'controller', 'graph-node-started', `LangGraph entered ${name}.`); },
       afterNode: name => { const prior = current().graph!; store.update(id, { graph: { ...prior, currentNode: name, completedNodes: [...new Set([...prior.completedNodes, name])] } }); store.event(id, 'controller', 'graph-node-completed', `LangGraph completed ${name}.`); },
     });
-    await graph.invoke({ runId: id }, { configurable: { thread_id: id }, signal, recursionLimit: 30 });
+    await graph.invoke({ runId: id }, { configurable: { thread_id: id }, runId: id, runName: 'ProofPatch security repair', tags: ['proofpatch', 'supply-chain-repair'], metadata: { proofpatchRunId: id }, signal, recursionLimit: 30 });
   } catch (error) {
     const old = current(), cancelled = old.cancelRequested, message = (error instanceof Error ? error.message : 'Package run failed.').replace(/gsk_[A-Za-z0-9]+/g, '[REDACTED]').slice(0, 1500);
     store.update(id, { status: cancelled ? 'cancelled' : old.status === 'failed' ? 'failed' : 'blocked', draftPRAllowed: false, failure: old.status === 'failed' && old.failure ? old.failure : { code: cancelled ? 'CANCELLED' : 'PACKAGE_RUN_BLOCKED', message } });

@@ -15,6 +15,7 @@ import FindingsPanel from './operations/findings-panel';
 import SecurityWatchPanel from './operations/security-watch-panel';
 import SecurityJourney from './operations/security-journey';
 import OrchestrationPanel from './operations/orchestration-panel';
+import LangSmithPanel from './operations/langsmith-panel';
 import RunMetrics from './operations/run-metrics';
 import RunAnalytics from './operations/run-analytics';
 import VerificationWorkbench from './operations/verification-workbench';
@@ -216,7 +217,7 @@ export default function OperationsDashboard() {
       </div>}
 
       {tab === 'pipeline' && <div className="ops-pipeline-page"><div className="ops-tab-intro"><div><span>03 / WATCH THE HANDOFF</span><h2>Repair pipeline</h2><p>Advisory match → package or image update → tests → senior review → draft PR → human review.</p></div><strong>{focusedRepository ? `${focusedRepository.owner}/${focusedRepository.name}` : 'Choose a service'}</strong></div>
-        <SecurityJourney repository={focusedRepository} snapshot={monitoring.snapshot} findings={focusedFindings} run={run} events={events}/><OrchestrationPanel run={run} events={events} service={service}/>
+        <SecurityJourney repository={focusedRepository} snapshot={monitoring.snapshot} findings={focusedFindings} run={run} events={events}/><OrchestrationPanel run={run} events={events} service={service}/><LangSmithPanel run={run} service={service}/>
         {run?.failure && <div className="ops-error-banner" role="alert"><AlertTriangle size={18}/><div><strong>{run.failure.code}</strong><p>{run.failure.message}</p></div>{run.target && !activeRun && <button className="button outline" onClick={() => void prepareFix(run.target!.findingId)} disabled={busy || !service?.ready}>Retry fix</button>}</div>}
         <button className="ops-text-next" onClick={() => changeTab('results')}>Open checks and model usage<ArrowRight size={15}/></button>
       </div>}

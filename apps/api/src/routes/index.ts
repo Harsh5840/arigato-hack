@@ -10,6 +10,7 @@ export function routes(store: RunStore, monitor?: MonitoringStore) {
   router.get('/runs', handlers.list); router.post('/runs', handlers.create); router.delete('/runs', handlers.clear);
   router.get('/runs/:id', handlers.get); router.get('/runs/:id/events', handlers.events);
   router.get('/runs/:id/evidence', handlers.evidence); router.post('/runs/:id/cancel', handlers.cancel);
+  router.get('/runs/:id/langsmith', handlers.langsmith);
   router.get('/runs/:id/diff', handlers.diff);
   if (monitor) {
     const monitoring = monitoringHandlers(monitor, store);

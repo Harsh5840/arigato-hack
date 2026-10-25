@@ -1,4 +1,4 @@
-import type { CandidateDiff, LiveEvent, LiveRun, ServiceStatus } from '@/types/live-orchestration';
+import type { CandidateDiff, LangSmithTrace, LiveEvent, LiveRun, ServiceStatus } from '@/types/live-orchestration';
 import type {MonitoredRepository, MonitoringSnapshot, SupplyFinding} from '@/types/monitoring';
 
 export const orchestrationApi = '/api/proofpatch';
@@ -21,6 +21,7 @@ export const getRuns = () => request<{runs: LiveRun[]}>('/runs');
 export const deleteSavedRuns = () => request<{deleted: number; deletedFindings: number}>('/runs', {method: 'DELETE', body: '{}'});
 export const getRun = (id: string) => request<{run: LiveRun}>(`/runs/${encodeURIComponent(id)}`);
 export const getRunEvidence = (id: string) => request<{run: LiveRun; events: LiveEvent[]}>(`/runs/${encodeURIComponent(id)}/evidence`);
+export const getRunTrace = (id: string) => request<LangSmithTrace>(`/runs/${encodeURIComponent(id)}/langsmith`);
 export const getCandidateDiff = (id: string) => request<CandidateDiff>(`/runs/${encodeURIComponent(id)}/diff`);
 export const startRun = (sourceMode: 'live' | 'cached') => request<{run: LiveRun}>('/runs', {method: 'POST', body: JSON.stringify({sourceMode})});
 export const cancelRun = (id: string) => request<{run: LiveRun}>(`/runs/${encodeURIComponent(id)}/cancel`, {method: 'POST', body: '{}'});
