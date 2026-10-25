@@ -52,3 +52,8 @@ input[type=checkbox]{accent-color:var(--blue)}
 :focus-visible{outline:2px solid var(--blue)!important;outline-offset:2px}
 .ops-footer{border-top:1px solid var(--rule)!important;font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink)}
 .ops-error-banner{border:1px solid #a1301f!important;border-left-width:6px!important;background:#FFF1EA!important}
+.ops-brand{gap:10px}
+.ops-brand img{display:block;height:auto}
+.ops-brand>img:first-child{width:30px}
+.ops-brand .ops-brand-word{width:132px}
+@media(max-width:740px){.ops-brand .ops-brand-word{width:112px}}

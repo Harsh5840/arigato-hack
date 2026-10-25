@@ -3,7 +3,9 @@
 import dynamic from 'next/dynamic';
 import {useEffect, useRef, useState} from 'react';
 
-const ProofCore = dynamic(() => import('./proof-core'), {ssr: false, loading: () => <div className="how-core-loading" aria-hidden="true"/>});
+const VerificationMachine = dynamic(() => import('../verification-machine'), {ssr: false, loading: () => <div className="how-core-loading" aria-hidden="true"/>});
+const heroChecks = ['Baseline reproduces the issue', 'Candidate passes', 'Benign controls still pass', 'Test identity matches', 'Commit identity matches'];
+const HERO_STEPS = [0, 1, 2, 3, 4, 4];
 
 type Lane = 'controller' | 'agent' | 'verifier' | 'human';
 const laneLabel: Record<Lane, string> = {controller: 'Controller', agent: 'AI agent', verifier: 'Hosted verifier', human: 'You'};
@@ -47,7 +49,15 @@ const faqs = [
 
 export default function HowItWorks({onStart}: {onStart: () => void}) {
   const [active, setActive] = useState(0);
+  const [tick, setTick] = useState(0);
   const frame = useRef<HTMLIFrameElement>(null);
+  const heroStage = HERO_STEPS[tick % HERO_STEPS.length];
+
+  useEffect(() => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { setTick(4); return; }
+    const timer = setInterval(() => setTick(t => t + 1), 1700);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const listen = (event: MessageEvent) => {
@@ -74,13 +84,12 @@ export default function HowItWorks({onStart}: {onStart: () => void}) {
           <a className="button" href="#how-press">Watch the press run</a>
         </div>
       </div>
-      <figure className="how-plate">
-        <div className="how-arch" aria-hidden="true"/>
-        <ProofCore className="how-core"/>
-        <figcaption>Fig. 1. A verified cartridge, drawn in characters. The ring carries the four authorities.</figcaption>
-        <ul className="how-legend" aria-label="Authorities shown as satellites on the ring">
-          {(['controller', 'agent', 'verifier', 'human'] as Lane[]).map(lane => <li key={lane} data-lane={lane}><i/>{laneLabel[lane]}</li>)}
-        </ul>
+      <figure className="how-plate how-machine">
+        <figcaption>Fig. 1. The verification interlock. The patch cartridge can only slide out once all five check fingers lift.</figcaption>
+        <VerificationMachine stage={heroStage} blocked={false} running={heroStage > 0 && heroStage < 4}/>
+        <ol className="how-checks" aria-label="The five checks the fingers stand for">
+          {heroChecks.map((check, i) => <li key={check} data-on={heroStage >= (i === 0 ? 1 : 3)}><b>{String(i + 1).padStart(2, '0')}</b>{check}</li>)}
+        </ol>
       </figure>
     </section>
 

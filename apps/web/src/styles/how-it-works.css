@@ -116,3 +116,20 @@
 .operations-dashboard .how .how-arch{border-radius:999px 999px 0 0!important}
 .operations-dashboard .how .how-step-body span,.operations-dashboard .how .how-ship-main small,.operations-dashboard .how .how-shipped a{border-radius:999px!important}
 .operations-dashboard .how .how-numbers dt,.operations-dashboard .how .how-numbers dd{background:none;border:0;padding:0}
+
+/* hero: the verification interlock, light */
+.how-plate.how-machine{aspect-ratio:auto;max-height:none;display:flex;flex-direction:column;background:var(--surface)}
+.how-machine figcaption{position:static;padding:14px 16px;border-bottom:1px solid var(--rule);background:var(--paper)}
+.how-machine .machine-figure{padding:6px 10px 0;background:linear-gradient(180deg,var(--paper),var(--peri-soft))}
+.how-machine .verification-svg{display:block;width:100%;height:auto}
+.how-checks{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border-top:1px solid var(--rule)}
+.how-checks li{padding:10px 10px 12px;font-size:11.5px;line-height:1.35;color:var(--muted);display:grid;gap:4px;transition:background .3s,color .3s}
+.how-checks li+li{border-left:1px solid var(--rule)}
+.how-checks b{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.1em}
+.how-checks li[data-on=true]{background:var(--peri-soft);color:var(--ink)}
+.how-checks li[data-on=true] b{color:var(--blue)}
+@media(max-width:740px){.how-checks{grid-template-columns:1fr}.how-checks li+li{border-left:0;border-top:1px solid var(--rule)}.how-checks li{grid-template-columns:28px 1fr;align-items:baseline}}
+@media(prefers-reduced-motion:reduce){.how-checks li{transition:none}}
+.how-machine .machine-figure{overflow:hidden}
+.how-machine .verification-svg{transform:scale(1.32);transform-origin:50% 58%}
+@media(max-width:740px){.how-machine .verification-svg{transform:scale(1.18)}}
