@@ -1,6 +1,0 @@
-[
-  ["scroll", ".iso-plate:first-child"],
-  ["shot", "design/anatomy/phone-pass.png", ".iso-plate:first-child"],
-  ["scroll", ".iso-plate:nth-child(2)"],
-  ["shot", "design/anatomy/phone-blocked.png", ".iso-plate:nth-child(2)"]
-]
