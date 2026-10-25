@@ -1,32 +1,35 @@
-import {Bot, Box, ClipboardCheck, FlaskConical, GitPullRequestDraft, Github, Radar, SearchCheck, ShieldCheck, UserCheck, Wrench} from 'lucide-react';
+'use client';
+
+import dynamic from 'next/dynamic';
+import {useEffect, useRef, useState} from 'react';
+import {ArrowRight, Bot, Box, ShieldCheck, UserCheck, Wrench, Radar} from 'lucide-react';
+
+const ProofCore = dynamic(() => import('./proof-core'), {ssr: false, loading: () => <div className="how-core-loading" aria-hidden="true"/>});
 
 type Lane = 'controller' | 'agent' | 'verifier' | 'human';
 const laneLabel: Record<Lane, string> = {controller: 'Controller', agent: 'AI agent', verifier: 'Hosted verifier', human: 'You'};
 
-const stages: {title: string; detail: string; lane: Lane; Icon: typeof Github}[] = [
-  {title: 'Connect', detail: 'Add a GitHub URL. The server reads manifests and detects the stack and tests.', lane: 'controller', Icon: Github},
-  {title: 'Watch', detail: 'Official advisories and forum leads are polled every five minutes.', lane: 'controller', Icon: Radar},
-  {title: 'Triage', detail: 'Supply Chain agent reads new leads in read-only context and summarises them.', lane: 'agent', Icon: SearchCheck},
-  {title: 'Repair', detail: 'Remediation agent edits only the exact package or image reference.', lane: 'agent', Icon: Wrench},
-  {title: 'Verify', detail: 'Frozen tests and Trivy scans run in a no-network container.', lane: 'verifier', Icon: FlaskConical},
-  {title: 'Review', detail: 'Senior reviewer inspects the real diff and the observed evidence.', lane: 'agent', Icon: ClipboardCheck},
-  {title: 'Draft PR', detail: 'An open draft is published. A person decides whether to merge.', lane: 'human', Icon: GitPullRequestDraft},
+const stations: {name: string; body: string; lanes: Lane[]; fact: string}[] = [
+  {name: 'Watch', body: 'Official advisories and allowlisted forum leads are polled every five minutes. The Supply Chain agent triages new leads read-only. Exact version matching against OSV decides, never the model.', lanes: ['controller', 'agent'], fact: 'nginx 1.26.0 matched exactly'},
+  {name: 'Repair', body: 'The Remediation agent changes one exact package or image reference, in at most two attempts. It cannot touch application code or integrity metadata.', lanes: ['agent'], fact: 'One line: 1.26.0 to 1.30.6'},
+  {name: 'Verify', body: 'A hosted workflow freezes the baseline tests, runs the candidate in a no-network container, then scans before and after. A selected CVE still present blocks the PR.', lanes: ['verifier'], fact: '5 check groups, 7 HTTP assertions'},
+  {name: 'Review', body: 'A separate senior reviewer reads the real diff and the evidence the verifier observed. Its opinion is advisory, the controller gates are not.', lanes: ['agent', 'controller'], fact: '11 of 11 controller gates'},
+  {name: 'Draft PR', body: 'An open draft is published at the verified commit. Merging, deploying and incident follow-up stay with a person. Nothing is merge-ready automatically.', lanes: ['human'], fact: 'Draft only, you decide'},
 ];
 
-const roles: {name: string; model: string; job: string; limit: string; Icon: typeof Bot; lane: Lane}[] = [
-  {name: 'Supply Chain', model: 'openai/gpt-oss-20b', job: 'Triages new advisory and forum leads and records model, summary and token use.', limit: 'Read-only. Never confirms a finding on its own.', Icon: Radar, lane: 'agent'},
-  {name: 'Remediation', model: 'openai/gpt-oss-120b', job: 'Proposes the smallest dependency or image-tag change, at most two attempts.', limit: 'Cannot touch application code or integrity metadata.', Icon: Wrench, lane: 'agent'},
-  {name: 'Development Security', model: 'openai/gpt-oss-120b', job: 'Senior review of the actual change and the evidence the verifier observed.', limit: 'Separate context from the fixer. Advisory, not a gate.', Icon: ShieldCheck, lane: 'agent'},
-  {name: 'Controller and verifier', model: 'Deterministic code', job: 'Matches exact versions against OSV, freezes baseline tests, validates identities, decides publication.', limit: 'The only authority that can block or publish.', Icon: Box, lane: 'controller'},
-  {name: 'Human reviewer', model: 'You', job: 'Reads the draft PR, merges, deploys and confirms the running service.', limit: 'Nothing is merge-ready or closed automatically.', Icon: UserCheck, lane: 'human'},
+const numbers = [
+  ['7', 'live HTTP assertions on the container draft PR'],
+  ['11', 'controller and runner gates that passed'],
+  ['831 to 391', 'Trivy findings, baseline to candidate'],
+  ['0', 'automatic merges, ever'],
 ];
 
 const gates = [
-  ['Exact match', 'Package and version are checked against OSV, not by keyword.'],
+  ['Exact match', 'Package and version checked against OSV, not by keyword.'],
   ['Frozen baseline', 'Relevant tests are fixed before any change is written.'],
-  ['Locked sandbox', 'Candidate runs with no external network, secrets or Docker socket.'],
-  ['Before and after scan', 'A selected CVE still present in the candidate blocks the PR.'],
-  ['Draft only', 'Publication opens a draft at the verified commit and nothing more.'],
+  ['Locked sandbox', 'No external network, secrets or Docker socket.'],
+  ['Before and after', 'A selected CVE still present blocks publication.'],
+  ['Draft only', 'Opens a draft at the verified commit and stops.'],
 ];
 
 const proofs = [
@@ -35,64 +38,99 @@ const proofs = [
   {repo: 'arigato-php-demo', pr: '#6', stack: 'PHP 8.3.36 image', value: 15, unit: 'storefront assertions'},
 ];
 
-const trivy = {before: 831, after: 391};
+const CELLS = 22;
+const blocks = (value: number, max: number) => {
+  const filled = Math.max(1, Math.round((value / max) * CELLS));
+  return '█'.repeat(filled) + '░'.repeat(CELLS - filled);
+};
 
 export default function HowItWorks({onStart}: {onStart: () => void}) {
-  const drop = Math.round((1 - trivy.after / trivy.before) * 100);
+  const [active, setActive] = useState(0);
+  const frame = useRef<HTMLIFrameElement>(null);
+
+  useEffect(() => {
+    const listen = (event: MessageEvent) => {
+      if (event.origin !== window.location.origin || event.source !== frame.current?.contentWindow) return;
+      const data = event.data as {source?: string; stage?: number};
+      if (data?.source === 'proof-press' && typeof data.stage === 'number') setActive(data.stage);
+    };
+    window.addEventListener('message', listen);
+    return () => window.removeEventListener('message', listen);
+  }, []);
+  const go = (index: number) => {
+    setActive(index);
+    frame.current?.contentWindow?.postMessage({source: 'proofpatch-ui', goto: index}, window.location.origin);
+  };
+
   return <div className="how">
     <section className="how-hero">
       <div className="how-hero-copy">
-        <h2>From a security alert to a pull request you can trust</h2>
-        <p>ProofPatch watches your repositories, proves a fix works in a locked sandbox, and hands you a draft PR. Three AI agents help. Deterministic code makes every decision that matters.</p>
-        <div className="how-hero-actions"><button className="button primary" onClick={onStart}>Connect a repository</button></div>
+        <h2>A security alert in. A reviewed fix out. <em>Nothing merges itself.</em></h2>
+        <p>ProofPatch watches your repositories, proves a fix in a locked sandbox, and opens a draft PR. AI agents help. Deterministic code decides.</p>
+        <div className="how-hero-actions">
+          <button className="button primary" onClick={onStart}>Connect a repository<ArrowRight size={15}/></button>
+          <a className="how-link" href="#how-press">Watch the press run</a>
+        </div>
       </div>
-      <figure className="how-track" aria-label="Seven stages from connecting a repository to a human reviewing a draft pull request">
-        <ol>
-          {stages.map(({title, detail, lane, Icon}, i) => <li key={title} data-lane={lane} style={{'--i': i} as React.CSSProperties}>
-            <span className="how-node"><Icon size={20} strokeWidth={1.8}/></span>
-            <strong>{title}</strong>
-            <small>{detail}</small>
-            <em>{laneLabel[lane]}</em>
-          </li>)}
-        </ol>
-        <div className="how-rail" aria-hidden="true"><i/></div>
-        <figcaption><span data-lane="controller">Controller</span><span data-lane="agent">AI agent</span><span data-lane="verifier">Hosted verifier</span><span data-lane="human">Human</span></figcaption>
-      </figure>
+      <div className="how-hero-stage" aria-hidden={false}>
+        <ProofCore className="how-core"/>
+        <ul className="how-legend" aria-label="Authorities shown as satellites on the ring">
+          {(['controller', 'agent', 'verifier', 'human'] as Lane[]).map(lane => <li key={lane} data-lane={lane}><i/>{laneLabel[lane]}</li>)}
+        </ul>
+      </div>
+      <dl className="how-numbers">
+        {numbers.map(([value, label]) => <div key={label}><dt>{value}</dt><dd>{label}</dd></div>)}
+      </dl>
     </section>
 
-    <section className="how-section">
-      <h3>Who does what</h3>
-      <p className="how-lede">Authority is split on purpose. Models explain and propose. Only the controller and verifier can block or publish.</p>
-      <div className="how-roles">
-        {roles.map(({name, model, job, limit, Icon, lane}) => <article key={name} data-lane={lane}>
-          <header><span><Icon size={18} strokeWidth={1.8}/></span><div><strong>{name}</strong><code>{model}</code></div></header>
-          <p>{job}</p>
-          <small>{limit}</small>
-        </article>)}
+    <section className="how-press" id="how-press">
+      <ol className="how-steps" aria-label="Pipeline stages">
+        {stations.map((station, index) => <li key={station.name} data-active={active === index} data-done={index < active}>
+          <button onClick={() => go(index)} aria-current={active === index ? 'step' : undefined}>
+            <span className="how-step-mark"/>
+            <span className="how-step-head"><strong>{station.name}</strong><small>{station.fact}</small></span>
+          </button>
+          <div className="how-step-body" hidden={active !== index}>
+            <p>{station.body}</p>
+            <div>{station.lanes.map(lane => <span key={lane} data-lane={lane}>{laneLabel[lane]}</span>)}</div>
+          </div>
+        </li>)}
+      </ol>
+      <div className="how-press-frame">
+        <iframe ref={frame} src="/figures/proof-press.html" title="Interactive proof press: a cartridge moves through five stations" loading="lazy"/>
       </div>
     </section>
 
-    <section className="how-section how-split">
-      <div>
+    <section className="how-authority">
+      <header><h3>Who is allowed to decide</h3><p>Models explain and propose. Only the controller and the verifier can block or publish. A person owns everything after that.</p></header>
+      <article className="how-a-controller" data-lane="controller">
+        <Box size={20} strokeWidth={1.7}/>
+        <h4>Controller and verifier</h4>
+        <code>Deterministic code</code>
+        <p>Matches exact versions against OSV, freezes baseline tests, validates every identity and artifact, and is the only authority that can publish.</p>
+      </article>
+      <article data-lane="agent"><Radar size={18} strokeWidth={1.7}/><h4>Supply Chain</h4><code>gpt-oss-20b</code><p>Triages leads. Read-only.</p></article>
+      <article data-lane="agent"><Wrench size={18} strokeWidth={1.7}/><h4>Remediation</h4><code>gpt-oss-120b</code><p>Smallest change, two attempts.</p></article>
+      <article data-lane="agent"><ShieldCheck size={18} strokeWidth={1.7}/><h4>Senior review</h4><code>gpt-oss-120b</code><p>Separate context from the fixer.</p></article>
+      <article className="how-a-human" data-lane="human">
+        <UserCheck size={20} strokeWidth={1.7}/>
+        <h4>You</h4>
+        <p>Read the draft, merge, deploy and confirm the running service. The knob beside the tray on the press is the only part the machine never turns.</p>
+      </article>
+    </section>
+
+    <section className="how-evidence">
+      <div className="how-gates">
         <h3>Five gates before a draft exists</h3>
-        <ol className="how-gates">{gates.map(([title, body], i) => <li key={title} style={{'--i': i} as React.CSSProperties}><b>{i + 1}</b><div><strong>{title}</strong><p>{body}</p></div></li>)}</ol>
+        <ol>{gates.map(([title, body], i) => <li key={title}><b>{i + 1}</b><div><strong>{title}</strong><span>{body}</span></div></li>)}</ol>
       </div>
       <div className="how-proof">
-        <h3>Recorded evidence</h3>
-        <p className="how-lede">Real draft PRs from the three judging repositories. Counts are observed checks, not a security score.</p>
+        <h3>Recorded on real draft PRs</h3>
         <ul className="how-bars">{proofs.map(item => <li key={item.repo}>
           <div><strong>{item.repo}</strong><span>PR {item.pr} · {item.stack}</span></div>
-          <div className="how-bar"><i style={{'--w': `${(item.value / 15) * 100}%`} as React.CSSProperties}/><b>{item.value}</b></div>
-          <small>{item.unit}</small>
+          <div className="how-bar"><span className="how-blocks" aria-hidden="true">{blocks(item.value, 15)}</span><b>{item.value}</b><small>{item.unit}</small></div>
         </li>)}</ul>
-        <div className="how-scan">
-          <div><span>Trivy findings, nginx and PHP images</span><strong>{trivy.before} to {trivy.after}</strong></div>
-          <div className="how-scan-bars" aria-label={`Findings fell from ${trivy.before} to ${trivy.after}, a ${drop} percent drop`}>
-            <div><label>Baseline</label><i style={{'--w': '100%'} as React.CSSProperties} className="before"/><b>{trivy.before}</b></div>
-            <div><label>Candidate</label><i style={{'--w': `${(trivy.after / trivy.before) * 100}%`} as React.CSSProperties} className="after"/><b>{trivy.after}</b></div>
-          </div>
-          <small>All severities. Residual findings stay visible for human review.</small>
-        </div>
+        <p className="how-note"><Bot size={14}/>Counts are observed checks, not a security score. Residual scanner findings stay visible for review.</p>
       </div>
     </section>
   </div>;
