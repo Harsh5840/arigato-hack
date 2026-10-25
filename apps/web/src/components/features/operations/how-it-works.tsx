@@ -4,7 +4,20 @@ import dynamic from 'next/dynamic';
 import {useEffect, useRef, useState} from 'react';
 
 const VerificationMachine = dynamic(() => import('../verification-machine'), {ssr: false, loading: () => <div className="how-core-loading" aria-hidden="true"/>});
-const heroChecks = ['Baseline reproduces the issue', 'Candidate passes', 'Benign controls still pass', 'Test identity matches', 'Commit identity matches'];
+/*
+ * One source of truth for every number on this page: the recorded runs in output/live-runs.
+ * Each completed run records the same 11 checks (all passed) and 3 model calls. The five groups
+ * below partition those 11 checks; they are the interlock's five fingers, the five gates and the
+ * press figure's five lamps.
+ */
+const checkGroups = [
+  {name: 'Exact match', count: 1, body: 'The installed package or image version is matched against OSV, not by keyword.', ids: 'affected_inventory'},
+  {name: 'Frozen baseline', count: 2, body: 'Baseline tests and the central runner are frozen before any change is written.', ids: 'frozen_baseline, runner_verifier'},
+  {name: 'Scoped change', count: 2, body: 'Only the discovered manifest and its lockfile may change, and only as policy allows.', ids: 'candidate_scope, runner_scope'},
+  {name: 'Fixed and passing', count: 3, body: 'The selected advisories no longer apply, the new version is what runs, and the frozen app tests pass.', ids: 'runner_no_known_advisories, runner_package_version, runner_business_suite'},
+  {name: 'Verified identity', count: 3, body: 'Candidate, frozen tests and the trusted workflow run all match before a draft is opened.', ids: 'evidence_identity, evidence_schema, trusted_workflow'},
+];
+const TOTAL_CHECKS = checkGroups.reduce((sum, group) => sum + group.count, 0);
 const HERO_STEPS = [0, 1, 2, 3, 4, 4];
 
 type Lane = 'controller' | 'agent' | 'verifier' | 'human';
@@ -13,30 +26,22 @@ const laneLabel: Record<Lane, string> = {controller: 'Controller', agent: 'AI ag
 const stations: {name: string; body: string; lanes: Lane[]; fact: string}[] = [
   {name: 'Watch', body: 'Official advisories and allowlisted forum leads are polled every five minutes. The Supply Chain agent triages new leads read-only. Exact version matching against OSV decides, never the model.', lanes: ['controller', 'agent'], fact: 'nginx 1.26.0 matched exactly'},
   {name: 'Repair', body: 'The Remediation agent changes one exact package or image reference, in at most two attempts. It cannot touch application code or integrity metadata.', lanes: ['agent'], fact: 'One line: 1.26.0 to 1.30.6'},
-  {name: 'Verify', body: 'A hosted workflow freezes the baseline tests, runs the candidate in a no-network container, then scans before and after. A selected CVE still present blocks the PR.', lanes: ['verifier'], fact: '5 check groups, 7 HTTP assertions'},
-  {name: 'Review', body: 'A separate senior reviewer reads the real diff and the evidence the verifier observed. Its opinion is advisory. The controller gates are not.', lanes: ['agent', 'controller'], fact: '11 of 11 controller gates'},
-  {name: 'Draft PR', body: 'An open draft is published at the verified commit. Merging, deploying and incident follow-up stay with a person. Nothing is merge-ready automatically.', lanes: ['human'], fact: 'Draft only, you decide'},
-];
-
-const numbers = [
-  ['7', 'live HTTP assertions on the container draft PR'],
-  ['11', 'controller and runner gates that passed'],
-  ['831 to 391', 'Trivy findings, baseline to candidate'],
-  ['0', 'automatic merges'],
-];
-
-const gates = [
-  ['Exact match', 'Package and version are checked against OSV, not by keyword.'],
-  ['Frozen baseline', 'Relevant tests are fixed before any change is written.'],
-  ['Locked sandbox', 'No external network, secrets or Docker socket.'],
-  ['Before and after', 'A selected CVE still present blocks publication.'],
-  ['Draft only', 'Opens a draft at the verified commit and stops.'],
+  {name: 'Verify', body: 'A hosted workflow freezes the baseline tests, runs the candidate in a no-network container, and records every check. A selected advisory that still applies blocks the PR.', lanes: ['verifier'], fact: '11 of 11 checks passed'},
+  {name: 'Review', body: 'A separate senior reviewer reads the real diff and the 11 recorded checks. Its opinion is advisory. The checks are not.', lanes: ['agent', 'controller'], fact: '3 model calls per run'},
+  {name: 'Draft PR', body: 'An open draft is published at the verified commit. Merging, deploying and incident follow-up stay with a person. Nothing is merge-ready automatically.', lanes: ['human'], fact: 'Draft PR #1, you decide'},
 ];
 
 const shipped = [
-  {repo: 'arigato-container-demo', pr: 1, stack: 'Container', change: 'nginx 1.26.0 to 1.30.6, pinned by digest', value: 7, unit: 'live HTTP assertions', url: 'https://github.com/Harsh5840/arigato-container-demo/pull/1', tone: 'sky'},
-  {repo: 'arigato-python-demo', pr: 2, stack: 'Python', change: 'Requests pinned in requirements.txt', value: 12, unit: 'business assertions', url: 'https://github.com/Harsh5840/arigato-python-demo/pull/2', tone: 'peri'},
-  {repo: 'arigato-php-demo', pr: 6, stack: 'PHP', change: 'PHP image 8.3.36 in the Dockerfile', value: 15, unit: 'storefront assertions', url: 'https://github.com/Harsh5840/arigato-php-demo/pull/6', tone: 'terra'},
+  {repo: 'arigato-container-demo', pr: 1, stack: 'Container', change: 'nginx 1.26.0 to 1.30.6 in compose.yaml', elapsed: '1m 44s', tokens: 7136, url: 'https://github.com/Harsh5840/arigato-container-demo/pull/1', tone: 'sky'},
+  {repo: 'arigato-python-demo', pr: 2, stack: 'Python', change: 'requests 2.31.0 to 2.34.2 in requirements.txt', elapsed: '55s', tokens: 5221, url: 'https://github.com/Harsh5840/arigato-python-demo/pull/2', tone: 'peri'},
+  {repo: 'arigato-php-demo', pr: 6, stack: 'PHP', change: 'PHP 8.3.35 to 8.3.36 in the Dockerfile', elapsed: '2m 56s', tokens: 6210, url: 'https://github.com/Harsh5840/arigato-php-demo/pull/6', tone: 'terra'},
+];
+
+const numbers = [
+  [String(shipped.length), 'draft PRs opened, one per demo repository'],
+  [`${TOTAL_CHECKS} / ${TOTAL_CHECKS}`, 'recorded checks passed on every run'],
+  ['3', 'model calls per run, in separate contexts'],
+  ['0', 'automatic merges'],
 ];
 
 const faqs = [
@@ -85,10 +90,10 @@ export default function HowItWorks({onStart}: {onStart: () => void}) {
         </div>
       </div>
       <figure className="how-plate how-machine">
-        <figcaption>Fig. 1. The verification interlock. The patch cartridge can only slide out once all five check fingers lift.</figcaption>
+        <figcaption>Fig. 1. The verification interlock. Each finger is one group of the {TOTAL_CHECKS} recorded checks. The patch cartridge slides out only when all five lift.</figcaption>
         <VerificationMachine stage={heroStage} blocked={false} running={heroStage > 0 && heroStage < 4}/>
-        <ol className="how-checks" aria-label="The five checks the fingers stand for">
-          {heroChecks.map((check, i) => <li key={check} data-on={heroStage >= (i === 0 ? 1 : 3)}><b>{String(i + 1).padStart(2, '0')}</b>{check}</li>)}
+        <ol className="how-checks" aria-label="The five check groups the fingers stand for">
+          {checkGroups.map((group, i) => <li key={group.name} data-on={heroStage >= (i === 0 ? 1 : 3)}><b>{String(i + 1).padStart(2, '0')} · {group.count}</b>{group.name}</li>)}
         </ol>
       </figure>
     </section>
@@ -155,16 +160,16 @@ export default function HowItWorks({onStart}: {onStart: () => void}) {
         {shipped.map(item => <li key={item.repo} data-tone={item.tone}>
           <span className="how-ship-no">#{item.pr}</span>
           <div className="how-ship-main"><h4>{item.repo}</h4><p>{item.change}</p><small>{item.stack}</small></div>
-          <div className="how-ship-metric"><b>{item.value}</b><span>{item.unit}</span></div>
+          <div className="how-ship-metric"><b>{TOTAL_CHECKS}/{TOTAL_CHECKS}</b><span>checks · {item.elapsed} · {item.tokens.toLocaleString('en-US')} tokens</span></div>
           <a href={item.url} target="_blank" rel="noreferrer" aria-label={`Open draft PR ${item.pr} on ${item.repo}`}>Draft PR <span aria-hidden="true">↗</span></a>
         </li>)}
       </ul>
-      <p className="how-note">Counts are observed checks on real draft PRs, not a security score. Residual scanner findings stay visible for review.</p>
+      <p className="how-note">Each figure is read from the recorded run: checks passed, time from start to draft, and tokens across its 3 model calls. Counts are observed checks, not a security score.</p>
     </section>
 
     <section className="how-block">
-      <header className="how-head"><span>04</span><h3>Five gates before a draft exists</h3></header>
-      <ol className="how-gates">{gates.map(([title, body], i) => <li key={title}><b>{String(i + 1).padStart(2, '0')}</b><strong>{title}</strong><p>{body}</p></li>)}</ol>
+      <header className="how-head"><span>04</span><h3>{TOTAL_CHECKS} checks in five groups</h3></header>
+      <ol className="how-gates">{checkGroups.map((group, i) => <li key={group.name}><b>{String(i + 1).padStart(2, '0')} · {group.count} {group.count === 1 ? 'check' : 'checks'}</b><strong>{group.name}</strong><p>{group.body}</p><code>{group.ids}</code></li>)}</ol>
     </section>
 
     <section className="how-block">

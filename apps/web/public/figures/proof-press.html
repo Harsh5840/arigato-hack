@@ -791,7 +791,7 @@ const P = {"origin":[380,238.28522135926067],"scale":1.5079784216008498,"azimuth
 const STOPS = [-130,-65,0,65,130];
 const DIAL = {"x":65,"y":-40,"r":17,"z":40,"h":9}, DIAL_TOP = 49, LAMPS = 5;
 const NAMES = ['Watch', 'Repair', 'Verify', 'Review', 'Draft PR'];
-const NOTES = ['OSV matches nginx 1.26.0 exactly', 'One image line changes: 1.26.0 to 1.30.6', 'Five check groups, 7 live HTTP assertions', 'Senior review reads 11 of 11 controller gates', 'Opened as a draft. You decide on merge.'];
+const NOTES = ['OSV matches nginx 1.26.0 exactly', 'One image line changes: 1.26.0 to 1.30.6', '11 of 11 checks pass, in five groups', 'Senior review reads all 11 recorded checks', 'Draft PR #1 opened. You decide on merge.'];
 const needleAt = (turn) => {
   const a = turn * Math.PI * 2;
   return lineOnTop([DIAL.x - Math.sin(a) * 3.4, DIAL.y + Math.cos(a) * 3.4], [DIAL.x + Math.sin(a) * (DIAL.r - 3.6), DIAL.y - Math.cos(a) * (DIAL.r - 3.6)], DIAL_TOP + 0.2, P);

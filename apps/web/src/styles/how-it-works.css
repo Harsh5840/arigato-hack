@@ -133,3 +133,19 @@
 .how-machine .machine-figure{overflow:hidden}
 .how-machine .verification-svg{transform:scale(1.32);transform-origin:50% 58%}
 @media(max-width:740px){.how-machine .verification-svg{transform:scale(1.18)}}
+
+/* tighter rhythm: less dead space between sections and across the hero */
+.how{gap:clamp(36px,4.5vw,60px)}
+.how-hero{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,3vw,44px);align-items:start;padding-top:0}
+.how-hero h2{font-size:clamp(38px,4.6vw,66px);max-width:14ch}
+.how-lede{margin:20px 0 24px!important}
+.how-mission{gap:28px;padding-top:clamp(22px,3vw,32px)}
+.how-block{gap:20px}
+.how-head{padding-top:14px}
+.how-gates code{font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1.5;overflow-wrap:anywhere;margin-top:auto;padding-top:8px}
+.how-gates li{grid-template-rows:auto auto 1fr auto}
+.how-ship-metric b{font-size:clamp(32px,3.6vw,48px)}
+.how-ship-metric span{text-transform:none;letter-spacing:.02em;font-size:11px}
+@media(max-width:1100px){.how-hero{grid-template-columns:1fr}}
+.how-press-frame{aspect-ratio:auto;height:690px}
+@media(max-width:740px){.how-press-frame{height:560px}}

@@ -238,7 +238,7 @@ const P = ${JSON.stringify(P)};
 const STOPS = ${JSON.stringify(STOPS)};
 const DIAL = ${JSON.stringify(DIAL)}, DIAL_TOP = ${DIAL_TOP}, LAMPS = ${LAMPS};
 const NAMES = ['Watch', 'Repair', 'Verify', 'Review', 'Draft PR'];
-const NOTES = ['OSV matches nginx 1.26.0 exactly', 'One image line changes: 1.26.0 to 1.30.6', 'Five check groups, 7 live HTTP assertions', 'Senior review reads 11 of 11 controller gates', 'Opened as a draft. You decide on merge.'];
+const NOTES = ['OSV matches nginx 1.26.0 exactly', 'One image line changes: 1.26.0 to 1.30.6', '11 of 11 checks pass, in five groups', 'Senior review reads all 11 recorded checks', 'Draft PR #1 opened. You decide on merge.'];
 const needleAt = ${needleAt.toString().replace(/k\./g, '')};
 const stage = document.querySelector('.iso-stage');
 const svg = stage.querySelector('svg');
