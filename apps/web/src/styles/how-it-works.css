@@ -24,15 +24,9 @@
 .how-legend li{display:flex;align-items:center;gap:7px}.how-legend i{width:9px;height:9px;background:var(--lane);border:1px solid var(--rule)}
 
 /* mission */
-.how-mission{display:grid;gap:44px;border-top:1px solid var(--rule);padding-top:clamp(28px,4vw,48px)}
+.how-mission{border-top:1px solid var(--rule);padding-top:clamp(28px,4vw,48px)}
 .how-mission>p{font-family:var(--serif);font-size:clamp(24px,3.3vw,42px);line-height:1.2;letter-spacing:-.015em;max-width:30em;text-wrap:balance}
 .how-mission>p em{font-style:italic;color:var(--blue)}
-.how-numbers{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:0;border:1px solid var(--rule)}
-.how-numbers>div{padding:22px 22px 20px;display:grid;gap:10px;align-content:space-between;background:var(--surface)}
-.how-numbers>div+div{border-left:1px solid var(--rule)}
-.how-numbers>div:nth-child(1){background:var(--sky-soft)}.how-numbers>div:nth-child(2){background:var(--peri-soft)}.how-numbers>div:nth-child(3){background:var(--terra-soft)}
-.how-numbers dt{font-family:var(--serif-display);font-size:clamp(34px,4vw,56px);line-height:1;letter-spacing:-.03em;white-space:nowrap;font-weight:400}
-.how-numbers dd{margin:0;font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;line-height:1.5}
 
 /* section heads */
 .how-block{display:grid;gap:30px}
@@ -99,14 +93,13 @@
 .how-faq summary:focus-visible{outline:2px solid var(--blue);outline-offset:-2px}
 
 @keyframes how-in{from{opacity:0;transform:translateY(6px)}}
-@media(max-width:1100px){.how-hero{grid-template-columns:1fr}.how-plate{max-height:480px;aspect-ratio:1/.8}.how-press{grid-template-columns:1fr}.how-steps{position:static}.how-tracks{grid-template-columns:1fr}.how-tracks article+article{border-left:0;border-top:1px solid var(--rule)}.how-tracks article{min-height:0}.how-numbers{grid-template-columns:repeat(2,minmax(0,1fr))}.how-numbers>div:nth-child(3){border-left:0}.how-numbers>div:nth-child(n+3){border-top:1px solid var(--rule)}}
+@media(max-width:1100px){.how-hero{grid-template-columns:1fr}.how-plate{max-height:480px;aspect-ratio:1/.8}.how-press{grid-template-columns:1fr}.how-steps{position:static}.how-tracks{grid-template-columns:1fr}.how-tracks article+article{border-left:0;border-top:1px solid var(--rule)}.how-tracks article{min-height:0}}
 @media(max-width:740px){.how-shipped li{grid-template-columns:1fr auto;gap:12px 16px}.how-ship-no{grid-column:1/-1;padding-left:20px}.how-ship-main{grid-column:1/-1}.how-press-frame{aspect-ratio:auto;height:560px}.how-head{flex-direction:column;gap:6px}}
 @media(prefers-reduced-motion:reduce){.how-step-body{animation:none}.how-step-head strong{transition:none}}
 
 /* shapes that must stay round despite the theme's square-corner rule */
 .operations-dashboard .how .how-arch{border-radius:999px 999px 0 0!important}
 .operations-dashboard .how .how-step-body span,.operations-dashboard .how .how-ship-main small,.operations-dashboard .how .how-shipped a{border-radius:999px!important}
-.operations-dashboard .how .how-numbers dt,.operations-dashboard .how .how-numbers dd{background:none;border:0;padding:0}
 
 /* hero: the verification interlock, light */
 .how-plate.how-machine{aspect-ratio:auto;max-height:none;display:flex;flex-direction:column;background:var(--surface)}
@@ -125,7 +118,7 @@
 .how-hero{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,3vw,44px);align-items:start;padding-top:0}
 .how-hero h2{font-size:clamp(38px,4.6vw,66px);max-width:14ch}
 .how-lede{margin:20px 0 24px!important}
-.how-mission{gap:28px;padding-top:clamp(22px,3vw,32px)}
+.how-mission{padding-top:clamp(22px,3vw,32px)}
 .how-block{gap:20px}
 .how-head{padding-top:14px}
 .how-ship-metric b{font-size:clamp(32px,3.6vw,48px)}

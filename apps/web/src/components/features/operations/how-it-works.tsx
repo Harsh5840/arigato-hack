@@ -25,13 +25,6 @@ const shipped = [
   {repo: 'arigato-php-demo', pr: 6, stack: 'PHP', change: 'PHP 8.3.35 to 8.3.36 in the Dockerfile', elapsed: '2m 56s', tokens: 6210, url: 'https://github.com/Harsh5840/arigato-php-demo/pull/6', tone: 'terra'},
 ];
 
-const numbers = [
-  [String(shipped.length), 'draft PRs opened, one per demo repository'],
-  [`${TOTAL_CHECKS} / ${TOTAL_CHECKS}`, 'recorded checks passed on every run'],
-  ['3', 'model calls per run, in separate contexts'],
-  ['0', 'automatic merges'],
-];
-
 const faqs = [
   ['Does ProofPatch merge or deploy anything?', 'No. It opens a draft pull request at the verified commit. A person reads it, merges it, deploys it and confirms the running service. mergeReady and findingClosed stay false.'],
   ['What can it repair automatically?', 'Exact PyPI pins, direct npm or Composer dependencies that have committed lockfiles, and official PHP or nginx image references in Dockerfiles or Compose files, when the repository has meaningful baseline tests. Everything else is monitored or blocked, never guessed at.'],
@@ -86,9 +79,6 @@ export default function HowItWorks({onStart}: {onStart: () => void}) {
 
     <section className="how-mission">
       <p>Security tools usually end at an alert. This one ends at a <em>tested change</em> that a person can read in a minute. AI helps to find and write it. Deterministic code decides whether it is safe to show you.</p>
-      <dl className="how-numbers">
-        {numbers.map(([value, label]) => <div key={label}><dt>{value}</dt><dd>{label}</dd></div>)}
-      </dl>
     </section>
 
     <section className="how-block" id="how-press">
