@@ -1,12 +1,13 @@
 'use client';
 
 import {useEffect, useRef, useState} from 'react';
-import {AlertTriangle, ArrowRight, GitBranch, GitPullRequestDraft, ListChecks, Network, RefreshCw, SearchCheck, Trash2} from 'lucide-react';
+import {AlertTriangle, ArrowRight, BookOpen, GitBranch, GitPullRequestDraft, ListChecks, Network, RefreshCw, SearchCheck, Trash2} from 'lucide-react';
 import {useLiveOrchestration} from '@/hooks/use-live-orchestration';
 import {useRepositoryMonitoring} from '@/hooks/use-repository-monitoring';
 import {isTerminal} from '@/types/live-orchestration';
 import type {LiveRun} from '@/types/live-orchestration';
 import type {MonitoredRepository} from '@/types/monitoring';
+import HowItWorks from './operations/how-it-works';
 import DashboardHeader from './operations/dashboard-header';
 import ExecutionControls from './operations/execution-controls';
 import RepositoryPanel from './operations/repository-panel';
@@ -22,8 +23,9 @@ import PullRequestsPanel from './operations/pull-requests-panel';
 import {canPrepareRepair, groupRepairFindings} from './operations/repair-capability';
 import {collectCreatedPullRequests} from './operations/pull-request-records';
 
-type DashboardTab = 'services' | 'findings' | 'pipeline' | 'results' | 'prs';
+type DashboardTab = 'how' | 'services' | 'findings' | 'pipeline' | 'results' | 'prs';
 const tabs: {id: DashboardTab; label: string; Icon: typeof GitBranch}[] = [
+  {id: 'how', label: 'How it works', Icon: BookOpen},
   {id: 'services', label: 'Services', Icon: GitBranch},
   {id: 'findings', label: 'Findings', Icon: SearchCheck},
   {id: 'pipeline', label: 'Pipeline', Icon: Network},
@@ -40,7 +42,7 @@ export default function OperationsDashboard() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [focusedId, setFocusedId] = useState('');
   const [initialized, setInitialized] = useState(false);
-  const [tab, setTab] = useState<DashboardTab>('services');
+  const [tab, setTab] = useState<DashboardTab>('how');
   const [notice, setNotice] = useState('');
   const [historyNotice, setHistoryNotice] = useState('');
   const requestedRun = useRef<string | null>(null);
@@ -108,7 +110,7 @@ export default function OperationsDashboard() {
   function changeTab(next: DashboardTab) {
     setTab(next);
     const url = new URL(window.location.href);
-    if (next === 'services') url.searchParams.delete('tab'); else url.searchParams.set('tab', next);
+    if (next === 'how') url.searchParams.delete('tab'); else url.searchParams.set('tab', next);
     window.history.replaceState(null, '', url);
   }
   function focusRepository(id: string) {
@@ -198,9 +200,11 @@ export default function OperationsDashboard() {
     <main className="ops-main ops-command-center">
       <div className="ops-console-heading"><div><h1>Security workspace</h1><p>Choose services, decide how they run, then follow the evidence.</p></div><span>{selectedRepositories.length} service{selectedRepositories.length === 1 ? '' : 's'} selected</span></div>
       <nav className="ops-dashboard-tabs" aria-label="Dashboard views">{tabs.map(({id, label, Icon}) => <button key={id} aria-current={tab === id ? 'page' : undefined} onClick={() => changeTab(id)}><Icon size={15}/>{label}{id === 'services' && <span>{selectedRepositories.length}</span>}{id === 'findings' && <span>{affectedCount}</span>}{id === 'prs' && <span>{createdPRs.length}</span>}</button>)}</nav>
-      {error && <div className="ops-error-banner" role="alert"><AlertTriangle size={18}/><div><strong>{error.code}</strong><p>{error.message}</p></div><button className="button subtle" onClick={() => void refresh()}><RefreshCw size={13}/>Reconnect</button></div>}
-      {service && !service.ready && <div className="ops-error-banner" role="status"><AlertTriangle size={18}/><div><strong>Server setup required</strong><p>{!service.groqConfigured ? 'Groq credentials are missing. ' : ''}{!service.githubConfigured ? 'GitHub credentials are missing. ' : ''}Configure the server and reconnect. Credentials stay on the server.</p></div></div>}
-      {monitoring.error && <div className="ops-error-banner" role="alert"><AlertTriangle size={18}/><div><strong>{monitoring.error.code}</strong><p>{monitoring.error.message}</p></div><button className="button subtle" onClick={() => void monitoring.refresh()}><RefreshCw size={13}/>Reload monitoring</button></div>}
+      {tab !== 'how' && error && <div className="ops-error-banner" role="alert"><AlertTriangle size={18}/><div><strong>{error.code}</strong><p>{error.message}</p></div><button className="button subtle" onClick={() => void refresh()}><RefreshCw size={13}/>Reconnect</button></div>}
+      {tab !== 'how' && service && !service.ready && <div className="ops-error-banner" role="status"><AlertTriangle size={18}/><div><strong>Server setup required</strong><p>{!service.groqConfigured ? 'Groq credentials are missing. ' : ''}{!service.githubConfigured ? 'GitHub credentials are missing. ' : ''}Configure the server and reconnect. Credentials stay on the server.</p></div></div>}
+      {tab !== 'how' && monitoring.error && <div className="ops-error-banner" role="alert"><AlertTriangle size={18}/><div><strong>{monitoring.error.code}</strong><p>{monitoring.error.message}</p></div><button className="button subtle" onClick={() => void monitoring.refresh()}><RefreshCw size={13}/>Reload monitoring</button></div>}
+
+      {tab === 'how' && <HowItWorks onStart={() => changeTab('services')}/>}
 
       {tab === 'services' && <div className="ops-services-view">
         <div className="ops-services-grid"><RepositoryPanel repositories={monitoring.repositories} selectedIds={selectedIds} focusedId={focusedId} loaded={monitoring.loaded} pending={monitoring.pending} onToggle={toggleRepository} onAll={selectAll} onFocus={focusRepository} onAdd={add} onWatch={(id, enabled) => void monitoring.update(id, {enabled})}/><ExecutionControls selectedCount={selectedRepositories.length} eligibleCount={eligible.length} existingDrafts={existingDrafts} mode={mode} pending={monitoring.pending} connected={monitoring.loaded && connection !== 'offline'} notice={notice} onMode={next => void applyMode(next)} onScan={() => void scanSelected()} onFindings={() => changeTab('findings')} onPipeline={() => changeTab('pipeline')}/></div>

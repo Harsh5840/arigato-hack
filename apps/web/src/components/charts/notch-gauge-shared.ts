@@ -7,8 +7,8 @@ import {
 } from "react";
 
 export const DEFAULT_ACTIVE_GRADIENT: readonly [string, string] = [
-  "#bef264",
-  "#10b981",
+  "#81b724",
+  "#75f3c9",
 ];
 
 export const DEFAULT_ACTIVE_FILL_OPACITY = 1;
