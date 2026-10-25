@@ -17,9 +17,12 @@ export class MonitoringStore {
     const clearedColumns = this.db.prepare('PRAGMA table_info(cleared_findings)').all() as {name: string}[];
     if (!clearedColumns.some(column => column.name === 'pull_request')) this.db.exec('ALTER TABLE cleared_findings ADD COLUMN pull_request TEXT');
     if (!this.state('settings')) this.setState('settings', { enabled: true, intervalSeconds: 300, sources: [] });
-    if (!this.repositories().length) {
-      const now = new Date().toISOString();
-      this.saveRepository({ id: 'sakurashop-php', owner: 'Harsh5840', name: 'arigato-php-demo', url: 'https://github.com/Harsh5840/arigato-php-demo', defaultBranch: 'main', enabled: false, autoRemediate: false, profile: 'php-runtime-demo', createdAt: now, updatedAt: now, inventory: [], canPush: false, scanStatus: 'idle' });
+    if (!this.state<boolean>('repositoriesInitialized')) {
+      if (!this.repositories().length) {
+        const now = new Date().toISOString();
+        this.saveRepository({ id: 'sakurashop-php', owner: 'Harsh5840', name: 'arigato-php-demo', url: 'https://github.com/Harsh5840/arigato-php-demo', defaultBranch: 'main', enabled: false, autoRemediate: false, profile: 'php-runtime-demo', createdAt: now, updatedAt: now, inventory: [], canPush: false, scanStatus: 'idle' });
+      }
+      this.setState('repositoriesInitialized', true);
     }
   }
   close() { this.db.close(); }
@@ -28,7 +31,23 @@ export class MonitoringStore {
   repositories(): MonitoredRepository[] { return (this.db.prepare('SELECT data FROM repositories ORDER BY identity').all() as { data: string }[]).map(row => JSON.parse(row.data)); }
   repository(id: string): MonitoredRepository | undefined { const row = this.db.prepare('SELECT data FROM repositories WHERE id=?').get(id) as { data: string } | undefined; return row ? JSON.parse(row.data) : undefined; }
   saveRepository(repo: MonitoredRepository) { this.db.prepare('INSERT INTO repositories(id,identity,data) VALUES(?,?,?) ON CONFLICT(identity) DO UPDATE SET data=excluded.data').run(repo.id, `${repo.owner}/${repo.name}`.toLowerCase(), JSON.stringify(repo)); }
-  patchRepository(id: string, patch: Partial<MonitoredRepository>): MonitoredRepository { const repo = this.repository(id); if (!repo) throw new Error('Repository not found.'); const next = { ...repo, ...patch, updatedAt: new Date().toISOString() }; this.saveRepository(next); return next; }
+  patchRepository(id: string, patch: Partial<MonitoredRepository>): MonitoredRepository { const repo = this.repository(id); if (!repo) throw new Error('Repository not found.'); const next = { ...repo, ...patch, updatedAt: new Date().toISOString() }; if (!this.db.prepare('UPDATE repositories SET data=? WHERE id=?').run(JSON.stringify(next), id).changes) throw new Error('Repository was disconnected during the scan.'); return next; }
+  disconnectRepository(id: string): {deletedFindings: number} {
+    this.db.exec('BEGIN IMMEDIATE');
+    try {
+      const repo = this.repository(id);
+      if (!repo) throw new Error('Repository not found.');
+      if (repo.scanStatus === 'scanning') throw new Error('Wait for this service scan to finish before disconnecting.');
+      const findings = this.findingsForRepositories([id]);
+      const archive = this.db.prepare('INSERT INTO cleared_findings(id,target_key,cleared_at,pull_request) VALUES(?,?,?,?) ON CONFLICT(id) DO UPDATE SET target_key=excluded.target_key,cleared_at=excluded.cleared_at,pull_request=excluded.pull_request');
+      const now = new Date().toISOString();
+      for (const finding of findings) if (finding.pullRequest) archive.run(finding.id, findingTarget(finding), now, JSON.stringify(finding.pullRequest));
+      const deletedFindings = Number(this.db.prepare('DELETE FROM findings WHERE repository_id=?').run(id).changes);
+      this.db.prepare('DELETE FROM repositories WHERE id=?').run(id);
+      this.db.exec('COMMIT');
+      return {deletedFindings};
+    } catch (error) { this.db.exec('ROLLBACK'); throw error; }
+  }
   findings(repositoryId?: string): SupplyFinding[] { const rows = repositoryId ? this.db.prepare('SELECT data FROM findings WHERE repository_id=? ORDER BY rowid DESC LIMIT 100').all(repositoryId) : this.db.prepare('SELECT data FROM findings ORDER BY rowid DESC LIMIT 100').all(); return (rows as { data: string }[]).map(row => JSON.parse(row.data)); }
   findingsForRepositories(repositoryIds: readonly string[]): SupplyFinding[] {
     if (!repositoryIds.length) return [];

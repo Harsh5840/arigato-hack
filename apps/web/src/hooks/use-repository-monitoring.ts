@@ -1,7 +1,7 @@
 'use client';
 
 import {useCallback, useEffect, useRef, useState} from 'react';
-import {addRepository, closePullRequestsAndDeleteFindings, getFindings, getMonitoring, getRepositories, OrchestrationError, pollMonitoring, remediateFinding, scanRepository, updateMonitoring, updateRepository} from '@/services/orchestration-api';
+import {addRepository, closePullRequestsAndDeleteFindings, disconnectRepository, getFindings, getMonitoring, getRepositories, OrchestrationError, pollMonitoring, remediateFinding, scanRepository, updateMonitoring, updateRepository} from '@/services/orchestration-api';
 import type {MonitoredRepository, MonitoringSnapshot, SupplyFinding} from '@/types/monitoring';
 
 export function useRepositoryMonitoring() {
@@ -33,6 +33,7 @@ export function useRepositoryMonitoring() {
   return {
     repositories, snapshot, findings, loaded, error: error ?? loadError, pending, refresh: () => {setError(null); return refresh();},
     add: (url: string) => perform('add', () => addRepository(url)),
+    remove: (id: string) => perform(`remove:${id}`, () => disconnectRepository(id)),
     update: (id: string, changes: {enabled?: boolean; autoRemediate?: boolean}) => perform(`update:${id}`, () => updateRepository(id, changes)),
     scan: (id: string) => perform(`scan:${id}`, () => scanRepository(id)),
     setMode: (ids: string[], mode: 'guided' | 'automatic') => perform('mode', async () => {
