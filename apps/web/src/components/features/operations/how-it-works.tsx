@@ -4,20 +4,8 @@ import dynamic from 'next/dynamic';
 import {useEffect, useRef, useState} from 'react';
 
 const VerificationMachine = dynamic(() => import('../verification-machine'), {ssr: false, loading: () => <div className="how-core-loading" aria-hidden="true"/>});
-/*
- * One source of truth for every number on this page: the recorded runs in output/live-runs.
- * Each completed run records the same 11 checks (all passed) and 3 model calls. The five groups
- * below partition those 11 checks; they are the interlock's five fingers, the five gates and the
- * press figure's five lamps.
- */
-const checkGroups = [
-  {name: 'Exact match', count: 1, body: 'The installed package or image version is matched against OSV, not by keyword.', ids: 'affected_inventory'},
-  {name: 'Frozen baseline', count: 2, body: 'Baseline tests and the central runner are frozen before any change is written.', ids: 'frozen_baseline, runner_verifier'},
-  {name: 'Scoped change', count: 2, body: 'Only the discovered manifest and its lockfile may change, and only as policy allows.', ids: 'candidate_scope, runner_scope'},
-  {name: 'Fixed and passing', count: 3, body: 'The selected advisories no longer apply, the new version is what runs, and the frozen app tests pass.', ids: 'runner_no_known_advisories, runner_package_version, runner_business_suite'},
-  {name: 'Verified identity', count: 3, body: 'Candidate, frozen tests and the trusted workflow run all match before a draft is opened.', ids: 'evidence_identity, evidence_schema, trusted_workflow'},
-];
-const TOTAL_CHECKS = checkGroups.reduce((sum, group) => sum + group.count, 0);
+// Each retained demo run in output/live-runs records 11 passing checks.
+const TOTAL_CHECKS = 11;
 const HERO_STEPS = [0, 1, 2, 3, 4, 4];
 
 type Lane = 'controller' | 'agent' | 'verifier' | 'human';
@@ -90,11 +78,9 @@ export default function HowItWorks({onStart}: {onStart: () => void}) {
         </div>
       </div>
       <figure className="how-plate how-machine">
-        <figcaption>Fig. 1. The verification interlock. Each finger is one group of the {TOTAL_CHECKS} recorded checks. The patch cartridge slides out only when all five lift.</figcaption>
+        <figcaption>Fig. 1. The verification interlock. The patch cartridge slides out after the recorded checks pass.</figcaption>
         <VerificationMachine stage={heroStage} blocked={false} running={heroStage > 0 && heroStage < 4}/>
-        <ol className="how-checks" aria-label="The five check groups the fingers stand for">
-          {checkGroups.map((group, i) => <li key={group.name} data-on={heroStage >= (i === 0 ? 1 : 3)}><b>{String(i + 1).padStart(2, '0')} · {group.count}</b>{group.name}</li>)}
-        </ol>
+        <div className="how-checks-summary" data-on={heroStage === 4} role="status" aria-live="polite">{heroStage === 4 ? 'Checks passed' : 'Checking…'}</div>
       </figure>
     </section>
 
@@ -168,12 +154,7 @@ export default function HowItWorks({onStart}: {onStart: () => void}) {
     </section>
 
     <section className="how-block">
-      <header className="how-head"><span>04</span><h3>{TOTAL_CHECKS} checks in five groups</h3></header>
-      <ol className="how-gates">{checkGroups.map((group, i) => <li key={group.name}><b>{String(i + 1).padStart(2, '0')} · {group.count} {group.count === 1 ? 'check' : 'checks'}</b><strong>{group.name}</strong><p>{group.body}</p><code>{group.ids}</code></li>)}</ol>
-    </section>
-
-    <section className="how-block">
-      <header className="how-head"><span>05</span><h3>Questions, answered</h3></header>
+      <header className="how-head"><span>04</span><h3>Questions, answered</h3></header>
       <div className="how-faq">{faqs.map(([q, a]) => <details key={q}><summary>{q}</summary><p>{a}</p></details>)}</div>
     </section>
   </div>;
