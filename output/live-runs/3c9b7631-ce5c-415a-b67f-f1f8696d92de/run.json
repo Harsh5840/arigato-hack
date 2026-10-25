@@ -1,0 +1,475 @@
+{
+  "run": {
+    "id": "3c9b7631-ce5c-415a-b67f-f1f8696d92de",
+    "status": "blocked",
+    "createdAt": "2026-10-25T05:08:11.503Z",
+    "updatedAt": "2026-10-25T05:09:04.889Z",
+    "sourceMode": "live",
+    "mode": "live-groq",
+    "repositoryId": "57ecbdbdfc9225e368a7",
+    "orchestrationEngine": "langgraph",
+    "repo": {
+      "owner": "Harsh5840",
+      "name": "arigato-container-demo",
+      "baseSha": "db7ecf6797233e222fa554139fb588bc156f0e32",
+      "candidateSha": "bcdb92204578af031def1b06ea3872d09a499b12",
+      "branch": "proofpatch/package-3c9b7631-a1"
+    },
+    "target": {
+      "repositoryId": "57ecbdbdfc9225e368a7",
+      "findingId": "finding-eaf1b654e9553d229907d044",
+      "advisoryId": "CVE-2026-97629",
+      "ecosystem": "Docker",
+      "packageName": "library/nginx",
+      "installedVersion": "1.26.0",
+      "fixedVersion": "1.30.6",
+      "manifestPath": "compose.yaml",
+      "imageRef": "nginx:1.26.0",
+      "fixedImageRef": "nginx:1.30.6@sha256:a7675fcee220f59b4a99f7098c06a0d5d999c2c0ee37c0211efb780536e5cb20",
+      "fixedDigest": "sha256:a7675fcee220f59b4a99f7098c06a0d5d999c2c0ee37c0211efb780536e5cb20",
+      "repairPolicyVersion": "generic-v1"
+    },
+    "agentCalls": [
+      {
+        "role": "supply",
+        "model": "openai/gpt-oss-20b",
+        "status": "completed",
+        "startedAt": "2026-10-25T05:08:21.504Z",
+        "summary": "The Docker image library/nginx:1.26.0 is affected by CVE‑2026‑97629, a session‑forgery vulnerability in TLS session tickets. The advisory specifies that version 1.26.0 falls within the affected range, and a fixed image is available at nginx:1.30.6.",
+        "summaryJa": "Dockerイメージ library/nginx:1.26.0 は CVE‑2026‑97629 による TLS セッションチケットのセッション偽造脆弱性の対象です。アドバイザリでは 1.26.0 が影響範囲に含まれると明記され、nginx:1.30.6 で修正済みです。",
+        "usage": {
+          "promptTokens": 862,
+          "completionTokens": 226,
+          "totalTokens": 1088
+        },
+        "completedAt": "2026-10-25T05:08:23.400Z"
+      },
+      {
+        "role": "fixer",
+        "model": "openai/gpt-oss-120b",
+        "status": "completed",
+        "startedAt": "2026-10-25T05:08:26.965Z",
+        "summary": "Updated compose.yaml to use nginx:1.30.6, addressing CVE-2026-97629.",
+        "summaryJa": "compose.yaml を nginx:1.30.6 に更新し、CVE-2026-97629 に対処しました。",
+        "usage": {
+          "promptTokens": 1137,
+          "completionTokens": 390,
+          "totalTokens": 1527
+        },
+        "completedAt": "2026-10-25T05:08:28.298Z"
+      }
+    ],
+    "checks": [
+      {
+        "id": "affected_inventory",
+        "label": "Exact dependency and supported test stack confirmed",
+        "status": "passed",
+        "detail": "Docker:library/nginx@1.26.0; sh /oracle/tests/runtime-check.sh"
+      },
+      {
+        "id": "frozen_baseline",
+        "label": "Baseline tests and central runner frozen before repair",
+        "status": "passed",
+        "detail": "8 files; sh /oracle/tests/runtime-check.sh; verifier 2e6350b66f08e02ab2d8906c590dd667fe5173694f5192d6d4029fb601a88474; runner ab0bedca72b0c2a23a2d5de0b48ef8e625371174"
+      },
+      {
+        "id": "candidate_scope",
+        "label": "Dependency change matches the discovered repair policy",
+        "status": "passed",
+        "detail": "container: compose.yaml. Baseline tests, workflows and unrelated application code are protected."
+      },
+      {
+        "id": "evidence_identity",
+        "label": "Verified candidate, frozen oracle and workflow run match",
+        "status": "passed",
+        "detail": "Expected candidate bcdb92204578af031def1b06ea3872d09a499b12; base db7ecf6797233e222fa554139fb588bc156f0e32; Actions 40164445866."
+      },
+      {
+        "id": "evidence_schema",
+        "label": "Complete required verification assertions",
+        "status": "failed",
+        "detail": "Missing, duplicated, malformed or incomplete check assertions."
+      },
+      {
+        "id": "trusted_workflow",
+        "label": "Trusted hosted workflow completed",
+        "status": "failed",
+        "detail": "Actions completed; conclusion failure."
+      }
+    ],
+    "mergeReady": false,
+    "findingClosed": false,
+    "graph": {
+      "threadId": "3c9b7631-ce5c-415a-b67f-f1f8696d92de",
+      "currentNode": "verify",
+      "completedNodes": [
+        "source",
+        "inventory",
+        "triage",
+        "baseline",
+        "repair"
+      ]
+    },
+    "advisory": {
+      "id": "CVE-2026-97629",
+      "titleEn": "library/nginx 1.26.0: CVE-2026-97629",
+      "titleJa": "library/nginx の依存関係の脆弱性",
+      "summary": "Session forgery when using TLS session tickets (medium). nginx 1.26.0 is in the vendor-affected range. Exploitability depends on enabled modules and configuration. This finding covers upstream nginx, not all image OS packages.",
+      "sources": [
+        {
+          "title": "nginx official security advisories and affected releases",
+          "url": "https://nginx.org/en/security_advisories.html",
+          "language": "en",
+          "retrievedAt": "2026-10-25T05:07:38.165Z"
+        },
+        {
+          "title": "Upstream vendor advisory",
+          "url": "https://my.f5.com/manage/s/article/K000162606",
+          "language": "en",
+          "retrievedAt": "2026-10-25T05:07:38.165Z"
+        },
+        {
+          "title": "Docker Official nginx image",
+          "url": "https://hub.docker.com/_/nginx",
+          "language": "en",
+          "retrievedAt": "2026-10-25T05:07:38.165Z"
+        }
+      ],
+      "cves": [
+        "CVE-2026-97629",
+        "CVE-2026-97205",
+        "CVE-2026-95101",
+        "CVE-2026-9256",
+        "CVE-2026-60005",
+        "CVE-2026-56434",
+        "CVE-2026-48142",
+        "CVE-2026-42946",
+        "CVE-2026-42945",
+        "CVE-2026-42934",
+        "CVE-2026-42533",
+        "CVE-2026-42055",
+        "CVE-2026-40701",
+        "CVE-2026-40460",
+        "CVE-2026-32647",
+        "CVE-2026-28753",
+        "CVE-2026-27784",
+        "CVE-2026-27654",
+        "CVE-2026-27651",
+        "CVE-2026-1642",
+        "CVE-2026-15176",
+        "CVE-2025-53859",
+        "CVE-2025-23419",
+        "CVE-2024-35200",
+        "CVE-2024-34161",
+        "CVE-2024-32760",
+        "CVE-2024-31079",
+        "CVE-2024-7347"
+      ],
+      "fixedVersion": "1.30.6",
+      "ownerTasks": [
+        "Review and merge the draft in GitHub.",
+        "Deploy the reviewed build and verify the running service.",
+        "Review remaining scanner findings, module/configuration exposure and incident guidance."
+      ]
+    },
+    "evidence": {
+      "policy": {
+        "target_repository": "Harsh5840/arigato-container-demo",
+        "run_id": "3c9b7631-ce5c-415a-b67f-f1f8696d92de-a1",
+        "base_sha": "db7ecf6797233e222fa554139fb588bc156f0e32",
+        "candidate_sha": "bcdb92204578af031def1b06ea3872d09a499b12",
+        "workflow_sha": "ab0bedca72b0c2a23a2d5de0b48ef8e625371174",
+        "github_run_id": "40164445866",
+        "mode": "verify",
+        "checks": [
+          {
+            "id": "scope",
+            "label": "Only the discovered dependency manifest and resolved lockfile may change",
+            "pass": true,
+            "detail": "compose.yaml"
+          },
+          {
+            "id": "verifier",
+            "label": "Baseline test files are frozen before dependency installation",
+            "pass": true,
+            "detail": "2e6350b66f08e02ab2d8906c590dd667fe5173694f5192d6d4029fb601a88474"
+          },
+          {
+            "id": "runner_completion",
+            "label": "Trusted runner completed successfully",
+            "pass": false,
+            "detail": "docker failed: Unable to find image 'aquasec/trivy:0.69.3@sha256:bcc376de8d77cfe086a917230e818dc9f8528e3c852f7b1aff648949b6258d1c' locally\ndocker.io/aquasec/trivy@sha256:bcc376de8d77cfe086a917230e818dc9f8528e3c852f7b1aff648949b6258d1c: Pulling from aquasec/trivy\n589002ba0eae: Pulling fs layer\nfc2618f97117: Pulling fs layer\n7b08753d422d: Pulling fs layer\n653c20201193: Pulling fs layer\n653c20201193: Waiting\n589002ba0eae: Verifying Checksum\n589002ba0eae: Download complete\nfc2618f97117: Verifying Checksum\nfc2618f97117: Download complete\n7b08753d422d: Verifying Checksum\n7b08753d422d: Download complete\n589002ba0eae: Pull complete\n653c20201193: Verifying Checksum\n653c20201193: Download complete\nfc2618f97117: Pull complete\n7b08753d422d: Pull complete\n653c20201193: Pull complete\nDigest: sha256:bcc376de8d77cfe086a917230e818dc9f8528e3c852f7b1aff648949b6258d1c\nStatus: Downloaded newer image for aquasec/trivy@sha256:bcc376de8d77cfe086a917230e818dc9f8528e3c852f7b1aff648949b6258d1c\n2026-10-25T05:08:47Z\tINFO\t[vulndb] Need to update DB\n2026-10-25T05:08:47Z\tINFO\t[vulndb] Downloading vulnerability DB...\n2026-10-25T05:08:47Z\tINFO\t[vulndb] Downloading artifact...\trepo=\"mirror.gcr.io/aquasec/trivy-db:2\"\n2026-10-25T05:08:49Z\tFATAL\tFatal error\trun error: init error: DB error: failed to download vulnerability DB: OCI artifact error: failed to download vulnerability DB: failed to download artifact from mirror.gcr.io/aquasec/trivy-db:2: oci download error: failed to fetch the layer: GET https://mirror.gcr.io/artifacts-downloads/namespaces/artifact-registry-docker-cache/repositories/virtual-docker/downloads/lVm1unuhFFKcDQFY: unexpected status code 404 Not Found\n"
+          }
+        ],
+        "verifier_sha256": "2e6350b66f08e02ab2d8906c590dd667fe5173694f5192d6d4029fb601a88474",
+        "policy": {
+          "version": "generic-repair-v1",
+          "kind": "container",
+          "root": "",
+          "manifestPath": "compose.yaml",
+          "allowedPaths": [
+            "compose.yaml"
+          ],
+          "testPaths": [
+            "config/nginx.conf",
+            "public/catalog.json",
+            "public/health.txt",
+            "public/index.html",
+            "public/style.css",
+            "tests/runtime-check.sh",
+            "tests/smoke.mjs",
+            "tests/static.test.mjs"
+          ],
+          "testCommand": [
+            "sh",
+            "/oracle/tests/runtime-check.sh"
+          ],
+          "runnerImage": ""
+        },
+        "failure": "docker failed: Unable to find image 'aquasec/trivy:0.69.3@sha256:bcc376de8d77cfe086a917230e818dc9f8528e3c852f7b1aff648949b6258d1c' locally\ndocker.io/aquasec/trivy@sha256:bcc376de8d77cfe086a917230e818dc9f8528e3c852f7b1aff648949b6258d1c: Pulling from aquasec/trivy\n589002ba0eae: Pulling fs layer\nfc2618f97117: Pulling fs layer\n7b08753d422d: Pulling fs layer\n653c20201193: Pulling fs layer\n653c20201193: Waiting\n589002ba0eae: Verifying Checksum\n589002ba0eae: Download complete\nfc2618f97117: Verifying Checksum\nfc2618f97117: Download complete\n7b08753d422d: Verifying Checksum\n7b08753d422d: Download complete\n589002ba0eae: Pull complete\n653c20201193: Verifying Checksum\n653c20201193: Download complete\nfc2618f97117: Pull complete\n7b08753d422d: Pull complete\n653c20201193: Pull complete\nDigest: sha256:bcc376de8d77cfe086a917230e818dc9f8528e3c852f7b1aff648949b6258d1c\nStatus: Downloaded newer image for aquasec/trivy@sha256:bcc376de8d77cfe086a917230e818dc9f8528e3c852f7b1aff648949b6258d1c\n2026-10-25T05:08:47Z\tINFO\t[vulndb] Need to update DB\n2026-10-25T05:08:47Z\tINFO\t[vulndb] Downloading vulnerability DB...\n2026-10-25T05:08:47Z\tINFO\t[vulndb] Downloading artifact...\trepo=\"mirror.gcr.io/aquasec/trivy-db:2\"\n2026-10-25T05:08:49Z\tFATAL\tFatal error\trun error: init error: DB error: failed to download vulnerability DB: OCI artifact error: failed to download vulnerability DB: failed to download artifact from mirror.gcr.io/aquasec/trivy-db:2: oci download error: failed to fetch the layer: GET https://mirror.gcr.io/artifacts-downloads/namespaces/artifact-registry-docker-cache/repositories/virtual-docker/downloads/lVm1unuhFFKcDQFY: unexpected status code 404 Not Found\n"
+      },
+      "verifierSha256": "2e6350b66f08e02ab2d8906c590dd667fe5173694f5192d6d4029fb601a88474",
+      "artifactSha256": "fafe8fa7a7ff3247d46ee68affdd0c2c77a3f91a09df1d9ee96ff3af0860bab8",
+      "rawFiles": {
+        "verification.json": "{\n  \"target_repository\": \"Harsh5840/arigato-container-demo\",\n  \"run_id\": \"3c9b7631-ce5c-415a-b67f-f1f8696d92de-a1\",\n  \"base_sha\": \"db7ecf6797233e222fa554139fb588bc156f0e32\",\n  \"candidate_sha\": \"bcdb92204578af031def1b06ea3872d09a499b12\",\n  \"workflow_sha\": \"ab0bedca72b0c2a23a2d5de0b48ef8e625371174\",\n  \"github_run_id\": \"40164445866\",\n  \"mode\": \"verify\",\n  \"checks\": [\n    {\n      \"id\": \"scope\",\n      \"label\": \"Only the discovered dependency manifest and resolved lockfile may change\",\n      \"pass\": true,\n      \"detail\": \"compose.yaml\"\n    },\n    {\n      \"id\": \"verifier\",\n      \"label\": \"Baseline test files are frozen before dependency installation\",\n      \"pass\": true,\n      \"detail\": \"2e6350b66f08e02ab2d8906c590dd667fe5173694f5192d6d4029fb601a88474\"\n    },\n    {\n      \"id\": \"runner_completion\",\n      \"label\": \"Trusted runner completed successfully\",\n      \"pass\": false,\n      \"detail\": \"docker failed: Unable to find image 'aquasec/trivy:0.69.3@sha256:bcc376de8d77cfe086a917230e818dc9f8528e3c852f7b1aff648949b6258d1c' locally\\ndocker.io/aquasec/trivy@sha256:bcc376de8d77cfe086a917230e818dc9f8528e3c852f7b1aff648949b6258d1c: Pulling from aquasec/trivy\\n589002ba0eae: Pulling fs layer\\nfc2618f97117: Pulling fs layer\\n7b08753d422d: Pulling fs layer\\n653c20201193: Pulling fs layer\\n653c20201193: Waiting\\n589002ba0eae: Verifying Checksum\\n589002ba0eae: Download complete\\nfc2618f97117: Verifying Checksum\\nfc2618f97117: Download complete\\n7b08753d422d: Verifying Checksum\\n7b08753d422d: Download complete\\n589002ba0eae: Pull complete\\n653c20201193: Verifying Checksum\\n653c20201193: Download complete\\nfc2618f97117: Pull complete\\n7b08753d422d: Pull complete\\n653c20201193: Pull complete\\nDigest: sha256:bcc376de8d77cfe086a917230e818dc9f8528e3c852f7b1aff648949b6258d1c\\nStatus: Downloaded newer image for aquasec/trivy@sha256:bcc376de8d77cfe086a917230e818dc9f8528e3c852f7b1aff648949b6258d1c\\n2026-10-25T05:08:47Z\\tINFO\\t[vulndb] Need to update DB\\n2026-10-25T05:08:47Z\\tINFO\\t[vulndb] Downloading vulnerability DB...\\n2026-10-25T05:08:47Z\\tINFO\\t[vulndb] Downloading artifact...\\trepo=\\\"mirror.gcr.io/aquasec/trivy-db:2\\\"\\n2026-10-25T05:08:49Z\\tFATAL\\tFatal error\\trun error: init error: DB error: failed to download vulnerability DB: OCI artifact error: failed to download vulnerability DB: failed to download artifact from mirror.gcr.io/aquasec/trivy-db:2: oci download error: failed to fetch the layer: GET https://mirror.gcr.io/artifacts-downloads/namespaces/artifact-registry-docker-cache/repositories/virtual-docker/downloads/lVm1unuhFFKcDQFY: unexpected status code 404 Not Found\\n\"\n    }\n  ],\n  \"verifier_sha256\": \"2e6350b66f08e02ab2d8906c590dd667fe5173694f5192d6d4029fb601a88474\",\n  \"policy\": {\n    \"version\": \"generic-repair-v1\",\n    \"kind\": \"container\",\n    \"root\": \"\",\n    \"manifestPath\": \"compose.yaml\",\n    \"allowedPaths\": [\n      \"compose.yaml\"\n    ],\n    \"testPaths\": [\n      \"config/nginx.conf\",\n      \"public/catalog.json\",\n      \"public/health.txt\",\n      \"public/index.html\",\n      \"public/style.css\",\n      \"tests/runtime-check.sh\",\n      \"tests/smoke.mjs\",\n      \"tests/static.test.mjs\"\n    ],\n    \"testCommand\": [\n      \"sh\",\n      \"/oracle/tests/runtime-check.sh\"\n    ],\n    \"runnerImage\": \"\"\n  },\n  \"failure\": \"docker failed: Unable to find image 'aquasec/trivy:0.69.3@sha256:bcc376de8d77cfe086a917230e818dc9f8528e3c852f7b1aff648949b6258d1c' locally\\ndocker.io/aquasec/trivy@sha256:bcc376de8d77cfe086a917230e818dc9f8528e3c852f7b1aff648949b6258d1c: Pulling from aquasec/trivy\\n589002ba0eae: Pulling fs layer\\nfc2618f97117: Pulling fs layer\\n7b08753d422d: Pulling fs layer\\n653c20201193: Pulling fs layer\\n653c20201193: Waiting\\n589002ba0eae: Verifying Checksum\\n589002ba0eae: Download complete\\nfc2618f97117: Verifying Checksum\\nfc2618f97117: Download complete\\n7b08753d422d: Verifying Checksum\\n7b08753d422d: Download complete\\n589002ba0eae: Pull complete\\n653c20201193: Verifying Checksum\\n653c20201193: Download complete\\nfc2618f97117: Pull complete\\n7b08753d422d: Pull complete\\n653c20201193: Pull complete\\nDigest: sha256:bcc376de8d77cfe086a917230e818dc9f8528e3c852f7b1aff648949b6258d1c\\nStatus: Downloaded newer image for aquasec/trivy@sha256:bcc376de8d77cfe086a917230e818dc9f8528e3c852f7b1aff648949b6258d1c\\n2026-10-25T05:08:47Z\\tINFO\\t[vulndb] Need to update DB\\n2026-10-25T05:08:47Z\\tINFO\\t[vulndb] Downloading vulnerability DB...\\n2026-10-25T05:08:47Z\\tINFO\\t[vulndb] Downloading artifact...\\trepo=\\\"mirror.gcr.io/aquasec/trivy-db:2\\\"\\n2026-10-25T05:08:49Z\\tFATAL\\tFatal error\\trun error: init error: DB error: failed to download vulnerability DB: OCI artifact error: failed to download vulnerability DB: failed to download artifact from mirror.gcr.io/aquasec/trivy-db:2: oci download error: failed to fetch the layer: GET https://mirror.gcr.io/artifacts-downloads/namespaces/artifact-registry-docker-cache/repositories/virtual-docker/downloads/lVm1unuhFFKcDQFY: unexpected status code 404 Not Found\\n\"\n}\n"
+      }
+    },
+    "ci": {
+      "id": 40164445866,
+      "url": "https://github.com/Harsh5840/arigato-hack/actions/runs/40164445866",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    "draftPRAllowed": false,
+    "failure": {
+      "code": "PACKAGE_RUN_BLOCKED",
+      "message": "Trusted verification failed, is missing, or does not match this exact candidate and frozen test suite."
+    }
+  },
+  "events": [
+    {
+      "id": 423,
+      "runId": "3c9b7631-ce5c-415a-b67f-f1f8696d92de",
+      "at": "2026-10-25T05:08:11.504Z",
+      "node": "controller",
+      "kind": "queued",
+      "message": "Confirmed Docker advisory CVE-2026-97629 queued for Harsh5840/arigato-container-demo."
+    },
+    {
+      "id": 424,
+      "runId": "3c9b7631-ce5c-415a-b67f-f1f8696d92de",
+      "at": "2026-10-25T05:08:12.437Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered source."
+    },
+    {
+      "id": 425,
+      "runId": "3c9b7631-ce5c-415a-b67f-f1f8696d92de",
+      "at": "2026-10-25T05:08:12.439Z",
+      "node": "supply-chain",
+      "kind": "source-fetching",
+      "message": "Read the verified Docker advisory CVE-2026-97629. Forum text alone cannot authorize repair."
+    },
+    {
+      "id": 426,
+      "runId": "3c9b7631-ce5c-415a-b67f-f1f8696d92de",
+      "at": "2026-10-25T05:08:12.445Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed source."
+    },
+    {
+      "id": 427,
+      "runId": "3c9b7631-ce5c-415a-b67f-f1f8696d92de",
+      "at": "2026-10-25T05:08:12.461Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered inventory."
+    },
+    {
+      "id": 428,
+      "runId": "3c9b7631-ce5c-415a-b67f-f1f8696d92de",
+      "at": "2026-10-25T05:08:12.465Z",
+      "node": "controller",
+      "kind": "matching",
+      "message": "Detect the stack in Harsh5840/arigato-container-demo at an immutable commit and match the exact installed dependency."
+    },
+    {
+      "id": 429,
+      "runId": "3c9b7631-ce5c-415a-b67f-f1f8696d92de",
+      "at": "2026-10-25T05:08:21.461Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed inventory."
+    },
+    {
+      "id": 430,
+      "runId": "3c9b7631-ce5c-415a-b67f-f1f8696d92de",
+      "at": "2026-10-25T05:08:21.495Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered triage."
+    },
+    {
+      "id": 431,
+      "runId": "3c9b7631-ce5c-415a-b67f-f1f8696d92de",
+      "at": "2026-10-25T05:08:21.500Z",
+      "node": "supply-chain",
+      "kind": "triaging",
+      "message": "The Supply Chain Agent explains the corroborated match before a deterministic repair policy is selected."
+    },
+    {
+      "id": 432,
+      "runId": "3c9b7631-ce5c-415a-b67f-f1f8696d92de",
+      "at": "2026-10-25T05:08:23.402Z",
+      "node": "supply-chain",
+      "kind": "agent-completed",
+      "message": "supply: openai/gpt-oss-20b; 1088 reported tokens. The Docker image library/nginx:1.26.0 is affected by CVE‑2026‑97629, a session‑forgery vulnerability in TLS session tickets. The advisory specifies that version 1.26.0 falls within the affected range, and a fixed image is available at nginx:1.30.6."
+    },
+    {
+      "id": 433,
+      "runId": "3c9b7631-ce5c-415a-b67f-f1f8696d92de",
+      "at": "2026-10-25T05:08:23.404Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed triage."
+    },
+    {
+      "id": 434,
+      "runId": "3c9b7631-ce5c-415a-b67f-f1f8696d92de",
+      "at": "2026-10-25T05:08:23.422Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered baseline."
+    },
+    {
+      "id": 435,
+      "runId": "3c9b7631-ce5c-415a-b67f-f1f8696d92de",
+      "at": "2026-10-25T05:08:23.425Z",
+      "node": "devsec",
+      "kind": "baseline",
+      "message": "Discover the relevant tests and freeze their baseline bytes before the fixer can edit a dependency manifest."
+    },
+    {
+      "id": 437,
+      "runId": "3c9b7631-ce5c-415a-b67f-f1f8696d92de",
+      "at": "2026-10-25T05:08:26.939Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed baseline."
+    },
+    {
+      "id": 438,
+      "runId": "3c9b7631-ce5c-415a-b67f-f1f8696d92de",
+      "at": "2026-10-25T05:08:26.959Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered repair."
+    },
+    {
+      "id": 439,
+      "runId": "3c9b7631-ce5c-415a-b67f-f1f8696d92de",
+      "at": "2026-10-25T05:08:26.963Z",
+      "node": "remediation",
+      "kind": "patching",
+      "message": "The Fix Agent prepares candidate 1/2 for library/nginx 1.30.6."
+    },
+    {
+      "id": 440,
+      "runId": "3c9b7631-ce5c-415a-b67f-f1f8696d92de",
+      "at": "2026-10-25T05:08:28.307Z",
+      "node": "remediation",
+      "kind": "agent-completed",
+      "message": "fixer: openai/gpt-oss-120b; 1527 reported tokens. Updated compose.yaml to use nginx:1.30.6, addressing CVE-2026-97629."
+    },
+    {
+      "id": 441,
+      "runId": "3c9b7631-ce5c-415a-b67f-f1f8696d92de",
+      "at": "2026-10-25T05:08:28.309Z",
+      "node": "remediation",
+      "kind": "mechanical-image-patch",
+      "message": "The Fix Agent planned the update. The image-edit tool applied the verified tag/digest while preserving comments, quotes, whitespace, commands and mounts."
+    },
+    {
+      "id": 442,
+      "runId": "3c9b7631-ce5c-415a-b67f-f1f8696d92de",
+      "at": "2026-10-25T05:08:30.912Z",
+      "node": "remediation",
+      "kind": "candidate-pushed",
+      "message": "Prepared baseline-child commit bcdb92204578af031def1b06ea3872d09a499b12 on proofpatch/package-3c9b7631-a1."
+    },
+    {
+      "id": 443,
+      "runId": "3c9b7631-ce5c-415a-b67f-f1f8696d92de",
+      "at": "2026-10-25T05:08:30.914Z",
+      "node": "controller",
+      "kind": "graph-node-completed",
+      "message": "LangGraph completed repair."
+    },
+    {
+      "id": 444,
+      "runId": "3c9b7631-ce5c-415a-b67f-f1f8696d92de",
+      "at": "2026-10-25T05:08:30.926Z",
+      "node": "controller",
+      "kind": "graph-node-started",
+      "message": "LangGraph entered verify."
+    },
+    {
+      "id": 445,
+      "runId": "3c9b7631-ce5c-415a-b67f-f1f8696d92de",
+      "at": "2026-10-25T05:08:30.928Z",
+      "node": "devsec",
+      "kind": "verifying",
+      "message": "Run sh /oracle/tests/runtime-check.sh against the exact candidate in the isolated central verifier."
+    },
+    {
+      "id": 446,
+      "runId": "3c9b7631-ce5c-415a-b67f-f1f8696d92de",
+      "at": "2026-10-25T05:08:32.862Z",
+      "node": "devsec",
+      "kind": "ci-progress",
+      "message": "Waiting for the trusted repository verification workflow."
+    },
+    {
+      "id": 447,
+      "runId": "3c9b7631-ce5c-415a-b67f-f1f8696d92de",
+      "at": "2026-10-25T05:08:40.392Z",
+      "node": "devsec",
+      "kind": "ci-progress",
+      "message": "Hosted verification: in_progress"
+    },
+    {
+      "id": 448,
+      "runId": "3c9b7631-ce5c-415a-b67f-f1f8696d92de",
+      "at": "2026-10-25T05:08:47.573Z",
+      "node": "devsec",
+      "kind": "ci-progress",
+      "message": "Hosted verification: in_progress"
+    },
+    {
+      "id": 449,
+      "runId": "3c9b7631-ce5c-415a-b67f-f1f8696d92de",
+      "at": "2026-10-25T05:08:54.533Z",
+      "node": "devsec",
+      "kind": "ci-progress",
+      "message": "Hosted verification: in_progress"
+    },
+    {
+      "id": 451,
+      "runId": "3c9b7631-ce5c-415a-b67f-f1f8696d92de",
+      "at": "2026-10-25T05:09:02.298Z",
+      "node": "devsec",
+      "kind": "ci-progress",
+      "message": "Hosted verification: completed (failure)"
+    },
+    {
+      "id": 452,
+      "runId": "3c9b7631-ce5c-415a-b67f-f1f8696d92de",
+      "at": "2026-10-25T05:09:04.891Z",
+      "node": "gate",
+      "kind": "blocked",
+      "message": "Trusted verification failed, is missing, or does not match this exact candidate and frozen test suite."
+    }
+  ]
+}
