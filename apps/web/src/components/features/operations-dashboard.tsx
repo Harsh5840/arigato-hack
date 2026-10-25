@@ -172,14 +172,14 @@ export default function OperationsDashboard() {
     const anchor = document.createElement('a'); anchor.href = url; anchor.download = `proofpatch-${run.id}.json`; anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
   async function deleteHistory() {
-    if (!window.confirm('Delete all locally saved runs and their event history? This cannot be undone. Findings and GitHub draft PRs will remain.')) return;
+    if (!window.confirm('Delete all locally saved runs, their event history, and findings linked to those runs? This cannot be undone. Unrelated findings and GitHub draft PRs remain open. A later scan may rediscover an unresolved finding with its existing PR link.')) return;
     setHistoryNotice('');
     const result = await clearSavedRuns();
     if (!result) return;
     requestedRun.current = null;
     followedAutomaticRuns.current.clear();
     await monitoring.refresh();
-    setHistoryNotice(`${result.deleted} saved run${result.deleted === 1 ? '' : 's'} deleted. Existing GitHub draft PRs remain.`);
+    setHistoryNotice(`${result.deleted} saved run${result.deleted === 1 ? '' : 's'} and ${result.deletedFindings} linked finding${result.deletedFindings === 1 ? '' : 's'} deleted. GitHub draft PRs remain open.`);
   }
   async function clearFindingsAndPRs() {
     const scope = selectedRepositories.map(repository => `${repository.owner}/${repository.name}`).join('\n');
@@ -217,7 +217,7 @@ export default function OperationsDashboard() {
         <button className="ops-text-next" onClick={() => changeTab('results')}>Open checks and model usage<ArrowRight size={15}/></button>
       </div>}
 
-      {tab === 'results' && <div className="ops-results-view"><div className="ops-tab-intro"><div><span>04 / INSPECT THE PROOF</span><h2>Results and human review</h2><p>Observed checks, each model call, token use, code diff, and the actual draft PR.</p></div><div className="ops-results-actions"><strong>{run ? `Run ${run.id.slice(0, 8)}` : 'No run selected'}</strong><div className="ops-result-delete-actions"><button className="ops-delete-runs" disabled={!allRuns.length || !!activeRun || busy || !!monitoring.pending} title={activeRun ? 'Wait for the active run to finish or cancel it first' : !allRuns.length ? 'No saved runs to delete' : 'Delete locally saved run history across all services'} onClick={() => void deleteHistory()}><Trash2 size={14}/>Delete saved runs</button><button className="ops-delete-runs" disabled={!allSelectedFindings.length || !!activeRun || busy || !!monitoring.pending} title={activeRun ? 'Wait for the active run to finish or cancel it first' : !allSelectedFindings.length ? 'No findings for checked services' : 'Close recorded GitHub draft PRs and clear findings for checked services'} onClick={() => void clearFindingsAndPRs()}><Trash2 size={14}/>Close PRs + clear findings</button></div></div></div>
+      {tab === 'results' && <div className="ops-results-view"><div className="ops-tab-intro"><div><span>04 / INSPECT THE PROOF</span><h2>Results and human review</h2><p>Observed checks, each model call, token use, code diff, and the actual draft PR.</p></div><div className="ops-results-actions"><strong>{run ? `Run ${run.id.slice(0, 8)}` : 'No run selected'}</strong><div className="ops-result-delete-actions"><button className="ops-delete-runs" disabled={!allRuns.length || !!activeRun || busy || !!monitoring.pending} title={activeRun ? 'Wait for the active run to finish or cancel it first' : !allRuns.length ? 'No saved runs to delete' : 'Delete saved runs, events, and their linked findings across all services; GitHub PRs stay open'} onClick={() => void deleteHistory()}><Trash2 size={14}/>Delete saved runs</button><button className="ops-delete-runs" disabled={!allSelectedFindings.length || !!activeRun || busy || !!monitoring.pending} title={activeRun ? 'Wait for the active run to finish or cancel it first' : !allSelectedFindings.length ? 'No findings for checked services' : 'Close recorded GitHub draft PRs and clear findings for checked services'} onClick={() => void clearFindingsAndPRs()}><Trash2 size={14}/>Close PRs + clear findings</button></div></div></div>
         {historyNotice && <div className="ops-history-notice" role="status">{historyNotice}</div>}
         <RunMetrics runs={runs} loaded={service !== null && monitoring.loaded && !!selectedRepositories.length}/>
         {run && <section className="ops-run-facts"><h2>Selected run</h2><p>{run.advisory?.titleEn ?? focusedFindings[0]?.summary ?? 'No advisory summary recorded.'}</p><dl><div><dt>Started</dt><dd>{new Date(run.createdAt).toLocaleString('en-GB',{timeZone:'Asia/Tokyo',dateStyle:'medium',timeStyle:'medium'})} JST</dd></div><div><dt>Last activity</dt><dd>{new Date(run.updatedAt).toLocaleString('en-GB',{timeZone:'Asia/Tokyo',dateStyle:'medium',timeStyle:'medium'})} JST</dd></div><div><dt>Checks passed</dt><dd>{run.checks.filter(check => check.status === 'passed').length} / {run.checks.length}</dd></div></dl></section>}

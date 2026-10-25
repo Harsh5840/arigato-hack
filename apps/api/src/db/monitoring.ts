@@ -11,9 +11,11 @@ export class MonitoringStore {
     this.db.exec(`PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000;
       CREATE TABLE IF NOT EXISTS repositories(id TEXT PRIMARY KEY, identity TEXT UNIQUE NOT NULL, data TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS findings(id TEXT PRIMARY KEY, repository_id TEXT NOT NULL, data TEXT NOT NULL);
-      CREATE TABLE IF NOT EXISTS cleared_findings(id TEXT PRIMARY KEY, target_key TEXT NOT NULL, cleared_at TEXT NOT NULL);
+      CREATE TABLE IF NOT EXISTS cleared_findings(id TEXT PRIMARY KEY, target_key TEXT NOT NULL, cleared_at TEXT NOT NULL, pull_request TEXT);
       CREATE TABLE IF NOT EXISTS advisory_leads(id TEXT PRIMARY KEY, data TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS monitoring_state(key TEXT PRIMARY KEY, value TEXT NOT NULL);`);
+    const clearedColumns = this.db.prepare('PRAGMA table_info(cleared_findings)').all() as {name: string}[];
+    if (!clearedColumns.some(column => column.name === 'pull_request')) this.db.exec('ALTER TABLE cleared_findings ADD COLUMN pull_request TEXT');
     if (!this.state('settings')) this.setState('settings', { enabled: true, intervalSeconds: 300, sources: [] });
     if (!this.repositories().length) {
       const now = new Date().toISOString();
@@ -39,7 +41,7 @@ export class MonitoringStore {
     this.db.exec('BEGIN IMMEDIATE');
     try {
       const findings = this.findingsForRepositories(repositoryIds);
-      const cleared = this.db.prepare('INSERT INTO cleared_findings(id,target_key,cleared_at) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET target_key=excluded.target_key,cleared_at=excluded.cleared_at');
+      const cleared = this.db.prepare('INSERT INTO cleared_findings(id,target_key,cleared_at,pull_request) VALUES(?,?,?,NULL) ON CONFLICT(id) DO UPDATE SET target_key=excluded.target_key,cleared_at=excluded.cleared_at,pull_request=NULL');
       const now = new Date().toISOString();
       for (const finding of findings) cleared.run(finding.id, findingTarget(finding), now);
       const deleted = Number(this.db.prepare(`DELETE FROM findings WHERE repository_id IN (${placeholders})`).run(...repositoryIds).changes);
@@ -52,10 +54,12 @@ export class MonitoringStore {
     const previous = this.finding(finding.id);
     const sameTarget = previous && ['repositoryId','ecosystem','packageName','installedVersion','fixedVersion','fixedDigest','manifestPath'].every(key => previous[key as keyof SupplyFinding] === finding[key as keyof SupplyFinding]);
     const targetKey = findingTarget(finding);
-    const cleared = this.db.prepare('SELECT target_key FROM cleared_findings WHERE id=?').get(finding.id) as {target_key: string} | undefined;
+    const cleared = this.db.prepare('SELECT target_key,pull_request FROM cleared_findings WHERE id=?').get(finding.id) as {target_key: string; pull_request: string | null} | undefined;
     if (cleared && cleared.target_key !== targetKey) this.db.prepare('DELETE FROM cleared_findings WHERE id=?').run(finding.id);
     let next: SupplyFinding;
-    if (cleared?.target_key === targetKey) next = {...finding, status: 'needs-owner', runId: undefined, pullRequest: undefined};
+    if (cleared?.target_key === targetKey) next = cleared.pull_request
+      ? {...finding, status: 'draft-created', runId: undefined, pullRequest: JSON.parse(cleared.pull_request) as SupplyFinding['pullRequest']}
+      : {...finding, status: 'needs-owner', runId: undefined, pullRequest: undefined};
     else if (sameTarget) next = {...finding, detectedAt: previous.detectedAt, status: finding.status === 'needs-owner' ? 'needs-owner' : previous.status, runId: finding.status === 'needs-owner' ? undefined : previous.runId, pullRequest: previous.pullRequest};
     else next = {...finding, runId: undefined};
     this.db.prepare('INSERT INTO findings(id,repository_id,data) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET data=excluded.data').run(next.id, next.repositoryId, JSON.stringify(next));
@@ -68,21 +72,24 @@ export class MonitoringStore {
     if (patch.status === 'queued') this.db.prepare('DELETE FROM cleared_findings WHERE id=?').run(id);
     return next;
   }
-  clearRunLinks(deletedIds: readonly string[]) {
-    if (!deletedIds.length) return;
+  deleteFindingsForRuns(deletedIds: readonly string[]): number {
+    if (!deletedIds.length) return 0;
     const deleted = new Set(deletedIds);
     this.db.exec('BEGIN IMMEDIATE');
     try {
       const rows = this.db.prepare('SELECT id,data FROM findings').all() as {id: string; data: string}[];
-      const update = this.db.prepare('UPDATE findings SET data=? WHERE id=?');
+      const archive = this.db.prepare('INSERT INTO cleared_findings(id,target_key,cleared_at,pull_request) VALUES(?,?,?,?) ON CONFLICT(id) DO UPDATE SET target_key=excluded.target_key,cleared_at=excluded.cleared_at,pull_request=excluded.pull_request');
+      const remove = this.db.prepare('DELETE FROM findings WHERE id=?');
+      const now = new Date().toISOString();
+      let count = 0;
       for (const row of rows) {
         const finding = JSON.parse(row.data) as SupplyFinding;
         if (!finding.runId || !deleted.has(finding.runId)) continue;
-        delete finding.runId;
-        if (finding.status === 'queued') finding.status = 'detected';
-        update.run(JSON.stringify(finding), row.id);
+        archive.run(finding.id, findingTarget(finding), now, finding.pullRequest ? JSON.stringify(finding.pullRequest) : null);
+        count += Number(remove.run(row.id).changes);
       }
       this.db.exec('COMMIT');
+      return count;
     } catch (error) { this.db.exec('ROLLBACK'); throw error; }
   }
   saveLeads(leads: AdvisoryLead[]) { for (const lead of leads) this.db.prepare('INSERT INTO advisory_leads(id,data) VALUES(?,?) ON CONFLICT(id) DO NOTHING').run(lead.id, JSON.stringify(lead)); this.db.exec('DELETE FROM advisory_leads WHERE rowid NOT IN (SELECT rowid FROM advisory_leads ORDER BY rowid DESC LIMIT 100)'); }

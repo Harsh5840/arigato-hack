@@ -3,6 +3,7 @@ import { afterEach, beforeEach, test } from 'node:test';
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
+import { DatabaseSync } from 'node:sqlite';
 import { createApp } from '../src/app.js';
 import { RunStore } from '../src/db/client.js';
 import { MonitoringStore } from '../src/db/monitoring.js';
@@ -78,7 +79,22 @@ test('registry, settings, findings and worker heartbeat survive a SQLite restart
   assert.equal(second.snapshot().workerLastSeenAt, '2026-10-25T00:00:01Z');
 });
 
-test('saved-run deletion refuses active work, then clears history without reopening draft findings', async () => {
+test('existing monitoring databases gain the draft-link cleanup column', () => {
+  const directory = mkdtempSync(resolve(tmpdir(), 'proofpatch-monitoring-'));
+  temporaryDirectories.push(directory);
+  const path = resolve(directory, 'state.sqlite');
+  const oldDatabase = new DatabaseSync(path);
+  oldDatabase.exec('CREATE TABLE cleared_findings(id TEXT PRIMARY KEY, target_key TEXT NOT NULL, cleared_at TEXT NOT NULL)');
+  oldDatabase.close();
+  const monitor = new MonitoringStore(path); stores.push(monitor);
+  monitor.saveFinding(finding());
+  monitor.patchFinding('finding-unit', {runId: 'old-run', status: 'draft-created', pullRequest: {url: 'https://github.com/unit-owner/python-service/pull/7', number: 7, draft: true}});
+  assert.equal(monitor.deleteFindingsForRuns(['old-run']), 1);
+  monitor.saveFinding(finding());
+  assert.equal(monitor.finding('finding-unit')?.pullRequest?.number, 7);
+});
+
+test('saved-run deletion refuses active work, then removes only its linked findings', async () => {
   const {monitor, runs} = memory();
   const repo = repository(); monitor.saveRepository(repo);
   const {run} = runs.createForFinding(repo, finding());
@@ -86,6 +102,7 @@ test('saved-run deletion refuses active work, then clears history without reopen
   monitor.patchFinding('finding-unit', {status: 'draft-created', runId: run.id});
   monitor.saveFinding(finding({id: 'queued-alias'}));
   monitor.patchFinding('queued-alias', {status: 'queued', runId: run.id});
+  monitor.saveFinding(finding({id: 'unrelated'}));
   const app = createApp(runs, undefined, monitor);
   const remove = () => app.request('http://localhost/api/runs', {method: 'DELETE', headers, body: '{}'});
   assert.equal((await remove()).status, 409);
@@ -95,17 +112,16 @@ test('saved-run deletion refuses active work, then clears history without reopen
   runs.update(run.id, {status: 'completed'});
   const response = await remove();
   assert.equal(response.status, 200);
-  assert.equal((await response.json()).deleted, 1);
+  assert.deepEqual(await response.json(), {deleted: 1, deletedFindings: 2});
   assert.equal(runs.get(run.id), undefined);
   assert.deepEqual(runs.events(run.id), []);
-  assert.equal(monitor.finding('finding-unit')?.status, 'draft-created');
-  assert.equal(monitor.finding('finding-unit')?.runId, undefined);
-  assert.equal(monitor.finding('queued-alias')?.status, 'detected');
-  assert.equal(monitor.finding('queued-alias')?.runId, undefined);
-  assert.equal((await (await remove()).json()).deleted, 0);
+  assert.equal(monitor.finding('finding-unit'), undefined);
+  assert.equal(monitor.finding('queued-alias'), undefined);
+  assert.ok(monitor.finding('unrelated'));
+  assert.deepEqual(await (await remove()).json(), {deleted: 0, deletedFindings: 0});
 });
 
-test('an archived real draft PR stays linked to the exact finding after run history is cleared', () => {
+test('run cleanup hides its finding but preserves the real draft link for a later rescan', async () => {
   const {monitor, runs} = memory();
   const repo = repository(); monitor.saveRepository(repo);
   monitor.saveFinding(finding({status: 'draft-created'}));
@@ -121,8 +137,14 @@ test('an archived real draft PR stays linked to the exact finding after run hist
   assert.equal(monitor.finding('finding-unit')?.status, 'draft-created');
   assert.deepEqual(monitor.finding('finding-unit')?.pullRequest, pr);
   monitor.patchFinding('finding-unit', {runId: run.id});
-  monitor.clearRunLinks([run.id]);
+  runs.update(run.id, {status: 'completed', pullRequest: pr});
+  const response = await createApp(runs, undefined, monitor).request('http://localhost/api/runs', {method: 'DELETE', headers, body: '{}'});
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), {deleted: 1, deletedFindings: 1});
+  assert.equal(monitor.finding('finding-unit'), undefined);
+  monitor.saveFinding(finding());
   assert.equal(monitor.finding('finding-unit')?.runId, undefined);
+  assert.equal(monitor.finding('finding-unit')?.status, 'draft-created');
   assert.deepEqual(monitor.finding('finding-unit')?.pullRequest, pr);
   assert.throws(() => queueRemediation(monitor, runs, 'finding-unit'), /draft PR already exists/);
 });

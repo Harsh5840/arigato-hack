@@ -17,8 +17,8 @@ export function runHandlers(store: RunStore, monitor?: MonitoringStore) {
     clear: (c: Context) => {
       const result = store.clearHistory();
       if (result.blocked) return c.json({error: {code: 'RUN_ACTIVE', message: 'Wait for the active run to finish or cancel it before deleting saved run history.'}}, 409);
-      monitor?.clearRunLinks(result.deletedIds);
-      return c.json({deleted: result.deletedIds.length});
+      const deletedFindings = monitor?.deleteFindingsForRuns(result.deletedIds) ?? 0;
+      return c.json({deleted: result.deletedIds.length, deletedFindings});
     },
     create: async (c: Context) => {
       const body: unknown = await c.req.json().catch(() => null);
